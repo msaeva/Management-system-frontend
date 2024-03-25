@@ -1,0 +1,50 @@
+<div class="card shadow-lg rounded-lg d-flex justify-content-center">
+  <h2 class="text-center text-2xl font-semibold mb-5">LOGIN</h2>
+  <div class="flex flex-column md:flex-row">
+    <div class="w-full md:w-5 flex flex-column align-items-center justify-content-center gap-3 py-5">
+      <form [formGroup]="loginForm" (ngSubmit)="login()">
+        <div class="p-float-label mt-5">
+          <input pInputText id="username" type="text" class="input-field form-control" formControlName="username">
+          <label for="username">Username: </label>
+          <div
+            *ngIf="loginForm.get('username')?.invalid && (loginForm.get('username')?.dirty || loginForm.get('username')?.touched)"
+            class="alert alert-danger">
+            <div *ngIf="loginForm.get('username')?.errors?.['required']" class="alert alert-danger">
+              Name is required.
+            </div>
+            <div *ngIf="loginForm.get('username')?.errors?.['minlength']" class="alert alert-danger">
+              Name must be at least 3 characters long.
+            </div>
+          </div>
+        </div>
+        <div class="p-float-label mt-5">
+          <input pInputText id="password" type="password" class="input-field form-control" formControlName="password">
+          <label for="password">Password: </label>
+          <div
+            *ngIf="loginForm.get('password')?.invalid && (loginForm.get('password')?.dirty || loginForm.get('password')?.touched)"
+            class="alert alert-danger">
+            <div *ngIf="loginForm.get('password')?.errors?.['required']" class="alert alert-danger">
+              Password is required.
+            </div>
+            <div *ngIf="loginForm.get('password')?.errors?.['minlength']" class="alert alert-danger">
+              Password must be at least 6 characters long.
+            </div>
+          </div>
+        </div>
+        <div class="flex flex-wrap justify-content-center align-items-center gap-2 mt-5">
+          <p-button [disabled]="loginForm.invalid" type="submit" label="Login" icon="pi pi-user"
+                    styleClass="w-10rem mx-auto">
+          </p-button>
+        </div>
+      </form>
+    </div>
+    <div class=" w-full md:w-2
+      ">
+      <p-divider layout="vertical" styleClass="hidden md:flex"><b>OR</b></p-divider>
+      <p-divider layout="horizontal" styleClass="flex md:hidden" [align]="'center'"><b>OR</b></p-divider>
+    </div>
+    <div class="w-full md:w-5 flex align-items-center justify-content-center py-5">
+      <p-button label="Sign Up" icon="pi pi-user-plus" styleClass="p-button-success w-10rem" [routerLink]="'/register'" ></p-button>
+    </div>
+  </div>
+</div>

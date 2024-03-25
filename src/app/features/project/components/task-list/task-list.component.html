@@ -1,0 +1,53 @@
+<div class="grid">
+  <div class="lg:col-3 sm:col-12 shadow-1 m-2">
+    <div class="p-grid p-justify-center mb-2">
+      <div class="p-col-12 header">
+        <p class="font-bold">TODO</p>
+      </div>
+    </div>
+    <div class="grid">
+      <div class="col-12" *ngFor="let task of todoTasks">
+        <app-task [task]="task"></app-task>
+      </div>
+    </div>
+  </div>
+
+  <div class="lg:col-3 sm:col-12 shadow-1 m-2">
+    <div class="p-grid p-justify-center mb-2">
+      <div class="p-col-12 header">
+        <p class="font-bold">OPEN</p>
+      </div>
+    </div>
+    <div class="grid">
+      <div class="col-12" *ngFor="let task of openTasks">
+        <app-task [task]="task"></app-task>
+      </div>
+    </div>
+  </div>
+
+  <div class="lg:col-3 sm:col-12 shadow-1 m-2">
+    <div class="p-grid p-justify-center mb-2">
+      <div class="p-col-12 header">
+        <p class="font-bold">IN PROGRESS</p>
+      </div>
+    </div>
+    <div class="grid">
+      <div class="col-12" *ngFor="let task of inProgressTasks">
+        <app-task [task]="task"></app-task>
+      </div>
+    </div>
+  </div>
+
+  <div class="lg:col-3 sm:col-12 shadow-1 m-2">
+    <div class="p-grid p-justify-center mb-2">
+      <div class="p-col-12 header">
+        <p class="font-bold">DONE</p>
+      </div>
+    </div>
+    <div class="grid">
+      <div class="col-12" *ngFor="let task of doneTasks">
+        <app-task [task]="task"></app-task>
+      </div>
+    </div>
+  </div>
+</div>

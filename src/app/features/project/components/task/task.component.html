@@ -1,0 +1,14 @@
+<div class="w-full">
+  <p-card [header]="task.title" [subheader]="task.abbreviation" class="w-full">
+    <ng-template pTemplate="footer">
+      <p-button label="View" (click)="openModal(task.id)" [link]="true"></p-button>
+    </ng-template>
+  </p-card>
+</div>
+
+<p-dialog header="Header" [(visible)]="visible" [style]="{width: '50vw'}" [maximizable]="true">
+  <app-detailed-task [id]=task.id></app-detailed-task>`
+</p-dialog>
+
+
+

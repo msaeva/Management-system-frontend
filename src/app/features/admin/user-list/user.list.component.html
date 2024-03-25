@@ -1,0 +1,116 @@
+<div class="card">
+  <div class="flex justify-content-end mb-3">
+    <button pButton type="button" icon="pi pi-plus" label="Create User"
+            class="p-button-rounded p-button-success"
+            (click)="createNewUser()"></button>
+  </div>
+  <p-table [value]="users" dataKey="id" editMode="row" styleClass="p-datatable-striped"
+           [tableStyle]="{'min-width': '40rem'}">
+    <ng-template pTemplate="header">
+      <tr>
+        <th style="width:10%;">Id</th>
+        <th style="width:15%;">First Name</th>
+        <th style="width:15%;">Last Name</th>
+        <th style="width:15%;">Username</th>
+        <th style="width:15%;">Email</th>
+        <th style="width:10%;">Role</th>
+        <th style="width:20%; text-align: center;">Actions</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-user let-editing="editing" let-ri="rowIndex">
+      <tr [pEditableRow]="user">
+        <td>
+          <p-cellEditor>
+            <ng-template pTemplate="input">
+              {{ user.id }}
+            </ng-template>
+            <ng-template pTemplate="output">
+              {{ user.id }}
+            </ng-template>
+          </p-cellEditor>
+        </td>
+        <td>
+          <p-cellEditor>
+            <ng-template pTemplate="input">
+              <input pInputText type="text" [(ngModel)]="user.firstName">
+            </ng-template>
+            <ng-template pTemplate="output">
+              {{ user.firstName }}
+            </ng-template>
+          </p-cellEditor>
+        </td>
+        <td>
+          <p-cellEditor>
+            <ng-template pTemplate="input">
+              <input pInputText type="text" [(ngModel)]="user.lastName">
+            </ng-template>
+            <ng-template pTemplate="output">
+              {{ user.lastName }}
+            </ng-template>
+          </p-cellEditor>
+        </td>
+        <td>
+          <p-cellEditor>
+            <ng-template pTemplate="input">
+              {{ user.username }}
+            </ng-template>
+            <ng-template pTemplate="output">
+              {{ user.username }}
+            </ng-template>
+          </p-cellEditor>
+        </td>
+        <td>
+          <p-cellEditor>
+            <ng-template pTemplate="input">
+              {{ user.email }}
+            </ng-template>
+            <ng-template pTemplate="output">
+              {{ user.email }}
+            </ng-template>
+          </p-cellEditor>
+        </td>
+        <td>
+          <p-cellEditor>
+            <ng-template pTemplate="input">
+              <input pInputText type="text" [(ngModel)]="user.role">
+            </ng-template>
+            <ng-template pTemplate="output">
+              {{ user.role }}
+            </ng-template>
+          </p-cellEditor>
+        </td>
+        <td>
+          <div class="flex align-items-center justify-content-center gap-2">
+            <button *ngIf="!editing" pButton pRipple type="button"
+                    pInitEditableRow icon="pi pi-pencil" (click)="onRowEditInit(user)"
+                    class="p-button-rounded p-button-text"></button>
+            <button *ngIf="editing" pButton pRipple type="button"
+                    pSaveEditableRow icon="pi pi-check" (click)="onRowEditSave(user)"
+                    class="p-button-rounded p-button-text p-button-success mr-2"></button>
+            <button *ngIf="editing" pButton pRipple type="button"
+                    pCancelEditableRow icon="pi pi-times" (click)="onRowEditCancel(user, ri)"
+                    class="p-button-rounded p-button-text p-button-danger"></button>
+            <button pButton pRipple type="button" icon="pi pi-trash" (click)="showConfirmation(user.id)"
+                    class="p-button-rounded p-button-text p-button-danger"></button>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
+<p-confirmDialog #cd>
+  <ng-template pTemplate="headless" let-message>
+    <div class="flex flex-column align-items-center p-5 surface-overlay border-round">
+      <div [ngStyle]="{backgroundColor: 'var(--red-800)'}"
+           class="border-circle bg-primary inline-flex justify-content-center align-items-center h-6rem w-6rem -mt-8">
+        <i class="pi pi-question text-5xl"></i>
+      </div>
+      <span class="font-bold text-2xl block mb-2 mt-4">{{ message.header }}</span>
+      <p class="mb-0">{{ message.message }}</p>
+      <div class="flex align-items-center gap-2 mt-4">
+        <button pButton label="Save" (click)="cd.accept()" class="p-button-danger w-8rem"></button>
+        <button pButton label="Cancel" (click)="cd.reject()" class="p-button-outlined w-8rem "></button>
+      </div>
+    </div>
+  </ng-template>
+</p-confirmDialog>

@@ -1,0 +1,17 @@
+.layout {
+  display: flex;
+}
+
+.content-container {
+  flex: 1;
+  display: flex;
+}
+
+.layout-sidebar {
+  width : max-content;
+  min-width: max-content;
+}
+
+.router-outlet-container {
+  flex: 1;
+}
