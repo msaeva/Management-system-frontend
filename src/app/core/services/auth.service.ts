@@ -1,9 +1,10 @@
 import {HttpClient} from "@angular/common/http";
-import {ActivatedRoute, Router} from "@angular/router";
+import {Router} from "@angular/router";
 import {Injectable} from "@angular/core";
 import {LocalStorageService} from "@core/services/local-storage.service";
 import {DetailedUser} from "@core/types/DetailedUser";
-import {API_URL_ADMIN} from "@core/constants";
+import {API_URL, API_URL_ADMIN} from "@core/constants";
+import {User} from "@core/types/User";
 
 @Injectable({providedIn: 'root'})
 export class AuthService {
@@ -26,27 +27,12 @@ export class AuthService {
 
   createAccount(user: any) {
     const url = API_URL_ADMIN + "/users";
-    const body = {
-      username: user.username,
-      email: user.email,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      password: user.password,
-      role: user.role
-    };
-    return this.http.post(url, body);
+    return this.http.post<DetailedUser>(url, user);
   }
 
-  // register(user: any) {
-  //   const url = 'http://localhost:8080/system-management-1.0-SNAPSHOT/api/register';
-  //
-  //   const body = {
-  //     username: this.registerForm.value.username,
-  //     email: this.registerForm.value.email,
-  //     firstName: this.registerForm.value.firstName,
-  //     lastName: this.registerForm.value.lastName,
-  //     password: this.registerForm.value.password,
-  //     role: "USER"
-  //   };
-  // }
+  register(user: any) {
+    const url = API_URL + '/register';
+    console.log(user);
+    return this.http.post<User>(url, user);
+  }
 }

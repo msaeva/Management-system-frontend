@@ -1,11 +1,10 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input} from '@angular/core';
 import {NgForOf, NgIf} from "@angular/common";
 import {PanelMenuModule} from "primeng/panelmenu";
 import {MenuItem} from "primeng/api";
 import {TieredMenuModule} from "primeng/tieredmenu";
 import {ToggleButtonModule} from "primeng/togglebutton";
 import {FormsModule} from "@angular/forms";
-import {ProjectService} from "@core/services/project.service";
 
 @Component({
   selector: 'app-sidebar',
@@ -24,6 +23,4 @@ import {ProjectService} from "@core/services/project.service";
 export class SidebarComponent {
   @Input() menuItems!: MenuItem[];
 
-  constructor(private projectService: ProjectService) {
-  }
 }

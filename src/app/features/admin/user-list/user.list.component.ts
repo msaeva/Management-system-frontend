@@ -1,21 +1,21 @@
 import {Component, OnInit} from '@angular/core';
 import {NgForOf, NgIf, NgStyle} from "@angular/common";
-import {User} from "@core/types/User";
-import {Observable, of} from "rxjs";
-import {UserComponent} from "@feature/admin/user/user.component";
 import {ToastModule} from "primeng/toast";
 import {TableModule} from "primeng/table";
-import {FormsModule} from "@angular/forms";
+import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
 import {DropdownModule} from "primeng/dropdown";
 import {ButtonModule} from "primeng/button";
 import {RippleModule} from "primeng/ripple";
 import {ChipsModule} from "primeng/chips";
-import {ConfirmationService, SelectItem} from "primeng/api";
+import {ConfirmationService} from "primeng/api";
 import {UserService} from "@core/services/user-service";
 import {DetailedUser} from "@core/types/DetailedUser";
 import {ToastService} from "@core/services/toast.service";
 import {ConfirmDialogModule} from "primeng/confirmdialog";
-import {AuthService} from "@core/services/auth.service";
+import {DialogModule} from "primeng/dialog";
+import {PasswordModule} from "primeng/password";
+import {CreateUserComponent} from "@feature/admin/create-user/create-user.component";
+import {roleOptions} from "@core/constants";
 
 @Component({
   selector: 'app-user-list',
@@ -23,7 +23,6 @@ import {AuthService} from "@core/services/auth.service";
   imports: [
     NgForOf,
     NgIf,
-    UserComponent,
     ToastModule,
     TableModule,
     FormsModule,
@@ -32,7 +31,11 @@ import {AuthService} from "@core/services/auth.service";
     RippleModule,
     ChipsModule,
     ConfirmDialogModule,
-    NgStyle
+    NgStyle,
+    DialogModule,
+    PasswordModule,
+    ReactiveFormsModule,
+    CreateUserComponent,
   ],
   templateUrl: './user.list.component.html',
   styleUrl: './user.list.component.scss'
@@ -41,11 +44,25 @@ export class UserListComponent implements OnInit {
 
   protected users: DetailedUser[] = [];
   clonedUsers: Map<number, DetailedUser> = new Map<number, DetailedUser>();
+  forms: FormGroup[] = [];
+
+  visible: boolean = false;
+
+  showCreateNewUserDialog() {
+    this.visible = true;
+  }
+
 
   constructor(private userService: UserService,
-              private authService: AuthService,
               private toastService: ToastService,
-              private confirmationService: ConfirmationService) {
+              private confirmationService: ConfirmationService,
+              private formBuilder: FormBuilder) {
+  }
+
+  newUserHandler(user: DetailedUser) {
+    this.initializeForms([...this.users, user]);
+    this.users.push(user);
+    this.visible = false;
   }
 
   showConfirmation(userId: number) {
@@ -64,31 +81,46 @@ export class UserListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.loadUsers()
+    this.loadUsers();
   }
 
   loadUsers() {
     this.userService.getAllUsers().subscribe(
       {
         next: (users) => {
+          this.initializeForms(users);
           this.users = users;
-          console.log(users);
         },
         error: () => {
           console.log("Error loading users");
         }
-
       })
+  }
+
+  private initializeForms(users: DetailedUser[]) {
+    this.forms = users.map(user => {
+      return this.formBuilder.group({
+        id: [user.id, [Validators.required]],
+        firstName: [user.firstName, [Validators.required, Validators.minLength(3)]],
+        lastName: [user.lastName, [Validators.required, Validators.minLength(3)]],
+        role: [user.role, [Validators.required]]
+      });
+    });
   }
 
   onRowEditInit(user: DetailedUser) {
     this.clonedUsers.set(user.id, {...user});
-    console.log(this.clonedUsers);
   }
 
   onRowEditSave(user: DetailedUser) {
+
     this.userService.update(user).subscribe({
       next: () => {
+        const userToUpdate = this.users.find(u => u.id === user.id);
+        userToUpdate!.role = user.role;
+        userToUpdate!.firstName = user.firstName;
+        userToUpdate!.lastName = user.lastName;
+
         this.clonedUsers.delete(user.id);
       }, error: (err) => {
         console.log(err)
@@ -117,18 +149,5 @@ export class UserListComponent implements OnInit {
     });
   }
 
-  createNewUser() {
-    // this.authService.createAccount(user).subscribe({
-    //   next: (response) => {
-    //     this.users.push(...this.users, user)
-    //   },
-    //   error: (err) => {
-    //     console.log(err)
-    //   }
-    // })
-  }
-
-  getUsers(): Observable<User[]> {
-    return of(this.users);
-  }
+  protected readonly roleOptions = roleOptions;
 }

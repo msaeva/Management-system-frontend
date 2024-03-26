@@ -1,0 +1,98 @@
+<form [formGroup]="createUserFormGroup">
+  <div class="p-float-label mt-5">
+    <input pInputText id="username" class="input-field" formControlName="username"/>
+    <label for="username">Username</label>
+    <div
+      *ngIf="createUserFormGroup.get('username')?.invalid && (createUserFormGroup.get('username')?.dirty || createUserFormGroup.get('username')?.touched)"
+      class="alert alert-danger">
+      <div *ngIf="createUserFormGroup.get('username')?.errors?.['required']">
+        Username is required.
+      </div>
+      <div *ngIf="createUserFormGroup.get('username')?.errors?.['minlength']" class="alert alert-danger">
+        Username must be at least 3 characters long.
+      </div>
+    </div>
+  </div>
+
+  <div class="p-float-label mt-5">
+    <input pInputText id="email" type="email" class="input-field" formControlName="email"/>
+    <label for="email">Email</label>
+    <div
+      *ngIf="createUserFormGroup.get('email')?.invalid && (createUserFormGroup.get('email')?.dirty || createUserFormGroup.get('email')?.touched)"
+      class="alert alert-danger">
+      <small *ngIf="createUserFormGroup.get('email')?.errors?.['required']">
+        First name is required.
+      </small>
+      <small *ngIf="createUserFormGroup.get('email')?.errors?.['email']">
+        Email is invalid!
+      </small>
+    </div>
+  </div>
+
+  <div class="p-float-label mt-5">
+    <input pInputText id="first-name" class="input-field" formControlName="firstName"/>
+    <label for="first-name">First Name</label>
+    <div
+      *ngIf="createUserFormGroup.get('firstName')?.invalid && (createUserFormGroup.get('firstName')?.dirty || createUserFormGroup.get('firstName')?.touched)"
+      class="alert alert-danger">
+      <small *ngIf="createUserFormGroup.get('firstName')?.errors?.['required']">
+        First name is required.
+      </small>
+      <small *ngIf="createUserFormGroup.get('firstName')?.errors?.['minlength']" class="alert alert-danger">
+        First name must be at least 3 characters long.
+      </small>
+    </div>
+  </div>
+
+  <div class="p-float-label mt-5">
+    <input pInputText id="last-name" class="input-field" formControlName="lastName"/>
+    <label for="last-name">Last Name</label>
+    <div
+      *ngIf="createUserFormGroup.get('lastName')?.invalid && (createUserFormGroup.get('lastName')?.dirty || createUserFormGroup.get('lastName')?.touched)"
+      class="alert alert-danger">
+      <small *ngIf="createUserFormGroup.get('lastName')?.errors?.['required']">
+        Last name is required.
+      </small>
+      <small *ngIf="createUserFormGroup.get('lastName')?.errors?.['minlength']" class="alert alert-danger">
+        Last name must be at least 3 characters long.
+      </small>
+    </div>
+  </div>
+
+  <div class="p-float-label mt-5">
+    <input pPassword id="password" class="input-field" formControlName="password"/>
+    <label for="password">Password</label>
+    <div
+      *ngIf="createUserFormGroup.get('password')?.invalid && (createUserFormGroup.get('password')?.dirty || createUserFormGroup.get('password')?.touched)"
+      class="alert alert-danger">
+      <small *ngIf="createUserFormGroup.get('password')?.errors?.['required']">
+        Password name is required.
+      </small>
+      <small *ngIf="createUserFormGroup.get('password')?.errors?.['minlength']" class="alert alert-danger">
+        Password must be at least 6 characters long.
+      </small>
+    </div>
+  </div>
+
+  <div class="p-float-label mt-5">
+    <p-dropdown [options]="roleOptions"
+                formControlName="role"
+                optionValue="value"
+                optionLabel="label"
+                placeholder="Select a Role">
+    </p-dropdown>
+    <div
+      *ngIf="createUserFormGroup.get('role')?.invalid && (createUserFormGroup.get('role')?.dirty || createUserFormGroup.get('role')?.touched)"
+      class="alert alert-danger">
+      <small *ngIf="createUserFormGroup.get('role')?.errors?.['required']">
+        Last name is required.
+      </small>
+    </div>
+  </div>
+
+  <div class="flex flex-wrap justify-content-center align-items-center gap-2 mt-5">
+    <p-button (click)="createAccount()" [disabled]="createUserFormGroup.invalid" label="Create" icon="pi pi-user"
+              styleClass="w-10rem mx-auto">
+    </p-button>
+  </div>
+</form>

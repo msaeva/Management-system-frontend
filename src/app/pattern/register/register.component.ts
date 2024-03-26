@@ -6,6 +6,8 @@ import {DividerModule} from "primeng/divider";
 import {PasswordModule} from "primeng/password";
 import {HttpClient} from "@angular/common/http";
 import {Router, RouterLink} from "@angular/router";
+import {AuthService} from "@core/services/auth.service";
+import {NgIf} from "@angular/common";
 
 @Component({
   selector: 'app-register',
@@ -17,46 +19,41 @@ import {Router, RouterLink} from "@angular/router";
     ButtonModule,
     DividerModule,
     PasswordModule,
-    RouterLink
+    RouterLink,
+    NgIf
   ],
   templateUrl: './register.component.html',
   styleUrl: './register.component.scss'
 })
 export class RegisterComponent {
 
-  constructor(private http: HttpClient, private router: Router) {
+  constructor(private http: HttpClient, private router: Router, private authService: AuthService) {
   }
 
   registerForm = new FormGroup({
     username: new FormControl('', [Validators.minLength(3)]),
-    email: new FormControl('', [Validators.minLength(3)]),
+    email: new FormControl('', [Validators.email]),
     firstName: new FormControl('', [Validators.minLength(3)]),
     lastName: new FormControl('', [Validators.minLength(3)]),
     password: new FormControl('', [Validators.required, Validators.minLength(6)])
   });
 
   register() {
+    // const body = {
+    //   username: this.registerForm.value.username,
+    //   email: this.registerForm.value.email,
+    //   firstName: this.registerForm.value.firstName,
+    //   lastName: this.registerForm.value.lastName,
+    //   password: this.registerForm.value.password,
+    //   role: "USER"
+    // };
 
-    const url = 'http://localhost:8080/system-management-1.0-SNAPSHOT/api/register';
-
-    const body = {
-      username: this.registerForm.value.username,
-      email: this.registerForm.value.email,
-      firstName: this.registerForm.value.firstName,
-      lastName: this.registerForm.value.lastName,
-      password: this.registerForm.value.password,
-      role: "USER"
-    };
-
-    console.log("register")
-
-    this.http.post(url, body).subscribe(
-      (response) => {
+    this.authService.register(this.registerForm.value).subscribe({
+      next: (response) => {
         console.log('Register successful:', response)
         this.router.navigate(['/login']);
       },
-      (error) => console.error('Login failed:', error)
-    )
+      error: (err) => console.log(err)
+    })
   }
-
 }

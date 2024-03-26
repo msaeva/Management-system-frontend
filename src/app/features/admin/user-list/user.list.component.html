@@ -2,7 +2,7 @@
   <div class="flex justify-content-end mb-3">
     <button pButton type="button" icon="pi pi-plus" label="Create User"
             class="p-button-rounded p-button-success"
-            (click)="createNewUser()"></button>
+            (click)="showCreateNewUserDialog()"></button>
   </div>
   <p-table [value]="users" dataKey="id" editMode="row" styleClass="p-datatable-striped"
            [tableStyle]="{'min-width': '40rem'}">
@@ -17,8 +17,8 @@
         <th style="width:20%; text-align: center;">Actions</th>
       </tr>
     </ng-template>
-    <ng-template pTemplate="body" let-user let-editing="editing" let-ri="rowIndex">
-      <tr [pEditableRow]="user">
+    <ng-template pTemplate="body" let-user let-editing="editing" let-i="rowIndex">
+      <tr [pEditableRow]="user" [formGroup]="forms[i]">
         <td>
           <p-cellEditor>
             <ng-template pTemplate="input">
@@ -32,7 +32,15 @@
         <td>
           <p-cellEditor>
             <ng-template pTemplate="input">
-              <input pInputText type="text" [(ngModel)]="user.firstName">
+              <input pInputText type="text" formControlName="firstName">
+              <div
+                *ngIf="forms[i]?.get('firstName')?.['invalid'] && (forms[i]?.get('firstName')?.dirty ||forms[i]?.get('firstName')?.touched)"
+                class="text-danger">
+                <small *ngIf="forms[i]?.get('firstName')?.errors?.['required']">Last Name is required.</small>
+                <small *ngIf="forms[i]?.get('firstName')?.errors?.['minlength']">
+                  Last Name must be at least 3 characters long.
+                </small>
+              </div>
             </ng-template>
             <ng-template pTemplate="output">
               {{ user.firstName }}
@@ -42,7 +50,15 @@
         <td>
           <p-cellEditor>
             <ng-template pTemplate="input">
-              <input pInputText type="text" [(ngModel)]="user.lastName">
+              <input pInputText type="text" formControlName="lastName">
+              <div
+                *ngIf="forms[i]?.get('lastName')?.['invalid'] && (forms[i]?.get('lastName')?.dirty ||forms[i]?.get('lastName')?.touched)"
+                class="text-danger">
+                <small *ngIf="forms[i]?.get('lastName')?.errors?.['required']">Last Name is required.</small>
+                <small *ngIf="forms[i]?.get('lastName')?.errors?.['minlength']">
+                  Last Name must be at least 3 characters long.
+                </small>
+              </div>
             </ng-template>
             <ng-template pTemplate="output">
               {{ user.lastName }}
@@ -72,7 +88,13 @@
         <td>
           <p-cellEditor>
             <ng-template pTemplate="input">
-              <input pInputText type="text" [(ngModel)]="user.role">
+              <p-dropdown [options]="roleOptions"
+                          formControlName="role"
+                          optionValue="value"
+                          optionLabel="label"
+                          placeholder="Select a Role">
+
+              </p-dropdown>
             </ng-template>
             <ng-template pTemplate="output">
               {{ user.role }}
@@ -85,10 +107,10 @@
                     pInitEditableRow icon="pi pi-pencil" (click)="onRowEditInit(user)"
                     class="p-button-rounded p-button-text"></button>
             <button *ngIf="editing" pButton pRipple type="button"
-                    pSaveEditableRow icon="pi pi-check" (click)="onRowEditSave(user)"
+                    pSaveEditableRow icon="pi pi-check" (click)="onRowEditSave((forms[i].value))"
                     class="p-button-rounded p-button-text p-button-success mr-2"></button>
             <button *ngIf="editing" pButton pRipple type="button"
-                    pCancelEditableRow icon="pi pi-times" (click)="onRowEditCancel(user, ri)"
+                    pCancelEditableRow icon="pi pi-times" (click)="onRowEditCancel(user, i)"
                     class="p-button-rounded p-button-text p-button-danger"></button>
             <button pButton pRipple type="button" icon="pi pi-trash" (click)="showConfirmation(user.id)"
                     class="p-button-rounded p-button-text p-button-danger"></button>
@@ -108,9 +130,18 @@
       <span class="font-bold text-2xl block mb-2 mt-4">{{ message.header }}</span>
       <p class="mb-0">{{ message.message }}</p>
       <div class="flex align-items-center gap-2 mt-4">
-        <button pButton label="Save" (click)="cd.accept()" class="p-button-danger w-8rem"></button>
+        <button pButton label="Delete" (click)="cd.accept()" class="p-button-danger w-8rem"></button>
         <button pButton label="Cancel" (click)="cd.reject()" class="p-button-outlined w-8rem "></button>
       </div>
     </div>
   </ng-template>
 </p-confirmDialog>
+
+<p-dialog header="Create New User"
+          [(visible)]="visible"
+          [modal]="true"
+          [style]="{ width: '50vw' }"
+          [draggable]="false"
+          [resizable]="false">
+  <app-create-user (newUserEvent)="newUserHandler($event)"></app-create-user>
+</p-dialog>

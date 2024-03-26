@@ -53,8 +53,8 @@ export class LoginComponent implements OnDestroy {
               const url = DEFAULT_ROUTING.get(this.localStorageService.getRole() as Role)
               this.router.navigate(['/', url]);
             },
-            error: () => {
-
+            error: (error) => {
+              console.log(error);
             }
           }
         )

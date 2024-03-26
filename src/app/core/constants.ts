@@ -8,3 +8,9 @@ export const DEFAULT_ROUTING = new Map([
   [Role.ADMIN, "admin"],
   [Role.USER, "project-management"],
 ])
+
+export  const roleOptions: { value: string, label: string }[] = [
+  {value: Role.ADMIN.valueOf(), label: 'Admin'},
+  {value: Role.USER.valueOf(), label: 'User'},
+  {value: Role.PM.valueOf(), label: 'PM'}
+];
