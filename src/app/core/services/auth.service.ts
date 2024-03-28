@@ -2,9 +2,9 @@ import {HttpClient} from "@angular/common/http";
 import {Router} from "@angular/router";
 import {Injectable} from "@angular/core";
 import {LocalStorageService} from "@core/services/local-storage.service";
-import {DetailedUser} from "@core/types/DetailedUser";
+import {DetailedUser} from "@core/types/users/DetailedUser";
 import {API_URL, API_URL_ADMIN} from "@core/constants";
-import {User} from "@core/types/User";
+import {User} from "@core/types/users/User";
 
 @Injectable({providedIn: 'root'})
 export class AuthService {

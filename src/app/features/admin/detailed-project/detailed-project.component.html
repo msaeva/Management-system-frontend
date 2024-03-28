@@ -1,0 +1,126 @@
+<div>
+  <div>
+    <div class="p-grid p-dir-col">
+      <div class="p-col">
+        <p-inplace #title [closable]="true">
+          <ng-template pTemplate="display">
+            <span class="label">Title:</span>
+            <span>{{ project?.title }}</span>
+          </ng-template>
+          <ng-template pTemplate="content">
+            <input *ngIf="project" type="text" [(ngModel)]="project.title" pInputText/>
+          </ng-template>
+        </p-inplace>
+      </div>
+
+      <div class="p-col">
+        <p-inplace #description [closable]="true">
+          <ng-template pTemplate="display">
+            <span class="label">Description:</span>
+            <span>{{ project?.description }}</span>
+          </ng-template>
+          <ng-template pTemplate="content">
+            <input *ngIf="project" type="text" [(ngModel)]="project.description" pInputText/>
+          </ng-template>
+        </p-inplace>
+      </div>
+
+      <div class="p-col">
+        <p-inplace #abbreviation [closable]="true">
+          <ng-template pTemplate="display">
+            <span class="label">Abbreviation:</span>
+            <span>{{ project?.abbreviation }}</span>
+          </ng-template>
+          <ng-template pTemplate="content">
+            <input *ngIf="project" type="text" [(ngModel)]="project.abbreviation" pInputText/>
+          </ng-template>
+        </p-inplace>
+      </div>
+
+      <div class="p-col">
+        <p-inplace #status [closable]="true">
+          <ng-template pTemplate="display">
+            <span class="label">Status:</span>
+            <span>{{ project?.status }}</span>
+          </ng-template>
+          <ng-template pTemplate="content">
+            <input *ngIf="project" type="text" [(ngModel)]="project.status" pInputText/>
+          </ng-template>
+        </p-inplace>
+      </div>
+    </div>
+
+    <div>
+      <div class="p-dialog-footer">
+        <p-button label="Delete Project" [rounded]="true" severity="danger"
+                  (click)="showDeleteProjectConfirmation(project?.id)"></p-button>
+      </div>
+      <div class="p-dialog-footer">
+        <p-button label="Update" [rounded]="true" severity="info" (click)="updateProject(project?.id)"></p-button>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="col m-2 p-2">
+      <div class="p-col-12 flex flex-row flex-wrap justify-content-between p-2">
+        <div>
+          <h3>Teams</h3>
+        </div>
+        <div>
+          <p-button (click)="createTeam()"
+                    [rounded]="true"
+                    severity="success"
+                    icon="pi pi-plus"
+                    size="small">
+          </p-button>
+        </div>
+      </div>
+      <div class="p-col-12">
+        <div *ngFor="let team of project?.teams" class="p-col-12 p-md-6 p-lg-4 p-xl-3 mb-3">
+          <ng-container *ngIf="!loadingUsersToAddToTeam">
+            <app-admin-team-card [team]="team"
+                                 [usersToAddToTeam]="usersToAddToTeam"
+                                 [projectId]="project?.id!"
+                                 (projectDeletedEvent)="removeDeletedProjectHandler($event)">
+            </app-admin-team-card>
+          </ng-container>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="col m-2 p-2">
+      <div class="p-grid p-gutter">
+        <div class="p-col-12 flex flex-row flex-wrap justify-content-between p-2">
+          <div>
+            <h3>Project Managers</h3>
+          </div>
+        </div>
+        <div class="p-col-12">
+          <app-admin-project-manager-table [project]="project"
+                                           [allProjectManagersOptions]="allProjectManagersOptions">
+          </app-admin-project-manager-table>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+<p-confirmDialog #cd>
+  <ng-template pTemplate="headless" let-message>
+    <div class="flex flex-column align-items-center p-5 surface-overlay border-round">
+      <div [ngStyle]="{backgroundColor: 'var(--red-800)'}"
+           class="border-circle bg-primary inline-flex justify-content-center align-items-center h-6rem w-6rem -mt-8">
+        <i class="pi pi-question text-5xl"></i>
+      </div>
+      <span class="font-bold text-2xl block mb-2 mt-4">{{ message.header }}</span>
+      <p class="mb-0">{{ message.message }}</p>
+      <div class="flex align-items-center gap-2 mt-4">
+        <button pButton label="Delete" (click)="cd.accept()" class="p-button-danger w-8rem"></button>
+        <button pButton label="Cancel" (click)="cd.reject()" class="p-button-outlined w-8rem "></button>
+      </div>
+    </div>
+  </ng-template>
+</p-confirmDialog>

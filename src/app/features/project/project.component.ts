@@ -8,8 +8,7 @@ import {AutoFocusModule} from "primeng/autofocus";
 import {TaskListComponent} from "@feature/project/components/task-list/task-list.component";
 import {ActivatedRoute} from "@angular/router";
 import {ProjectService} from "@core/services/project.service";
-import {Task} from "@core/types/Task";
-import {Project} from "@core/types/Project";
+import {DetailedProject} from "@core/types/DetailedProject";
 import {DatePipe, NgForOf} from "@angular/common";
 
 @Component({
@@ -32,11 +31,11 @@ import {DatePipe, NgForOf} from "@angular/common";
 export class ProjectComponent implements OnInit {
   visible: boolean = false;
   projectId: string = '';
-  project: Project;
+  project: DetailedProject;
 
   constructor(private projectService: ProjectService,
               private activatedRoute: ActivatedRoute) {
-    this.project = {} as Project;
+    this.project = {} as DetailedProject;
   }
 
   showDialog() {
@@ -51,7 +50,7 @@ export class ProjectComponent implements OnInit {
 
   loadProject() {
     this.projectService.getById(this.projectId).subscribe({
-      next: (project: Project) => {
+      next: (project: DetailedProject) => {
         this.project = project;
         console.log(project);
         console.log(this.project);

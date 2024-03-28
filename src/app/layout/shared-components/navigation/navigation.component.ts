@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import {Component} from '@angular/core';
 import {MenubarModule} from "primeng/menubar";
 import {NgClass} from "@angular/common";
 import {AuthService} from "@core/services/auth.service";
+import {LayoutService} from "@core/services/layout.service";
 
 @Component({
   selector: 'app-navigation',
@@ -14,7 +15,12 @@ import {AuthService} from "@core/services/auth.service";
   styleUrl: './navigation.component.scss'
 })
 export class NavigationComponent {
-  constructor(private authService: AuthService) {
+  constructor(private authService: AuthService,
+              private layoutService: LayoutService) {
+  }
+
+  toggleSidebar() {
+    this.layoutService.toggleSidebar();
   }
 
   logout() {

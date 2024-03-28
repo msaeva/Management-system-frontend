@@ -1,9 +1,6 @@
 import {Injectable} from "@angular/core";
 import {API_URL} from "@core/constants";
-import {HttpClient, HttpHeaders} from "@angular/common/http";
-import {Project} from "@core/types/Project";
-import {LocalStorageService} from "@core/services/local-storage.service";
-import {Task} from "@core/types/Task";
+import {HttpClient} from "@angular/common/http";
 import {SingleTask} from "@core/types/SingleTask";
 
 @Injectable({

@@ -9,7 +9,7 @@ import {RippleModule} from "primeng/ripple";
 import {ChipsModule} from "primeng/chips";
 import {ConfirmationService} from "primeng/api";
 import {UserService} from "@core/services/user-service";
-import {DetailedUser} from "@core/types/DetailedUser";
+import {DetailedUser} from "@core/types/users/DetailedUser";
 import {ToastService} from "@core/services/toast.service";
 import {ConfirmDialogModule} from "primeng/confirmdialog";
 import {DialogModule} from "primeng/dialog";

@@ -1,7 +1,8 @@
 import {Injectable} from "@angular/core";
 import {API_URL_ADMIN} from "@core/constants";
 import {HttpClient} from "@angular/common/http";
-import {DetailedUser} from "@core/types/DetailedUser";
+import {DetailedUser} from "@core/types/users/DetailedUser";
+import {SimpleUser} from "@core/types/users/SimpleUser";
 
 @Injectable({providedIn: 'root'})
 export class UserService {
@@ -29,5 +30,10 @@ export class UserService {
       role: user.role
     };
     return this.http.put(url, body);
+  }
+
+  getByRole(role: string) {
+    const url = API_URL_ADMIN + "/users/role/" + role;
+    return this.http.get<SimpleUser[]>(url);
   }
 }

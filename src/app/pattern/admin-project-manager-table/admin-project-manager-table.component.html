@@ -1,0 +1,43 @@
+<p-card>
+  <div>
+    <p-multiSelect [options]="dropdownOptions!"
+                   [(ngModel)]="selectedPMToAddToProject!"
+                   [showClear]="true"
+                   placeholder="Add Users"
+                   optionLabel="fullName"
+                   display="chip">
+    </p-multiSelect>
+    <p-button (click)="addProjectManager(project?.id!)"
+              label="Add"
+              [text]="true"
+              severity="success">
+    </p-button>
+  </div>
+  <div>
+    <p-table [value]="project?.pms!" dataKey="id" [style]="{width: '90%'}">
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Username</th>
+          <th>Email</th>
+          <th>Role</th>
+          <th>Actions</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-user>
+        <tr>
+          <td>{{ user.username }}</td>
+          <td>{{ user.email }}</td>
+          <td>{{ user.role }}</td>
+          <td>
+            <button (click)="showDeleteProjectConfirmation(user.id)"
+                    pButton
+                    type="button"
+                    icon="pi pi-times"
+                    class="p-button-rounded p-button-danger">
+            </button>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</p-card>

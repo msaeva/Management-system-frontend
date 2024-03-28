@@ -22,5 +22,6 @@ import {FormsModule} from "@angular/forms";
 })
 export class SidebarComponent {
   @Input() menuItems!: MenuItem[];
+  @Input() sidebarVisible!: boolean;
 
 }

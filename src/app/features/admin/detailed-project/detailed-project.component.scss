@@ -1,0 +1,14 @@
+.team-card {
+  position: relative;
+}
+.header-content{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.team-remove-button {
+  position: absolute;
+  top: 5px; /* Adjust as needed */
+  left: 5px; /* Adjust as needed */
+}

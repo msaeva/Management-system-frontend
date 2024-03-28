@@ -60,7 +60,7 @@
   </div>
 
   <div class="p-float-label mt-5">
-    <input pPassword id="password" class="input-field" formControlName="password"/>
+    <input pPassword id="password" type="password" class="input-field" formControlName="password"/>
     <label for="password">Password</label>
     <div
       *ngIf="createUserFormGroup.get('password')?.invalid && (createUserFormGroup.get('password')?.dirty || createUserFormGroup.get('password')?.touched)"

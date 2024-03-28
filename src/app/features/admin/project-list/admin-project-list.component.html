@@ -1,0 +1,58 @@
+<div class="flex justify-content-end p-4">
+  <p-button [rounded]="true"
+            (onClick)="showCreateUserDialog()"
+            severity="success"
+            icon="pi pi-plus">
+
+  </p-button>
+</div>
+
+<div class="projects-container">
+  <ng-container *ngFor="let project of projects">
+    <div class="lg:col-9 sm:col-12 shadow-1 m-2">
+      <p-fieldset [legend]="project.title" [toggleable]="true">
+        <ng-template pTemplate="header">
+        </ng-template>
+        <div class="p-grid mb-2">
+          <div class="p-col-12 header">
+            <p class="font-bold">{{ project.description }}</p>
+          </div>
+        </div>
+        <div class="p-grid">
+          <div class="p-align-end">
+            <p-button label="View" (onClick)="showDialog(project.id)" [outlined]="true" size="small"
+                      severity="info"></p-button>
+          </div>
+        </div>
+      </p-fieldset>
+    </div>
+  </ng-container>
+</div>
+
+<p-dialog [header]="selectedProject ? selectedProject.title + ' - ' + selectedProject.abbreviation : ''"
+          [(visible)]="visibleDetailedProjectDialog"
+          [modal]="true"
+          [style]="{ width: '90vw', height: '90vw' }"
+          [draggable]="false"
+          [resizable]="false">
+
+  <ng-container *ngIf="!loadingProjectManagers && !loadingProjectById">
+    <app-detailed-project [project]="selectedProject"
+                          [allProjectManagersOptions]="allProjectManagersOptions "
+                          (projectDeleted)="removeDeletedProject($event)">
+    </app-detailed-project>
+  </ng-container>
+
+</p-dialog>
+
+<p-dialog header="Create New Project"
+          [(visible)]="visibleCreateProjectDialog"
+          [modal]="true"
+          [style]="{ width: '50vw', height: '60vw' }"
+          [draggable]="false"
+          [resizable]="false">
+  <app-create-project (newProjectEvent)="newProjectHandler($event)"
+                      [allProjectManagers]="allProjectManagers">
+
+  </app-create-project>
+</p-dialog>

@@ -1,0 +1,71 @@
+<form [formGroup]="createProjectFormGroup">
+  <div class="p-float-label mt-5">
+    <input pInputText id="title" class="input-field" formControlName="title"/>
+    <label for="title">Title</label>
+    <div
+      *ngIf="createProjectFormGroup.get('title')?.invalid && (createProjectFormGroup.get('title')?.dirty || createProjectFormGroup.get('title')?.touched)"
+      class="alert alert-danger">
+      <div *ngIf="createProjectFormGroup.get('title')?.errors?.['required']">
+        Title is required.
+      </div>
+      <div *ngIf="createProjectFormGroup.get('title')?.errors?.['minlength']" class="alert alert-danger">
+        Title must be at least 4 characters long.
+      </div>
+    </div>
+  </div>
+
+  <div class="p-float-label mt-5">
+    <textarea id="float-input" rows="3" cols="18" pInputTextarea
+              formControlName="description"></textarea>
+    <label for="float-input">Description</label>
+
+    <div
+      *ngIf="createProjectFormGroup.get('description')?.invalid && (createProjectFormGroup.get('description')?.dirty || createProjectFormGroup.get('description')?.touched)"
+      class="alert alert-danger">
+      <small *ngIf="createProjectFormGroup.get('description')?.errors?.['required']">
+        Description is required.
+      </small>
+      <small *ngIf="createProjectFormGroup.get('description')?.errors?.['minlength']">
+        Description should be between 10 and 250 characters long.
+      </small>
+    </div>
+    <small class="text-muted">{{ createProjectFormGroup.get('description')?.value?.length || 0 }} / 250</small>
+  </div>
+
+  <div class="p-float-label mt-5">
+    <input pInputText id="abbreviation" class="input-field" formControlName="abbreviation"/>
+    <label for="abbreviation">Abbreviation</label>
+    <div
+      *ngIf="createProjectFormGroup.get('abbreviation')?.invalid && (createProjectFormGroup.get('abbreviation')?.dirty
+      || createProjectFormGroup.get('abbreviation')?.touched)"
+      class="alert alert-danger">
+      <small *ngIf="createProjectFormGroup.get('abbreviation')?.errors?.['required']">
+        Abbreviation is required.
+      </small>
+      <small *ngIf="createProjectFormGroup.get('abbreviation')?.errors?.['minlength']" class="alert alert-danger">
+        Abbreviation must be at least 3 characters long.
+      </small>
+    </div>
+  </div>
+
+  <div class="p-float-label mt-5">
+      <p-multiSelect formControlName="pmIds"
+                   [options]="allProjectManagers"
+                   [showClear]="true"
+                   placeholder="Select Project Manager"
+                   optionLabel="fullName"
+                   optionValue="id"
+                   display="chip"
+    >
+    </p-multiSelect>
+  </div>
+
+  <div class="flex flex-wrap justify-content-center align-items-center gap-2 mt-5">
+    <p-button (click)="createProject()"
+              [disabled]="createProjectFormGroup.invalid"
+              label="Create"
+              icon="pi pi-user"
+              styleClass="w-10rem mx-auto">
+    </p-button>
+  </div>
+</form>

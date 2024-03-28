@@ -4,6 +4,8 @@ import {SidebarComponent} from "@layouts/shared-components/sidebar/sidebar.compo
 import {RouterOutlet} from "@angular/router";
 import {ProjectService} from "@core/services/project.service";
 import {MenuItem} from "primeng/api";
+import {AsyncPipe, NgIf} from "@angular/common";
+import {LayoutService} from "@core/services/layout.service";
 
 @Component({
   selector: 'app-project-management',
@@ -11,15 +13,19 @@ import {MenuItem} from "primeng/api";
   imports: [
     NavigationComponent,
     SidebarComponent,
-    RouterOutlet
+    RouterOutlet,
+    NgIf,
+    AsyncPipe
   ],
   templateUrl: './project-management.component.html',
   styleUrl: './project-management.component.scss'
 })
 export class ProjectManagementComponent implements OnInit {
   menuItems: MenuItem[] = [];
+  showSidebar$ = this.layoutService.getValue();
 
-  constructor(private projectService: ProjectService) {
+  constructor(private projectService: ProjectService,
+              private layoutService: LayoutService) {
   }
 
   ngOnInit() {

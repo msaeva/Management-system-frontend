@@ -1,4 +1,4 @@
-import {User} from "@core/types/User";
+import {User} from "@core/types/users/User";
 
 export interface Team {
   id: number;
