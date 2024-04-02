@@ -4,7 +4,7 @@ import {TaskComponent} from "@feature/project/components/task/task.component";
 import {ProjectComponent} from "@feature/project/project.component";
 import {AdminProjectComponent} from "@feature/admin/project/admin-project.component";
 import {ProjectService} from "@core/services/project.service";
-import {DetailedProject} from "@core/types/DetailedProject";
+import {DetailedProject} from "@core/types/projects/DetailedProject";
 import {FieldsetModule} from "primeng/fieldset";
 import {ButtonModule} from "primeng/button";
 import {DialogModule} from "primeng/dialog";

@@ -1,0 +1,43 @@
+<div class="flex flex-column gap-2 p-4">
+  <ng-container *ngFor="let project of allProjectTasks">
+    <p-panel [toggleable]="true" [collapsed]="true">
+      <ng-template pTemplate="header">
+        <div class="flex align-items-center justify-content-between w-full">
+          <span class="font-bold">
+            {{ project.project.title }} - {{ project.project.abbreviation }}
+          </span>
+          <p-button [routerLink]="['/admin','projects', project.project.id, 'tasks']"
+                    [link]="true"
+                    label="View All">
+          </p-button>
+          <span class="p-text-secondary pr-4">Total Tasks: {{ project.tasks.length }}</span>
+        </div>
+      </ng-template>
+      <p class="m-0">
+
+        <p-table [value]="project.tasks" [tableStyle]="{'min-width': '50rem'}">
+          <ng-template pTemplate="header">
+            <tr>
+              <th pSortableColumn="title" style="width:20%">Title
+                <p-sortIcon field="code"></p-sortIcon>
+              </th>
+              <th pSortableColumn="abbreviation" style="width:20%">Abbreviation
+                <p-sortIcon field="name"></p-sortIcon>
+              </th>
+              <th pSortableColumn="status" style="width:20%">Status
+                <p-sortIcon field="category"></p-sortIcon>
+              </th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-task>
+            <tr>
+              <td>{{ task.title }}</td>
+              <td>{{ task.abbreviation }}</td>
+              <td>{{ task.status }}</td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </p>
+    </p-panel>
+  </ng-container>
+</div>

@@ -3,7 +3,6 @@
             (onClick)="showCreateUserDialog()"
             severity="success"
             icon="pi pi-plus">
-
   </p-button>
 </div>
 
@@ -48,11 +47,10 @@
 <p-dialog header="Create New Project"
           [(visible)]="visibleCreateProjectDialog"
           [modal]="true"
-          [style]="{ width: '50vw', height: '60vw' }"
+          [style]="{ width: '40vw', height: '38vw' }"
           [draggable]="false"
           [resizable]="false">
   <app-create-project (newProjectEvent)="newProjectHandler($event)"
                       [allProjectManagers]="allProjectManagers">
-
   </app-create-project>
 </p-dialog>

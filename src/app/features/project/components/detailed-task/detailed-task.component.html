@@ -1,5 +1,36 @@
+<div>
+  <div>
+    <p>{{ task?.title }}</p>
+    <p>{{ task?.description }}</p>
+    <p>Status: {{ task?.status }}</p>
+  </div>
 
-<p>{{task?.title}}</p>
-<p>{{task?.description}}</p>
-<p>Status: {{task?.status}}</p>
+  <h3>Comments</h3>
+  <ng-container *ngFor="let comment of comments">
+    <p-card [subheader]="formatDateTime(comment.createdDate)">
+      <ng-template pTemplate="header">
+        <div class="inline-flex align-items-center justify-content-center gap-2">
+          <p-avatar image="https://primefaces.org/cdn/primeng/images/avatar/amyelsner.png" shape="circle"/>
+          <span class="font-bold white-space-nowrap">{{ comment.fullName }}</span>
+        </div>
+      </ng-template>
+      <p class="m-0">
+        {{ comment.comment }}
+      </p>
+    </p-card>
+  </ng-container>
+  <div>
+    <h3>Post a Comment</h3>
+    <span class="p-float-label">
+      <textarea [(ngModel)]="newCommentInput"
+                id="float-input"
+                rows="5" cols="40"
+                pInputTextarea></textarea>
+      <label for="float-input">Your Comment</label>
+    </span>
+    <div>
+      <p-button (onClick)="postComment()" label="Post Comment" [rounded]="true" severity="success"></p-button>
+    </div>
+  </div>
+</div>
 

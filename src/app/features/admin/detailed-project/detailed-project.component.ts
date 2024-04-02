@@ -1,8 +1,8 @@
 import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {Inplace, InplaceModule} from "primeng/inplace";
-import {FormsModule, ReactiveFormsModule} from "@angular/forms";
+import {FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
 import {NgForOf, NgIf, NgStyle} from "@angular/common";
-import {DetailedProject} from "@core/types/DetailedProject";
+import {DetailedProject} from "@core/types/projects/DetailedProject";
 import {ProjectService} from "@core/services/project.service";
 import {ChipsModule} from "primeng/chips";
 import {ConfirmationService} from "primeng/api";
@@ -21,6 +21,9 @@ import {ToastService} from "@core/services/toast.service";
 import {
   AdminProjectManagerTableComponent
 } from "@pattern/admin-project-manager-table/admin-project-manager-table.component";
+import {CalendarModule} from "primeng/calendar";
+import {InputTextareaModule} from "primeng/inputtextarea";
+import {projectStatus, roleOptions} from "@core/constants";
 
 @Component({
   selector: 'app-detailed-project',
@@ -40,20 +43,21 @@ import {
     TableModule,
     MultiSelectModule,
     AdminTeamCardComponent,
-    AdminProjectManagerTableComponent
+    AdminProjectManagerTableComponent,
+    CalendarModule,
+    InputTextareaModule
   ],
   templateUrl: './detailed-project.component.html',
   styleUrl: './detailed-project.component.scss'
 })
 export class DetailedProjectComponent implements OnInit {
-  @Input({required: true}) project!: DetailedProject | undefined;
+  @Input({required: true}) project!: DetailedProject;
+
   @Input({required: true}) allProjectManagersOptions!: SimpleUser[];
   @Output() projectDeleted = new EventEmitter<number>();
   @Output() teamDeleted = new EventEmitter<number>();
-  @ViewChild("title") titleControl!: Inplace;
-  @ViewChild("description") descriptionControl!: Inplace;
-  @ViewChild("status") statusControl!: Inplace;
-  @ViewChild("abbreviation") abbreviationControl!: Inplace;
+
+  updateProjectFormGroup!: FormGroup;
 
   usersToAddToTeam: SimpleUser[] = [];
   loadingUsersToAddToTeam: boolean = true;
@@ -62,11 +66,41 @@ export class DetailedProjectComponent implements OnInit {
               private teamService: TeamService,
               private confirmationService: ConfirmationService,
               private toastService: ToastService,
-              private userService: UserService) {
+              private userService: UserService,
+              private formBuilder: FormBuilder) {
   }
 
   ngOnInit(): void {
+    this.loadFormGroup();
     this.loadUsersToAddToTeam();
+  }
+
+  loadFormGroup() {
+    this.updateProjectFormGroup = this.formBuilder.group({
+      id: [
+        {value: this.project.id, disabled: true},
+        [Validators.required, Validators.minLength(3)]
+      ],
+      title: [
+        {value: this.project.title, disabled: true},
+        [Validators.required, Validators.minLength(4)]
+      ],
+      abbreviation: [
+        {value: this.project.abbreviation, disabled: true},
+        [Validators.required, Validators.minLength(3)]
+      ],
+      createdDate: [
+        {value: this.project.createdDate, disabled: true},
+        Validators.required],
+      description: [
+        {value: this.project.description, disabled: true},
+        [Validators.required, Validators.minLength(4)]
+      ],
+      status: [
+        {value: this.project.status, disabled: true},
+        [Validators.required, Validators.minLength(6)]
+      ],
+    });
   }
 
   showDeleteProjectConfirmation(projectId: number | undefined) {
@@ -92,30 +126,26 @@ export class DetailedProjectComponent implements OnInit {
     })
   }
 
+  toggleEditMode() {
+    const func = this.updateProjectFormGroup.get('title')!.disabled ? 'enable' : 'disable';
+
+    this.updateProjectFormGroup.controls['title'][func]();
+    this.updateProjectFormGroup.controls['description'][func]();
+    this.updateProjectFormGroup.controls['abbreviation'][func]();
+    this.updateProjectFormGroup.controls['status'][func]();
+  }
+
   updateProject(id: number | undefined) {
-    const body = {
-      title: this.project?.title,
-      description: this.project?.description,
-      status: this.project?.status,
-      abbreviation: this.project?.abbreviation,
-    }
-    this.projectService.update(id, body).subscribe({
+    this.projectService.update(id, this.updateProjectFormGroup.value).subscribe({
       next: (response) => {
         this.project = response;
-        this.deactivateUpdateProject();
+        this.toggleEditMode();
         console.log(response);
 
       }, error: (err) => {
         console.log(err);
       }
     })
-  }
-
-  deactivateUpdateProject() {
-    this.titleControl.deactivate();
-    this.descriptionControl.deactivate();
-    this.statusControl.deactivate();
-    this.abbreviationControl.deactivate();
   }
 
 
@@ -149,9 +179,16 @@ export class DetailedProjectComponent implements OnInit {
     })
 
   }
-  removeDeletedProjectHandler(teamId: unknown) {
+
+  removeDeletedProjectHandler(teamId: number) {
     if (this.project) {
       this.project.teams = this.project.teams.filter(t => t.id !== teamId);
     }
   }
+
+  cancelUpdateProject() {
+    this.loadFormGroup();
+  }
+
+  protected readonly projectStatus = projectStatus;
 }

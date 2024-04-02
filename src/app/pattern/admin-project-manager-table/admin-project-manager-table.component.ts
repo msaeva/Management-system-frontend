@@ -5,7 +5,7 @@ import {MultiSelectModule} from "primeng/multiselect";
 import {ConfirmationService, SharedModule} from "primeng/api";
 import {TableModule} from "primeng/table";
 import {FormsModule} from "@angular/forms";
-import {DetailedProject} from "@core/types/DetailedProject";
+import {DetailedProject} from "@core/types/projects/DetailedProject";
 import {SimpleUser} from "@core/types/users/SimpleUser";
 import {ProjectService} from "@core/services/project.service";
 import {ToastService} from "@core/services/toast.service";

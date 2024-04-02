@@ -42,7 +42,7 @@ import {roleOptions} from "@core/constants";
 })
 export class UserListComponent implements OnInit {
 
-  protected users: DetailedUser[] = [];
+  users: DetailedUser[] = [];
   clonedUsers: Map<number, DetailedUser> = new Map<number, DetailedUser>();
   forms: FormGroup[] = [];
 

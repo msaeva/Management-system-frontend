@@ -1,5 +1,5 @@
 import {Component, Input} from '@angular/core';
-import {DetailedProject} from "@core/types/DetailedProject";
+import {DetailedProject} from "@core/types/projects/DetailedProject";
 
 @Component({
   selector: 'app-admin-project',

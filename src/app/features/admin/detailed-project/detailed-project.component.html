@@ -1,126 +1,189 @@
-<div>
-  <div>
-    <div class="p-grid p-dir-col">
-      <div class="p-col">
-        <p-inplace #title [closable]="true">
-          <ng-template pTemplate="display">
-            <span class="label">Title:</span>
-            <span>{{ project?.title }}</span>
-          </ng-template>
-          <ng-template pTemplate="content">
-            <input *ngIf="project" type="text" [(ngModel)]="project.title" pInputText/>
-          </ng-template>
-        </p-inplace>
-      </div>
-
-      <div class="p-col">
-        <p-inplace #description [closable]="true">
-          <ng-template pTemplate="display">
-            <span class="label">Description:</span>
-            <span>{{ project?.description }}</span>
-          </ng-template>
-          <ng-template pTemplate="content">
-            <input *ngIf="project" type="text" [(ngModel)]="project.description" pInputText/>
-          </ng-template>
-        </p-inplace>
-      </div>
-
-      <div class="p-col">
-        <p-inplace #abbreviation [closable]="true">
-          <ng-template pTemplate="display">
-            <span class="label">Abbreviation:</span>
-            <span>{{ project?.abbreviation }}</span>
-          </ng-template>
-          <ng-template pTemplate="content">
-            <input *ngIf="project" type="text" [(ngModel)]="project.abbreviation" pInputText/>
-          </ng-template>
-        </p-inplace>
-      </div>
-
-      <div class="p-col">
-        <p-inplace #status [closable]="true">
-          <ng-template pTemplate="display">
-            <span class="label">Status:</span>
-            <span>{{ project?.status }}</span>
-          </ng-template>
-          <ng-template pTemplate="content">
-            <input *ngIf="project" type="text" [(ngModel)]="project.status" pInputText/>
-          </ng-template>
-        </p-inplace>
-      </div>
+<div class="p-grid p-fluid">
+  <div class="p-col-12 p-md-4">
+    <div class="flex justify-content-end flex-wrap w-full p-3">
+      <p-button type="button"
+                icon="pi pi-times"
+                label="Delete"
+                severity="danger"
+                (click)="showDeleteProjectConfirmation(project.id)">
+      </p-button>
     </div>
 
-    <div>
-      <div class="p-dialog-footer">
-        <p-button label="Delete Project" [rounded]="true" severity="danger"
-                  (click)="showDeleteProjectConfirmation(project?.id)"></p-button>
+    <p-card>
+      <form [formGroup]="updateProjectFormGroup">
+        <div class="p-grid">
+          <div class="grid gap-4">
+            <div class="p-col-2">
+              <div class="flex flex-column gap-2">
+                <label for="id">ID</label>
+                <input formControlName="id"
+                       pInputText id="id"/>
+              </div>
+            </div>
+
+            <div class="p-col-2">
+              <div class="flex flex-column gap-2">
+                <label for="title">Title</label>
+                <input pInputText id="title"
+                       formControlName="title"/>
+                <div
+                  *ngIf="updateProjectFormGroup.get('title')?.invalid && (updateProjectFormGroup.get('title')?.dirty || updateProjectFormGroup.get('title')?.touched)"
+                  class="alert alert-danger">
+                  <small *ngIf="updateProjectFormGroup.get('title')?.errors?.['required']">
+                    Title is required.
+                  </small>
+                  <small *ngIf="updateProjectFormGroup.get('title')?.errors?.['minlength']"
+                         class="alert alert-danger">
+                    Title must be at least 4 characters long.
+                  </small>
+                </div>
+              </div>
+            </div>
+
+            <div class="p-col-2">
+              <div class="flex flex-column gap-2">
+                <label for="abbreviation">Abbreviation</label>
+                <input pInputText id="abbreviation"
+                       formControlName="abbreviation"/>
+                <div
+                  *ngIf="updateProjectFormGroup.get('abbreviation')?.invalid && (updateProjectFormGroup.get('abbreviation')?.dirty || updateProjectFormGroup.get('abbreviation')?.touched)"
+                  class="alert alert-danger">
+                  <small *ngIf="updateProjectFormGroup.get('abbreviation')?.errors?.['required']">
+                    Abbreviation is required.
+                  </small>
+                  <small *ngIf="updateProjectFormGroup.get('abbreviation')?.errors?.['minlength']"
+                         class="alert alert-danger">
+                    Abbreviation must be at least 4 characters long.
+                  </small>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid gap-4 mt-4">
+            <div class="p-col">
+              <div class="p-col-2">
+                <div class="flex flex-column gap-2">
+                  <label for="created_date">Created Date</label>
+                  <input
+                    pInputText id="created_date"
+                    formControlName="createdDate"/>
+                </div>
+              </div>
+            </div>
+
+            <div class="p-col">
+              <div class="p-col-2">
+                <div class="flex flex-column gap-2">
+                  <label for="status">Status</label>
+                  <p-dropdown [options]="projectStatus"
+                              id="status"
+                              formControlName="status"
+                              optionValue="value"
+                              optionLabel="label"
+                              placeholder="Select a Status">
+                  </p-dropdown>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="p-col mt-4">
+            <div class="flex flex-column gap-2">
+              <label for="description">Description</label>
+              <textarea formControlName="description"
+                        pInputTextarea id="description"
+                        rows="5">
+            </textarea>
+              <div
+                *ngIf="updateProjectFormGroup.get('description')?.invalid && (updateProjectFormGroup.get('description')?.dirty || updateProjectFormGroup.get('description')?.touched)"
+                class="alert alert-danger">
+                <small *ngIf="updateProjectFormGroup.get('description')?.errors?.['required']">
+                  Description is required.
+                </small>
+                <small *ngIf="updateProjectFormGroup.get('description')?.errors?.['minlength']">
+                  Description should be between 10 and 1000 characters long.
+                </small>
+                <small *ngIf="updateProjectFormGroup.get('description')?.errors?.['maxlength']">
+                  Description should be between 10 and 1000 characters long.
+                </small>
+              </div>
+            </div>
+          </div>
+          <div class="flex justify-content-end mt-3">
+            <div class="w-1">
+              <button type="button"
+                      pButton icon="pi pi-pencil"
+                      label="Edit"
+                      class="p-button-primary"
+                      *ngIf="updateProjectFormGroup.get('title')!.disabled"
+                      (click)="toggleEditMode()">
+              </button>
+              <button type="button"
+                      pButton icon="pi pi-check"
+                      label="Save"
+                      [disabled]="!updateProjectFormGroup.dirty && updateProjectFormGroup.valid"
+                      class="p-button-success mt-2"
+                      *ngIf="!updateProjectFormGroup.get('title')!.disabled"
+                      (click)="updateProject(project!.id)">
+              </button>
+              <button type="button"
+                      pButton icon="pi pi-times"
+                      label="Cancel"
+                      class="p-button-danger mt-2"
+                      *ngIf="!updateProjectFormGroup.get('title')!.disabled"
+                      (click)="cancelUpdateProject()">
+              </button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </p-card>
+  </div>
+</div>
+
+<div class="grid mt-7">
+  <div class="col m-2 p-2">
+    <div class="p-col-12 flex flex-row flex-wrap justify-content-between p-2">
+      <div>
+        <h3>Teams</h3>
       </div>
-      <div class="p-dialog-footer">
-        <p-button label="Update" [rounded]="true" severity="info" (click)="updateProject(project?.id)"></p-button>
+      <div>
+        <p-button (click)="createTeam()"
+                  [rounded]="true"
+                  severity="success"
+                  icon="pi pi-plus"
+                  size="small">
+        </p-button>
+      </div>
+    </div>
+    <div class="p-col-12">
+      <div *ngFor="let team of project?.teams" class="p-col-12 p-md-6 p-lg-4 p-xl-3 mb-3">
+        <ng-container *ngIf="!loadingUsersToAddToTeam">
+          <app-admin-team-card [team]="team"
+                               [usersToAddToTeam]="usersToAddToTeam"
+                               [projectId]="project?.id!"
+                               (projectDeletedEvent)="removeDeletedProjectHandler($event)">
+          </app-admin-team-card>
+        </ng-container>
+
       </div>
     </div>
   </div>
 
-  <div class="grid">
-    <div class="col m-2 p-2">
+  <div class="col m-2 p-2">
+    <div class="p-grid p-gutter">
       <div class="p-col-12 flex flex-row flex-wrap justify-content-between p-2">
         <div>
-          <h3>Teams</h3>
-        </div>
-        <div>
-          <p-button (click)="createTeam()"
-                    [rounded]="true"
-                    severity="success"
-                    icon="pi pi-plus"
-                    size="small">
-          </p-button>
+          <h3>Project Managers</h3>
         </div>
       </div>
       <div class="p-col-12">
-        <div *ngFor="let team of project?.teams" class="p-col-12 p-md-6 p-lg-4 p-xl-3 mb-3">
-          <ng-container *ngIf="!loadingUsersToAddToTeam">
-            <app-admin-team-card [team]="team"
-                                 [usersToAddToTeam]="usersToAddToTeam"
-                                 [projectId]="project?.id!"
-                                 (projectDeletedEvent)="removeDeletedProjectHandler($event)">
-            </app-admin-team-card>
-          </ng-container>
-
-        </div>
+        <app-admin-project-manager-table [project]="project"
+                                         [allProjectManagersOptions]="allProjectManagersOptions">
+        </app-admin-project-manager-table>
       </div>
     </div>
-
-    <div class="col m-2 p-2">
-      <div class="p-grid p-gutter">
-        <div class="p-col-12 flex flex-row flex-wrap justify-content-between p-2">
-          <div>
-            <h3>Project Managers</h3>
-          </div>
-        </div>
-        <div class="p-col-12">
-          <app-admin-project-manager-table [project]="project"
-                                           [allProjectManagersOptions]="allProjectManagersOptions">
-          </app-admin-project-manager-table>
-        </div>
-      </div>
-
-    </div>
-
   </div>
 </div>
-<p-confirmDialog #cd>
-  <ng-template pTemplate="headless" let-message>
-    <div class="flex flex-column align-items-center p-5 surface-overlay border-round">
-      <div [ngStyle]="{backgroundColor: 'var(--red-800)'}"
-           class="border-circle bg-primary inline-flex justify-content-center align-items-center h-6rem w-6rem -mt-8">
-        <i class="pi pi-question text-5xl"></i>
-      </div>
-      <span class="font-bold text-2xl block mb-2 mt-4">{{ message.header }}</span>
-      <p class="mb-0">{{ message.message }}</p>
-      <div class="flex align-items-center gap-2 mt-4">
-        <button pButton label="Delete" (click)="cd.accept()" class="p-button-danger w-8rem"></button>
-        <button pButton label="Cancel" (click)="cd.reject()" class="p-button-outlined w-8rem "></button>
-      </div>
-    </div>
-  </ng-template>
-</p-confirmDialog>
+

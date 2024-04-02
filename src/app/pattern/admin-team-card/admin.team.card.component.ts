@@ -45,7 +45,6 @@ export class AdminTeamCardComponent implements OnInit {
               private toastService: ToastService,
               private projectService: ProjectService) {
   }
-
   ngOnInit(): void {
     const teamUserIds = new Set(this.team.users.map(user => user.id));
 

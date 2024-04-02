@@ -11,7 +11,9 @@ import {ToastModule} from "primeng/toast";
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, ProjectManagementComponent, NgIf, AsyncPipe, NavigationComponent, SidebarComponent, ToastModule],
+  imports: [RouterOutlet,
+    ProjectManagementComponent,
+    NgIf, AsyncPipe, NavigationComponent, SidebarComponent, ToastModule],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })

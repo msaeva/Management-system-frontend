@@ -26,7 +26,6 @@ export class TaskComponent {
   taskId: number | undefined;
 
   openModal(id: number) {
-    console.log(this.task)
     this.taskId = this.task.id;
     this.visible = true;
   }

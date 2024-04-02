@@ -1,0 +1,183 @@
+<div class="card">
+  <div class="flex justify-content-end mb-3">
+    <p-button [rounded]="true"
+              (onClick)="showCreateNewTaskDialog()"
+              severity="success"
+              icon="pi pi-plus">
+
+    </p-button>
+  </div>
+
+  <p-table
+    [value]="allTasks"
+    [lazy]="true"
+    [paginator]="true"
+    [rows]="pagination.size"
+    [first]="pagination.page"
+    [totalRecords]="pagination.totalRecords"
+    (onLazyLoad)="loadTasks($event)"
+    [rowsPerPageOptions]="[1, 10, 25, 50]"
+    dataKey="id" editMode="row"
+    styleClass="p-datatable-striped"
+    [tableStyle]="{'min-width': '40rem'}">
+    <ng-template pTemplate="header">
+      <tr>
+        <!--        <th pSortableColumn="id" style="width:20%">Id-->
+        <!--          <p-sortIcon field="id"></p-sortIcon>-->
+        <!--        </th>-->
+        <!--        <th pSortableColumn="title" style="width:20%">Title-->
+        <!--          <p-sortIcon field="title"></p-sortIcon>-->
+        <!--        </th>-->
+        <!--        <th pSortableColumn="abbreviation" style="width:20%">Abbreviation-->
+        <!--          <p-sortIcon field="abbreviation"></p-sortIcon>-->
+        <!--        </th>-->
+        <!--        <th pSortableColumn="description" style="width:20%">Description-->
+        <!--          <p-sortIcon field="description"></p-sortIcon>-->
+        <!--        </th>-->
+        <!--        <th pSortableColumn="status" style="width:20%">Status-->
+        <!--          <p-sortIcon field="status"></p-sortIcon>-->
+        <!--        </th>-->
+        <!--        <th pSortableColumn="createdDate" style="width:20%">Created Date-->
+        <!--          <p-sortIcon field="createdDate"></p-sortIcon>-->
+        <!--        </th>-->
+        <!--        <th style="width:20%; text-align: center;">Actions</th>-->
+
+
+        <th pSortableColumn="id" style="width:10%;">
+          Id
+          <p-sortIcon field="id"></p-sortIcon>
+        </th>
+        <th style="width:15%;">Title</th>
+        <th style="width:15%;">Abbreviation</th>
+        <th style="width:15%;">Description</th>
+        <th style="width:15%;">Status</th>
+        <th style="width:10%;">Created Date</th>
+        <th style="width:20%; text-align: center;">Actions</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-task let-editing="editing" let-i="rowIndex">
+      <tr [pEditableRow]="task" [formGroup]="forms[i]">
+        <td>
+          <p-cellEditor>
+            <ng-template pTemplate="input">
+              {{ task.id }}
+            </ng-template>
+            <ng-template pTemplate="output">
+              {{ task.id }}
+            </ng-template>
+          </p-cellEditor>
+        </td>
+        <td>
+          <p-cellEditor>
+            <ng-template pTemplate="input">
+              <input pInputText type="text" formControlName="title">
+              <div
+                *ngIf="forms[i]?.get('title')?.['invalid'] && (forms[i]?.get('title')?.dirty ||forms[i]?.get('title')?.touched)"
+                class="text-danger">
+                <small *ngIf="forms[i]?.get('title')?.errors?.['required']">Last Name is required.</small>
+                <small *ngIf="forms[i]?.get('title')?.errors?.['minlength']">
+                  Last Name must be at least 3 characters long.
+                </small>
+              </div>
+            </ng-template>
+            <ng-template pTemplate="output">
+              {{ task.title }}
+            </ng-template>
+          </p-cellEditor>
+        </td>
+        <td>
+          <p-cellEditor>
+            <ng-template pTemplate="input">
+              <input pInputText type="text" formControlName="abbreviation">
+              <div
+                *ngIf="forms[i]?.get('abbreviation')?.['invalid'] && (forms[i]?.get('abbreviation')?.dirty ||forms[i]?.get('abbreviation')?.touched)"
+                class="text-danger">
+                <small *ngIf="forms[i]?.get('abbreviation')?.errors?.['required']">Last Name is required.</small>
+                <small *ngIf="forms[i]?.get('abbreviation')?.errors?.['minlength']">
+                  Abbreviation must be at least 3 characters long.
+                </small>
+              </div>
+            </ng-template>
+            <ng-template pTemplate="output">
+              {{ task.abbreviation }}
+            </ng-template>
+          </p-cellEditor>
+        </td>
+        <td>
+          <p-cellEditor>
+            <ng-template pTemplate="input">
+              <input pInputText type="text" formControlName="description">
+              <div
+                *ngIf="forms[i]?.get('description')?.['invalid'] && (forms[i]?.get('description')?.dirty ||forms[i]?.get('description')?.touched)"
+                class="text-danger">
+                <small *ngIf="forms[i]?.get('description')?.errors?.['required']">
+                  Description is required.
+                </small>
+                <small *ngIf="forms[i]?.get('description')?.errors?.['minlength']">
+                  Description should be between 5 and 300 characters long.
+                </small>
+                <small *ngIf="forms[i]?.get('description')?.errors?.['maxLength']">
+                  Description should be between 5 and 300 characters long.
+                </small>
+              </div>
+            </ng-template>
+            <ng-template pTemplate="output">
+              {{ task.description }}
+            </ng-template>
+          </p-cellEditor>
+        </td>
+        <td>
+          <p-cellEditor>
+            <ng-template pTemplate="input">
+              <p-dropdown [options]="taskStatus"
+                          formControlName="role"
+                          optionValue="value"
+                          optionLabel="label"
+                          placeholder="Select a Role">
+
+              </p-dropdown>
+            </ng-template>
+            <ng-template pTemplate="output">
+              {{ task.status }}
+            </ng-template>
+          </p-cellEditor>
+        </td>
+        <td>
+          <p-cellEditor>
+            <ng-template pTemplate="input">
+              {{ task.createdDate }}
+            </ng-template>
+            <ng-template pTemplate="output">
+              {{ formatDateTime(task.createdDate) }}
+            </ng-template>
+          </p-cellEditor>
+        </td>
+        <td>
+          <div class="flex align-items-center justify-content-center gap-2">
+            <button *ngIf="!editing" pButton pRipple type="button"
+                    pInitEditableRow icon="pi pi-pencil" (click)="onRowEditInit(task)"
+                    class="p-button-rounded p-button-text"></button>
+            <button *ngIf="editing" pButton pRipple type="button"
+                    pSaveEditableRow icon="pi pi-check" (click)="onRowEditSave((forms[i].value))"
+                    class="p-button-rounded p-button-text p-button-success mr-2"></button>
+            <button *ngIf="editing" pButton pRipple type="button"
+                    pCancelEditableRow icon="pi pi-times" (click)="onRowEditCancel(task, i)"
+                    class="p-button-rounded p-button-text p-button-danger"></button>
+            <button pButton pRipple type="button" icon="pi pi-trash" (click)="showConfirmation(task.id)"
+                    class="p-button-rounded p-button-text p-button-danger"></button>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
+<p-dialog header="Create New Task"
+          [(visible)]="visibleCreateTaskDialog"
+          [modal]="true"
+          [style]="{ width: '40vw', height: '35vw' }"
+          [draggable]="false"
+          [resizable]="false">
+  <app-create-task (newTaskEvent)="newTaskHandler($event)"
+                   [projectId]="projectId">
+  </app-create-task>
+</p-dialog>

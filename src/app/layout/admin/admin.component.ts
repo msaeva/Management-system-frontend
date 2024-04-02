@@ -2,10 +2,12 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {NavigationComponent} from "@layouts/shared-components/navigation/navigation.component";
 import {RouterOutlet} from "@angular/router";
 import {SidebarComponent} from "@layouts/shared-components/sidebar/sidebar.component";
-import {MenuItem} from "primeng/api";
+import {MenuItem, SharedModule} from "primeng/api";
 import {LayoutService} from "@core/services/layout.service";
-import {AsyncPipe, NgIf} from "@angular/common";
+import {AsyncPipe, NgIf, NgStyle} from "@angular/common";
 import {Subscription} from "rxjs";
+import {ButtonModule} from "primeng/button";
+import {ConfirmDialogModule} from "primeng/confirmdialog";
 
 
 @Component({
@@ -16,7 +18,11 @@ import {Subscription} from "rxjs";
     RouterOutlet,
     SidebarComponent,
     AsyncPipe,
-    NgIf
+    NgIf,
+    ButtonModule,
+    ConfirmDialogModule,
+    SharedModule,
+    NgStyle
   ],
   templateUrl: './admin.component.html',
   styleUrl: './admin.component.scss'
@@ -45,16 +51,28 @@ export class AdminComponent implements OnInit, OnDestroy {
     this.menuItems.push({
         label: 'Users',
         icon: 'pi pi-calendar',
-        routerLink: ['/admin/users']
+        routerLink: ['/admin/users'],
+        routerLinkActiveOptions: {
+          exact:
+            true
+        }
       },
       {
         label: 'Projects',
         icon: 'pi pi-calendar',
-        routerLink: ['/admin/projects']
+        routerLink: ['/admin/projects'],
+        routerLinkActiveOptions: {
+          exact:
+            true
+        }
       }, {
         label: 'Tasks',
         icon: 'pi pi-calendar',
-        routerLink: ['/admin/tasks']
+        routerLink: ['/admin/tasks'],
+        routerLinkActiveOptions: {
+          exact:
+            true
+        }
       })
   }
 

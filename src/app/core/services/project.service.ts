@@ -1,8 +1,12 @@
 import {Injectable} from "@angular/core";
 import {API_URL, API_URL_ADMIN} from "@core/constants";
-import {HttpClient} from "@angular/common/http";
-import {DetailedProject} from "@core/types/DetailedProject";
+import {HttpClient, HttpParams} from "@angular/common/http";
+import {DetailedProject} from "@core/types/projects/DetailedProject";
 import {User} from "@core/types/users/User";
+import {ProjectTask} from "@core/types/projects/ProjectTask";
+import {DetailedTask} from "@core/types/DetailedTask";
+import {Pagination} from "@core/types/pagination";
+import {Pageable} from "@core/types/pageable";
 
 @Injectable({providedIn: 'root'})
 export class ProjectService {
@@ -57,5 +61,22 @@ export class ProjectService {
   removeProjectManager(projectId: number, pmId: number) {
     const url = `${API_URL_ADMIN}/projects/${projectId}/project-managers/${pmId}`;
     return this.http.delete<User[]>(url);
+  }
+
+  getProjectsWithTasks() {
+    const url = `${API_URL_ADMIN}/projects/tasks`;
+    return this.http.get<ProjectTask[]>(url);
+  }
+
+  getAllProjectTasks(projectId: number, pagination: Pagination) {
+    const url = `${API_URL_ADMIN}/projects/${projectId}/tasks`;
+    let params = new HttpParams();
+
+    Object.entries(pagination).filter((entry) => entry[0] !== "totalRecords")
+      .forEach((entry) => {
+      params = params.append(entry[0], entry[1]);
+    });
+
+    return this.http.get<Pageable<DetailedTask>>(url, {params: params});
   }
 }

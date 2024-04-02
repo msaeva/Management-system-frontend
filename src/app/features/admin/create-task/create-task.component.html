@@ -1,0 +1,55 @@
+<form [formGroup]="createTaskFormGroup">
+  <div class="grid justify-content-center align-items-center">
+    <div class="flex flex-column mt-3 pt-3 w-full">
+      <span class="p-float-label w-full">
+        <input pInputText id="title" formControlName="title" class="w-full"/>
+        <label for="title">Title</label>
+      </span>
+      <div
+        *ngIf="createTaskFormGroup.get('title')?.invalid && (createTaskFormGroup.get('title')?.dirty || createTaskFormGroup.get('title')?.touched)"
+        class="alert alert-danger">
+        <small *ngIf="createTaskFormGroup.get('title')?.errors?.['required']">
+          Title is required.
+        </small>
+        <small *ngIf="createTaskFormGroup.get('title')?.errors?.['minlength']" class="alert alert-danger">
+          Title must be at least 4 characters long.
+        </small>
+      </div>
+    </div>
+    <div class="flex flex-column mt-3 pt-3 w-full">
+      <span class="p-float-label w-full">
+        <textarea id="float-input"
+                  rows="8" cols="30"
+                  pInputTextarea
+                  formControlName="description"
+                  class="w-full">
+        </textarea>
+        <label for="float-input">Project Description</label>
+      </span>
+      <div
+        *ngIf="createTaskFormGroup.get('description')?.invalid && (createTaskFormGroup.get('description')?.dirty || createTaskFormGroup.get('description')?.touched)"
+        class="alert alert-danger">
+        <small *ngIf="createTaskFormGroup.get('description')?.errors?.['required']">
+          Description is required.
+        </small>
+        <small *ngIf="createTaskFormGroup.get('description')?.errors?.['minlength']">
+          Description should be between 10 and 1000 characters long.
+        </small>
+        <small *ngIf="createTaskFormGroup.get('description')?.errors?.['maxlength']">
+          Description should be between 10 and 1000 characters long.
+        </small>
+      </div>
+      <small class="text-muted">{{ createTaskFormGroup.get('description')?.value?.length || 0 }} / 1000</small>
+    </div>
+
+    <div class="justify-content-center align-items-center gap-2 mt-5">
+      <p-button (click)="createTask()"
+                [disabled]="createTaskFormGroup.invalid"
+                label="Create"
+                icon="pi pi-user"
+                styleClass="w-10rem mx-auto">
+      </p-button>
+    </div>
+  </div>
+</form>
+

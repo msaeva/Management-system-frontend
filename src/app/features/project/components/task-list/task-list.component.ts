@@ -6,7 +6,7 @@ import {Task} from "@core/types/Task";
 import {NgForOf} from "@angular/common";
 
 @Component({
-  selector: 'app-task-list',
+  selector: 'app-project-task-list',
   standalone: true,
   imports: [
     TaskComponent,
@@ -52,7 +52,7 @@ export class TaskListComponent implements OnInit {
     this.doneTasks = this.tasks.filter(task => task.status === "DONE");
     this.todoTasks = this.tasks.filter(task => task.status === "TODO");
     this.inProgressTasks = this.tasks.filter(task => task.status === "IN_PROGRESS");
-    // this.openTasks = this.tasks.filter(task => task.status === "OPEN");
+    this.openTasks = this.tasks.filter(task => task.status === "OPEN");
     // this.reOpenTasks = this.tasks.filter(task => task.status === "RE-OPEN");
   }
 }

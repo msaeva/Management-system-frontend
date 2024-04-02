@@ -34,7 +34,7 @@ export class CreateUserComponent {
     firstName: new FormControl('', [Validators.required, Validators.minLength(3)]),
     lastName: new FormControl('', [Validators.required, Validators.minLength(3)]),
     password: new FormControl('', [Validators.required, Validators.minLength(6)]),
-    role: new FormControl('', [Validators.required])
+    role: new FormControl('Select a Role', [Validators.required])
   })
 
   constructor(private authService: AuthService,
