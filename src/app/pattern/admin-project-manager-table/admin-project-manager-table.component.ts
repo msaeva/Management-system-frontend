@@ -5,11 +5,11 @@ import {MultiSelectModule} from "primeng/multiselect";
 import {ConfirmationService, SharedModule} from "primeng/api";
 import {TableModule} from "primeng/table";
 import {FormsModule} from "@angular/forms";
-import {DetailedProject} from "@core/types/projects/DetailedProject";
-import {SimpleUser} from "@core/types/users/SimpleUser";
+import {DetailedProject} from "@core/types/projects/detailed-project";
+import {SimpleUser} from "@core/types/users/simple-user";
 import {ProjectService} from "@core/services/project.service";
 import {ToastService} from "@core/services/toast.service";
-import {User} from "@core/types/users/User";
+import {User} from "@core/types/users/user";
 
 @Component({
   selector: 'app-admin-project-manager-table',

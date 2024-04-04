@@ -2,13 +2,13 @@ import {Component, Input, OnInit} from '@angular/core';
 import {ButtonModule} from "primeng/button";
 import {DialogModule} from "primeng/dialog";
 import {SingleTaskService} from "@core/services/single-task.service";
-import {SingleTask} from "@core/types/SingleTask";
+import {SingleTask} from "@core/types/single-task";
 import {CardModule} from "primeng/card";
 import {AvatarModule} from "primeng/avatar";
 import {InputTextareaModule} from "primeng/inputtextarea";
 import {CommentService} from "@core/services/comment.service";
 import {DatePipe, NgForOf} from "@angular/common";
-import {Comment} from "@core/types/Comment";
+import {Comment} from "@core/types/comment";
 import {FormsModule} from "@angular/forms";
 
 @Component({

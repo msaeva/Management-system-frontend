@@ -7,10 +7,10 @@ import {PasswordModule} from "primeng/password";
 import {FormBuilder, FormControl, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
 import {InputTextareaModule} from "primeng/inputtextarea";
 import {UserService} from "@core/services/user-service";
-import {SimpleUser} from "@core/types/users/SimpleUser";
+import {SimpleUser} from "@core/types/users/simple-user";
 import {MultiSelectModule} from "primeng/multiselect";
 import {ProjectService} from "@core/services/project.service";
-import {DetailedProject} from "@core/types/projects/DetailedProject";
+import {DetailedProject} from "@core/types/projects/detailed-project";
 import {ToastService} from "@core/services/toast.service";
 
 @Component({

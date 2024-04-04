@@ -1,5 +1,5 @@
-import {Team} from "@core/types/Team";
-import {User} from "@core/types/users/User";
+import {Team} from "@core/types/team";
+import {User} from "@core/types/users/user";
 
 export interface DetailedProject {
   createdDate: string;

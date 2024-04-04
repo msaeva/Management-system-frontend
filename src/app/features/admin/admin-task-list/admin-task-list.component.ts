@@ -9,8 +9,8 @@ import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from "@angular/
 import {RippleModule} from "primeng/ripple";
 import {TableLazyLoadEvent, TableModule, TablePageEvent} from "primeng/table";
 import {ProjectService} from "@core/services/project.service";
-import {DetailedTask} from "@core/types/DetailedTask";
-import {ConfirmationService} from "primeng/api";
+import {DetailedTask} from "@core/types/detailed-task";
+import {ConfirmationService, LazyLoadEvent} from "primeng/api";
 import {ToastService} from "@core/services/toast.service";
 import {TaskService} from "@core/services/task.service";
 import {ConfirmDialogModule} from "primeng/confirmdialog";
@@ -49,7 +49,7 @@ export class AdminTaskListComponent implements OnInit {
 
   pagination: Pagination = {
     page: 0,
-    size: 1,
+    size: 5,
     sort: "id",
     order: "asc",
     totalRecords: -1
@@ -68,12 +68,6 @@ export class AdminTaskListComponent implements OnInit {
 
   ngOnInit(): void {
     this.projectId = Number(this.route.snapshot.paramMap.get('id'));
-    this.loadAllProjectTasks();
-  }
-
-  loadAllProjectTasks() {
-
-
   }
 
   showCreateNewTaskDialog() {
@@ -122,7 +116,7 @@ export class AdminTaskListComponent implements OnInit {
     if (!dateTime) {
       return '';
     }
-    return this.datePipe.transform(new Date(dateTime), 'medium') || '';
+    return this.datePipe.transform(new Date(dateTime), 'short') || '';
   }
 
   showConfirmation(taskId: number) {
@@ -166,11 +160,12 @@ export class AdminTaskListComponent implements OnInit {
 
   readonly taskStatus = taskStatus;
 
-
   loadTasks($event: TableLazyLoadEvent) {
     console.log($event);
     this.pagination.page = $event.first as number;
     this.pagination.size = $event.rows as number;
+    this.pagination.sort = $event.sortField as string;
+    this.pagination.order = $event.sortOrder === 1 ? 'asc' : 'desc' as string;
 
     this.projectService.getAllProjectTasks(this.projectId, this.pagination).subscribe({
       next: (response: Pageable<DetailedTask>) => {
@@ -185,3 +180,4 @@ export class AdminTaskListComponent implements OnInit {
     })
   }
 }
+

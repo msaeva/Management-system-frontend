@@ -72,7 +72,16 @@ export class AdminComponent implements OnInit, OnDestroy {
         routerLinkActiveOptions: {
           exact:
             true
-        }
+        },
+      },
+      {
+        label: 'Meetings',
+        icon: 'pi pi-calendar',
+        routerLink: ['/admin/meetings'],
+        routerLinkActiveOptions: {
+          exact:
+            true
+        },
       })
   }
 

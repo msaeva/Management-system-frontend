@@ -5,7 +5,7 @@ import {InputTextModule} from "primeng/inputtext";
 import {NgIf} from "@angular/common";
 import {PasswordModule} from "primeng/password";
 import {FormBuilder, FormControl, ReactiveFormsModule, Validators} from "@angular/forms";
-import {DetailedUser} from "@core/types/users/DetailedUser";
+import {DetailedUser} from "@core/types/users/detailed-user";
 import {AuthService} from "@core/services/auth.service";
 import {ToastService} from "@core/services/toast.service";
 import {roleOptions} from "@core/constants";

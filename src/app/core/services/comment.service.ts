@@ -1,7 +1,7 @@
 import {Injectable} from "@angular/core";
 import {API_URL} from "@core/constants";
 import {HttpClient} from "@angular/common/http";
-import {Comment} from "@core/types/Comment";
+import {Comment} from "@core/types/comment";
 
 
 @Injectable({providedIn: 'root'})

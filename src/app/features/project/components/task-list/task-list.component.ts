@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {TaskComponent} from "@feature/project/components/task/task.component";
 import {TaskService} from "@core/services/task.service";
 import {ActivatedRoute} from "@angular/router";
-import {Task} from "@core/types/Task";
+import {Task} from "@core/types/task";
 import {NgForOf} from "@angular/common";
 
 @Component({

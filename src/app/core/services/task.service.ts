@@ -2,8 +2,8 @@ import {Injectable} from "@angular/core";
 import {HttpClient} from "@angular/common/http";
 import {API_URL, API_URL_ADMIN} from "@core/constants";
 import {Observable} from "rxjs";
-import {Task} from "@core/types/Task";
-import {DetailedTask} from "@core/types/DetailedTask";
+import {Task} from "@core/types/task";
+import {DetailedTask} from "@core/types/detailed-task";
 
 @Injectable({providedIn: 'root'})
 export class TaskService {

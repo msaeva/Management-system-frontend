@@ -1,7 +1,7 @@
 import {Component, Input} from '@angular/core';
 import {CardModule} from "primeng/card";
 import {ButtonModule} from "primeng/button";
-import {Task} from "@core/types/Task";
+import {Task} from "@core/types/task";
 import {DetailedTaskComponent} from "@feature/project/components/detailed-task/detailed-task.component";
 import {NgIf} from "@angular/common";
 import {SingleTaskService} from "@core/services/single-task.service";

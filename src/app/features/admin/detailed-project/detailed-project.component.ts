@@ -2,7 +2,7 @@ import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angula
 import {Inplace, InplaceModule} from "primeng/inplace";
 import {FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
 import {NgForOf, NgIf, NgStyle} from "@angular/common";
-import {DetailedProject} from "@core/types/projects/DetailedProject";
+import {DetailedProject} from "@core/types/projects/detailed-project";
 import {ProjectService} from "@core/services/project.service";
 import {ChipsModule} from "primeng/chips";
 import {ConfirmationService} from "primeng/api";
@@ -12,7 +12,7 @@ import {DropdownModule} from "primeng/dropdown";
 import {RippleModule} from "primeng/ripple";
 import {TableModule} from "primeng/table";
 import {MultiSelectModule} from "primeng/multiselect";
-import {SimpleUser} from "@core/types/users/SimpleUser";
+import {SimpleUser} from "@core/types/users/simple-user";
 import {UserService} from "@core/services/user-service";
 import {Role} from "@core/role.enum";
 import {TeamService} from "@core/services/team.service";
@@ -110,15 +110,12 @@ export class DetailedProjectComponent implements OnInit {
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
         this.deleteProject(projectId);
-      },
-      reject: () => {
-        // this.toastService.showMessage({ severity: 'error', summary: 'Rejected', detail: 'You have rejected', life: 3000 });
       }
     });
   }
 
   loadUsersToAddToTeam() {
-    this.userService.getByRole(Role.USER.valueOf()).subscribe({
+    this.userService.getByRole([Role.USER.valueOf()]).subscribe({
       next: (users) => {
         this.usersToAddToTeam = users;
         this.loadingUsersToAddToTeam = false;
@@ -135,7 +132,7 @@ export class DetailedProjectComponent implements OnInit {
     this.updateProjectFormGroup.controls['status'][func]();
   }
 
-  updateProject(id: number | undefined) {
+  updateProject(id: number) {
     this.projectService.update(id, this.updateProjectFormGroup.value).subscribe({
       next: (response) => {
         this.project = response;

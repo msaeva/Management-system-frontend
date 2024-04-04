@@ -19,39 +19,38 @@
     [rowsPerPageOptions]="[1, 10, 25, 50]"
     dataKey="id" editMode="row"
     styleClass="p-datatable-striped"
+    sortField="id"
     [tableStyle]="{'min-width': '40rem'}">
     <ng-template pTemplate="header">
       <tr>
-        <!--        <th pSortableColumn="id" style="width:20%">Id-->
-        <!--          <p-sortIcon field="id"></p-sortIcon>-->
-        <!--        </th>-->
-        <!--        <th pSortableColumn="title" style="width:20%">Title-->
-        <!--          <p-sortIcon field="title"></p-sortIcon>-->
-        <!--        </th>-->
-        <!--        <th pSortableColumn="abbreviation" style="width:20%">Abbreviation-->
-        <!--          <p-sortIcon field="abbreviation"></p-sortIcon>-->
-        <!--        </th>-->
-        <!--        <th pSortableColumn="description" style="width:20%">Description-->
-        <!--          <p-sortIcon field="description"></p-sortIcon>-->
-        <!--        </th>-->
-        <!--        <th pSortableColumn="status" style="width:20%">Status-->
-        <!--          <p-sortIcon field="status"></p-sortIcon>-->
-        <!--        </th>-->
-        <!--        <th pSortableColumn="createdDate" style="width:20%">Created Date-->
-        <!--          <p-sortIcon field="createdDate"></p-sortIcon>-->
-        <!--        </th>-->
-        <!--        <th style="width:20%; text-align: center;">Actions</th>-->
-
-
         <th pSortableColumn="id" style="width:10%;">
           Id
           <p-sortIcon field="id"></p-sortIcon>
         </th>
-        <th style="width:15%;">Title</th>
-        <th style="width:15%;">Abbreviation</th>
-        <th style="width:15%;">Description</th>
-        <th style="width:15%;">Status</th>
-        <th style="width:10%;">Created Date</th>
+
+        <th pSortableColumn="title" style="width:15%;">
+          Title
+          <p-sortIcon field="title"></p-sortIcon>
+        </th>
+
+        <th pSortableColumn="abbreviation" style="width:15%;">
+          Abbreviation
+          <p-sortIcon field="abbreviation"></p-sortIcon>
+        </th>
+
+        <th pSortableColumn="description" style="width:15%;">
+          Description
+          <p-sortIcon field="description"></p-sortIcon>
+        </th>
+        <th pSortableColumn="status" style="width:15%;">
+          Status
+          <p-sortIcon field="status"></p-sortIcon>
+        </th>
+        <th pSortableColumn="createdDate" style="width:10%;">
+          Created Date
+          <p-sortIcon field="createdDate"></p-sortIcon>
+        </th>
+
         <th style="width:20%; text-align: center;">Actions</th>
       </tr>
     </ng-template>

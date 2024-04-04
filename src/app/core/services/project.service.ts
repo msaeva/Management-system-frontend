@@ -1,12 +1,13 @@
 import {Injectable} from "@angular/core";
 import {API_URL, API_URL_ADMIN} from "@core/constants";
 import {HttpClient, HttpParams} from "@angular/common/http";
-import {DetailedProject} from "@core/types/projects/DetailedProject";
-import {User} from "@core/types/users/User";
-import {ProjectTask} from "@core/types/projects/ProjectTask";
-import {DetailedTask} from "@core/types/DetailedTask";
+import {DetailedProject} from "@core/types/projects/detailed-project";
+import {User} from "@core/types/users/user";
+import {ProjectTask} from "@core/types/projects/project-task";
+import {DetailedTask} from "@core/types/detailed-task";
 import {Pagination} from "@core/types/pagination";
 import {Pageable} from "@core/types/pageable";
+import {ProjectUser} from "@core/types/projects/project-user";
 
 @Injectable({providedIn: 'root'})
 export class ProjectService {
@@ -33,7 +34,7 @@ export class ProjectService {
     return this.http.get<DetailedProject>(url);
   }
 
-  update(id: number | undefined, body: any) {
+  update(id: number, body: any) {
     const url = API_URL_ADMIN + "/projects/" + id;
     return this.http.put<DetailedProject>(url, body);
   }
@@ -78,5 +79,10 @@ export class ProjectService {
     });
 
     return this.http.get<Pageable<DetailedTask>>(url, {params: params});
+  }
+
+  getProjectsWithUsers() {
+    const url = `${API_URL_ADMIN}/projects/users`;
+    return this.http.get<ProjectUser[]>(url);
   }
 }

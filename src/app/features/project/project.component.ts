@@ -8,7 +8,7 @@ import {AutoFocusModule} from "primeng/autofocus";
 import {TaskListComponent} from "@feature/project/components/task-list/task-list.component";
 import {ActivatedRoute} from "@angular/router";
 import {ProjectService} from "@core/services/project.service";
-import {DetailedProject} from "@core/types/projects/DetailedProject";
+import {DetailedProject} from "@core/types/projects/detailed-project";
 import {DatePipe, NgForOf} from "@angular/common";
 
 @Component({

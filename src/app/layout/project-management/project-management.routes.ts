@@ -1,7 +1,7 @@
 import {Routes} from '@angular/router';
 import {ProjectManagementComponent} from "@layouts/project-management/project-management.component";
 import {ProjectComponent} from "@feature/project/project.component";
-import {MeetingComponent} from "@feature/project/components/meeting/meeting.component";
+import {MeetingsComponent} from "@feature/project/components/meetings/meetings.component";
 
 export default <Routes>[
   {
@@ -14,7 +14,7 @@ export default <Routes>[
       },
       {
         path: 'meetings',
-        component: MeetingComponent
+        component: MeetingsComponent
       }
     ]
   }

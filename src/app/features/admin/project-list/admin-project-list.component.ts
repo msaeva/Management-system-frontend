@@ -4,7 +4,7 @@ import {TaskComponent} from "@feature/project/components/task/task.component";
 import {ProjectComponent} from "@feature/project/project.component";
 import {AdminProjectComponent} from "@feature/admin/project/admin-project.component";
 import {ProjectService} from "@core/services/project.service";
-import {DetailedProject} from "@core/types/projects/DetailedProject";
+import {DetailedProject} from "@core/types/projects/detailed-project";
 import {FieldsetModule} from "primeng/fieldset";
 import {ButtonModule} from "primeng/button";
 import {DialogModule} from "primeng/dialog";
@@ -16,7 +16,7 @@ import {CreateUserComponent} from "@feature/admin/create-user/create-user.compon
 import {CreateProjectComponent} from "@feature/admin/create-project/create-project.component";
 import {Role} from "@core/role.enum";
 import {UserService} from "@core/services/user-service";
-import {SimpleUser} from "@core/types/users/SimpleUser";
+import {SimpleUser} from "@core/types/users/simple-user";
 
 
 @Component({
@@ -80,8 +80,9 @@ export class AdminProjectListComponent implements OnInit {
 
 
   loadPMs() {
-    this.userService.getByRole(Role.PM.valueOf()).subscribe({
+    this.userService.getByRole([Role.PM.valueOf()]).subscribe({
       next: (response) => {
+        console.log(response);
         this.allProjectManagers = response;
         this.allProjectManagersOptions = this.allProjectManagers;
 

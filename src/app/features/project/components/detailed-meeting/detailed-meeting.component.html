@@ -1,0 +1,118 @@
+<div class="p-grid p-3">
+  <div class="p-col-12 p-md-4">
+    <div class="p-grid">
+      <div class="grid gap-4">
+        <div class="p-col-2">
+          <div class="flex flex-column gap-2">
+            <label for="title">Title</label>
+            <input [disabled]="true" [(ngModel)]="meeting.title" pInputText id="title"/>
+          </div>
+        </div>
+
+        <div class="grid gap-4">
+          <div class="p-col-2">
+            <div class="flex flex-column gap-2">
+              <label>Start</label>
+              <span class="p-inputgroup">
+                <input [disabled]="true"
+                       [ngModel]="meeting.start | date:'medium'"
+                       pInputText id="start"/>
+                <span class="p-inputgroup-addon">
+                  <i class="pi pi-calendar" style="color: var(--primary-color)"></i>
+                </span>
+              </span>
+            </div>
+          </div>
+          <div class="p-col-2">
+            <div class="flex flex-column gap-2">
+              <label>End</label>
+              <span class="p-inputgroup">
+                <input [disabled]="true"
+                       [ngModel]="meeting.end | date:'medium'"
+                       pInputText id="end"/>
+                <span class="p-inputgroup-addon">
+                  <i class="pi pi-calendar" style="color: var(--primary-color)"></i>
+                </span>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid gap-4 mt-4">
+        <div class="p-col">
+          <div class="p-col-2">
+            <div class="flex flex-column gap-2">
+              <label for="status">Status</label>
+              <input [disabled]="true"
+                     [(ngModel)]="meeting.status"
+                     pInputText id="status"/>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!--<div class="p-grid p-fluid">-->
+<!--  <div class="p-col-12 p-md-4">-->
+<!--      <form [formGroup]="updateMeetingFormGroup">-->
+<!--        <div class="p-grid">-->
+<!--          <div class="grid gap-4">-->
+<!--            <div class="p-col-2">-->
+<!--              <div class="flex flex-column gap-2">-->
+<!--                <label for="title">Title</label>-->
+<!--                <input pInputText id="title"-->
+<!--                       formControlName="title"/>-->
+<!--                <div-->
+<!--                  *ngIf="updateMeetingFormGroup.get('title')?.invalid && (updateMeetingFormGroup.get('title')?.dirty || updateMeetingFormGroup.get('title')?.touched)"-->
+<!--                  class="alert alert-danger">-->
+<!--                  <small *ngIf="updateMeetingFormGroup.get('title')?.errors?.['required']">-->
+<!--                    Title is required.-->
+<!--                  </small>-->
+<!--                  <small *ngIf="updateMeetingFormGroup.get('title')?.errors?.['minlength']"-->
+<!--                         class="alert alert-danger">-->
+<!--                    Title must be at least 4 characters long.-->
+<!--                  </small>-->
+<!--                </div>-->
+<!--              </div>-->
+<!--            </div>-->
+
+<!--            <div class="grid gap-4">-->
+<!--              <div class="p-col-2">-->
+<!--                <div class="flex flex-column gap-2">-->
+<!--                  <label>Start</label>-->
+<!--                  <p-calendar formControlName="start" [showIcon]="true" [showTime]="true"></p-calendar>-->
+<!--                </div>-->
+<!--              </div>-->
+<!--              <div class="p-col-2">-->
+<!--                <div class="flex flex-column gap-2">-->
+<!--                  <label>End</label>-->
+<!--                  <p-calendar formControlName="end"-->
+<!--                              [showIcon]="true"-->
+<!--                              [showTime]="true">-->
+<!--                  </p-calendar>-->
+<!--                </div>-->
+<!--              </div>-->
+<!--            </div>-->
+<!--          </div>-->
+
+<!--          <div class="grid gap-4 mt-4">-->
+<!--            <div class="p-col">-->
+<!--              <div class="p-col-2">-->
+<!--                <div class="flex flex-column gap-2">-->
+<!--                  <label for="status">Status</label>-->
+<!--                  <input-->
+<!--                    pInputText id="status"-->
+<!--                    formControlName="status"/>-->
+<!--                </div>-->
+<!--              </div>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--      </form>-->
+<!--  </div>-->
+<!--</div>-->
+

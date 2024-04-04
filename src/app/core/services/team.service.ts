@@ -1,8 +1,8 @@
 import {Injectable} from "@angular/core";
 import {HttpClient} from "@angular/common/http";
 import {API_URL_ADMIN} from "@core/constants";
-import {User} from "@core/types/users/User";
-import {Team} from "@core/types/Team";
+import {User} from "@core/types/users/user";
+import {Team} from "@core/types/team";
 
 @Injectable({providedIn: 'root'})
 export class TeamService {

@@ -162,7 +162,7 @@
         <ng-container *ngIf="!loadingUsersToAddToTeam">
           <app-admin-team-card [team]="team"
                                [usersToAddToTeam]="usersToAddToTeam"
-                               [projectId]="project?.id!"
+                               [projectId]="project.id!"
                                (projectDeletedEvent)="removeDeletedProjectHandler($event)">
           </app-admin-team-card>
         </ng-container>

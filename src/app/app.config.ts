@@ -9,6 +9,7 @@ import {JwtInterceptor} from "@core/interceptors/jwt.interceptor";
 import {ConfirmationService, MessageService} from "primeng/api";
 import {ToastModule} from "primeng/toast";
 import {DatePipe} from "@angular/common";
+import {FullCalendarModule} from "@fullcalendar/angular";
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -25,6 +26,7 @@ export const appConfig: ApplicationConfig = {
     DatePipe,
     MessageService,
     ConfirmationService,
+    FullCalendarModule,
     provideRouter(routes),
     importProvidersFrom(HttpClientModule),
     provideAnimations()
