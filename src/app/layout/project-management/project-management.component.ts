@@ -3,9 +3,11 @@ import {NavigationComponent} from "@layouts/shared-components/navigation/navigat
 import {SidebarComponent} from "@layouts/shared-components/sidebar/sidebar.component";
 import {RouterOutlet} from "@angular/router";
 import {ProjectService} from "@core/services/project.service";
-import {MenuItem} from "primeng/api";
-import {AsyncPipe, NgIf} from "@angular/common";
+import {MenuItem, SharedModule} from "primeng/api";
+import {AsyncPipe, NgIf, NgStyle} from "@angular/common";
 import {LayoutService} from "@core/services/layout.service";
+import {ButtonModule} from "primeng/button";
+import {ConfirmDialogModule} from "primeng/confirmdialog";
 
 @Component({
   selector: 'app-project-management',
@@ -15,7 +17,11 @@ import {LayoutService} from "@core/services/layout.service";
     SidebarComponent,
     RouterOutlet,
     NgIf,
-    AsyncPipe
+    AsyncPipe,
+    ButtonModule,
+    ConfirmDialogModule,
+    SharedModule,
+    NgStyle
   ],
   templateUrl: './project-management.component.html',
   styleUrl: './project-management.component.scss'

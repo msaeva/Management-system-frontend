@@ -14,7 +14,7 @@ export class AuthService {
   }
 
   login(username: string, password: string) {
-    const url = 'http://localhost:8080/system-management-1.0-SNAPSHOT/api/authenticate';
+    const url = API_URL + '/authenticate';
 
     const body = {username, password};
     return this.http.post(url, body, {responseType: 'text'});

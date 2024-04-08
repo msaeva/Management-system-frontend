@@ -7,11 +7,11 @@
       </span>
       <div
         *ngIf="createProjectFormGroup.get('title')?.invalid && (createProjectFormGroup.get('title')?.dirty || createProjectFormGroup.get('title')?.touched)"
-        class="alert alert-danger">
-        <small *ngIf="createProjectFormGroup.get('title')?.errors?.['required']">
+        class="p-error">
+        <small *ngIf="createProjectFormGroup.get('title')?.errors?.['required']" class="p-error">
           Title is required.
         </small>
-        <small *ngIf="createProjectFormGroup.get('title')?.errors?.['minlength']" class="alert alert-danger">
+        <small *ngIf="createProjectFormGroup.get('title')?.errors?.['minlength']" class="p-error">
           Title must be at least 4 characters long.
         </small>
       </div>
@@ -28,14 +28,14 @@
       </span>
       <div
         *ngIf="createProjectFormGroup.get('description')?.invalid && (createProjectFormGroup.get('description')?.dirty || createProjectFormGroup.get('description')?.touched)"
-        class="alert alert-danger">
-        <small *ngIf="createProjectFormGroup.get('description')?.errors?.['required']">
+        class="p-error">
+        <small *ngIf="createProjectFormGroup.get('description')?.errors?.['required']" class="p-error">
           Description is required.
         </small>
-        <small *ngIf="createProjectFormGroup.get('description')?.errors?.['minlength']">
+        <small *ngIf="createProjectFormGroup.get('description')?.errors?.['minlength']" class="p-error">
           Description should be between 10 and 1000 characters long.
         </small>
-        <small *ngIf="createProjectFormGroup.get('description')?.errors?.['maxlength']">
+        <small *ngIf="createProjectFormGroup.get('description')?.errors?.['maxlength']" class="p-error">
           Description should be between 10 and 1000 characters long.
         </small>
       </div>
@@ -50,11 +50,11 @@
       <div
         *ngIf="createProjectFormGroup.get('abbreviation')?.invalid && (createProjectFormGroup.get('abbreviation')?.dirty
       || createProjectFormGroup.get('abbreviation')?.touched)"
-        class="alert alert-danger">
-        <small *ngIf="createProjectFormGroup.get('abbreviation')?.errors?.['required']">
+        class="p-error">
+        <small *ngIf="createProjectFormGroup.get('abbreviation')?.errors?.['required']" class="p-error">
           Abbreviation is required.
         </small>
-        <small *ngIf="createProjectFormGroup.get('abbreviation')?.errors?.['minlength']" class="alert alert-danger">
+        <small *ngIf="createProjectFormGroup.get('abbreviation')?.errors?.['minlength']" class="p-error">
           Abbreviation must be at least 3 characters long.
         </small>
       </div>

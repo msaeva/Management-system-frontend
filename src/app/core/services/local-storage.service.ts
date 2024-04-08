@@ -25,6 +25,15 @@ export class LocalStorageService {
     return null;
   }
 
+  getAuthUserId(): number | null {
+    const token = this.getToken();
+    if (token) {
+      const decodedToken: any = jwtDecode(token);
+      return decodedToken.id as number;
+    }
+    return null;
+  }
+
   clear(): void {
     localStorage.clear();
   }

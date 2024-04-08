@@ -5,11 +5,11 @@
       <label for="username">Username</label>
       <div
         *ngIf="createUserFormGroup.get('username')?.invalid && (createUserFormGroup.get('username')?.dirty || createUserFormGroup.get('username')?.touched)"
-        class="alert alert-danger">
-        <div *ngIf="createUserFormGroup.get('username')?.errors?.['required']">
+        class="p-error">
+        <div *ngIf="createUserFormGroup.get('username')?.errors?.['required']" class="p-error">
           Username is required.
         </div>
-        <div *ngIf="createUserFormGroup.get('username')?.errors?.['minlength']" class="alert alert-danger">
+        <div *ngIf="createUserFormGroup.get('username')?.errors?.['minlength']" class="p-error">
           Username must be at least 3 characters long.
         </div>
       </div>
@@ -23,11 +23,11 @@
       <label for="email">Email</label>
       <div
         *ngIf="createUserFormGroup.get('email')?.invalid && (createUserFormGroup.get('email')?.dirty || createUserFormGroup.get('email')?.touched)"
-        class="alert alert-danger">
-        <small *ngIf="createUserFormGroup.get('email')?.errors?.['required']">
+        class="p-error">
+        <small *ngIf="createUserFormGroup.get('email')?.errors?.['required']" class="p-error">
           First name is required.
         </small>
-        <small *ngIf="createUserFormGroup.get('email')?.errors?.['email']">
+        <small *ngIf="createUserFormGroup.get('email')?.errors?.['email']" class="p-error">
           Email is invalid!
         </small>
       </div>
@@ -40,11 +40,11 @@
       <label for="first-name">First Name</label>
       <div
         *ngIf="createUserFormGroup.get('firstName')?.invalid && (createUserFormGroup.get('firstName')?.dirty || createUserFormGroup.get('firstName')?.touched)"
-        class="alert alert-danger">
-        <small *ngIf="createUserFormGroup.get('firstName')?.errors?.['required']">
+        class="p-error">
+        <small *ngIf="createUserFormGroup.get('firstName')?.errors?.['required']" class="p-error">
           First name is required.
         </small>
-        <small *ngIf="createUserFormGroup.get('firstName')?.errors?.['minlength']" class="alert alert-danger">
+        <small *ngIf="createUserFormGroup.get('firstName')?.errors?.['minlength']" class="p-error">
           First name must be at least 3 characters long.
         </small>
       </div>
@@ -57,11 +57,11 @@
       <label for="last-name">Last Name</label>
       <div
         *ngIf="createUserFormGroup.get('lastName')?.invalid && (createUserFormGroup.get('lastName')?.dirty || createUserFormGroup.get('lastName')?.touched)"
-        class="alert alert-danger">
-        <small *ngIf="createUserFormGroup.get('lastName')?.errors?.['required']">
+        class="p-error">
+        <small *ngIf="createUserFormGroup.get('lastName')?.errors?.['required']" class="p-error">
           Last name is required.
         </small>
-        <small *ngIf="createUserFormGroup.get('lastName')?.errors?.['minlength']" class="alert alert-danger">
+        <small *ngIf="createUserFormGroup.get('lastName')?.errors?.['minlength']" class="p-error">
           Last name must be at least 3 characters long.
         </small>
       </div>
@@ -74,11 +74,11 @@
       <label for="password">Password</label>
       <div
         *ngIf="createUserFormGroup.get('password')?.invalid && (createUserFormGroup.get('password')?.dirty || createUserFormGroup.get('password')?.touched)"
-        class="alert alert-danger">
-        <small *ngIf="createUserFormGroup.get('password')?.errors?.['required']">
+        class="p-error">
+        <small *ngIf="createUserFormGroup.get('password')?.errors?.['required']" class="p-error">
           Password name is required.
         </small>
-        <small *ngIf="createUserFormGroup.get('password')?.errors?.['minlength']" class="alert alert-danger">
+        <small *ngIf="createUserFormGroup.get('password')?.errors?.['minlength']" class="p-error">
           Password must be at least 6 characters long.
         </small>
       </div>
@@ -93,15 +93,17 @@
       </p-dropdown>
       <div
         *ngIf="createUserFormGroup.get('role')?.invalid && (createUserFormGroup.get('role')?.dirty || createUserFormGroup.get('role')?.touched)"
-        class="alert alert-danger">
-        <small *ngIf="createUserFormGroup.get('role')?.errors?.['required']">
+        class="p-error">
+        <small *ngIf="createUserFormGroup.get('role')?.errors?.['required']" class="p-error">
           Last name is required.
         </small>
       </div>
     </div>
 
     <div class="flex flex-wrap justify-content-center align-items-center gap-2 mt-5">
-      <p-button (click)="createAccount()" [disabled]="createUserFormGroup.invalid" label="Create" icon="pi pi-user"
+      <p-button (onClick)="createAccount()"
+                [disabled]="createUserFormGroup.invalid"
+                label="Create" icon="pi pi-user"
                 styleClass="w-10rem mx-auto">
       </p-button>
     </div>

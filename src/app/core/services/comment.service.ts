@@ -18,4 +18,14 @@ export class CommentService {
     const url = API_URL + "/comments";
     return this.http.post<Comment>(url, body);
   }
+
+  deleteComment(id: number) {
+    const url = API_URL + "/comments/" + id;
+    return this.http.delete(url);
+  }
+
+  updateComment(id: number, value: string) {
+    const url = API_URL + "/comments/" + id;
+    return this.http.put<Comment>(url, value);
+  }
 }

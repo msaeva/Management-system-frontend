@@ -1,6 +1,5 @@
 import {Component, OnInit} from '@angular/core';
 import {SidebarComponent} from "@layouts/shared-components/sidebar/sidebar.component";
-import {TaskComponent} from "@feature/project/components/task/task.component";
 import {DialogModule} from "primeng/dialog";
 import {AvatarModule} from "primeng/avatar";
 import {ButtonModule} from "primeng/button";
@@ -16,7 +15,6 @@ import {DatePipe, NgForOf} from "@angular/common";
   standalone: true,
   imports: [
     SidebarComponent,
-    TaskComponent,
     DialogModule,
     AvatarModule,
     ButtonModule,

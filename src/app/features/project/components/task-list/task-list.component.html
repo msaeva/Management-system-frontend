@@ -2,7 +2,7 @@
 <div class="kanban-wrapper">
   <!--  <div class="col">-->
   <p-card [pDroppableDisabled]="isDropDisabled"
-          (onDrop)="drop('OPEN', $event)"
+          (onDrop)="drop('OPEN')"
           pDroppable styleClass="OPEN">
     <h2>
         <span>OPEN
@@ -22,10 +22,11 @@
              (onDragEnd)="dragEnd(task)"
              (click)="openDetailedTaskDialog(task)"
         >
-          <div class="task-body">
+          <div class="flex justify-content-between flex-wrap">
             <h4>{{ task.title }}</h4>
+            <p>{{task.abbreviation}}</p>
             <p>{{ task.description }}</p>
-          </div><!-- body -->
+          </div>
           <div class="task-footer flex justify-content-between">
             <span><i class="pi pi-user mr-2"></i>{{ task.userFullName ? task.userFullName : 'No assigned user' }}</span>
             <p-chip styleClass="flex-auto" [label]="task.status | titlecase"></p-chip>
@@ -39,7 +40,7 @@
 
   <!--  <div class="col">-->
   <p-card [pDroppableDisabled]="isDropDisabled"
-          (onDrop)="drop('TODO', $event)"
+          (onDrop)="drop('TODO')"
           pDroppable styleClass="TODO">
     <h2>
         <span>TODO
@@ -57,8 +58,9 @@
              (onDragStart)="dragStart(task)"
              (onDragEnd)="dragEnd(task)"
              (click)="openDetailedTaskDialog(task)">
-          <div class="task-body">
+          <div class="flex justify-content-between flex-wrap">
             <h4>{{ task.title }}</h4>
+            <p>{{task.abbreviation}}</p>
             <p>{{ task.description }}</p>
           </div>
           <div class="task-footer flex justify-content-between">
@@ -74,7 +76,7 @@
 
   <!--  <div class="col">-->
   <p-card [pDroppableDisabled]="isDropDisabled"
-          (onDrop)="drop('IN_PROGRESS', $event)"
+          (onDrop)="drop('IN_PROGRESS')"
           pDroppable styleClass="IN_PROGRESS">
     <h2>
         <span>IN PROGRESS <p-chip
@@ -89,10 +91,11 @@
              (onDragStart)="dragStart(task)"
              (onDragEnd)="dragEnd(task)"
              (click)="openDetailedTaskDialog(task)">
-          <div class="task-body">
+          <div class="flex justify-content-between flex-wrap">
             <h4>{{ task.title }}</h4>
+            <p>{{task.abbreviation}}</p>
             <p>{{ task.description }}</p>
-          </div><!-- body -->
+          </div>
           <div class="task-footer flex justify-content-between">
             <span><i class="pi pi-user mr-2"></i>{{ task.userFullName }}</span>
             <p-chip styleClass="flex-auto" [label]="task.status | titlecase"></p-chip>
@@ -106,7 +109,7 @@
 
   <!--  <div class="col">-->
   <p-card [pDroppableDisabled]="isDropDisabled"
-          (onDrop)="drop('DONE', $event)"
+          (onDrop)="drop('DONE')"
           pDroppable styleClass="DONE">
     <ng-template pTemplate="header">
     </ng-template>
@@ -126,8 +129,9 @@
              (onDragStart)="dragStart(task)"
              (onDragEnd)="dragEnd(task)"
              (click)="openDetailedTaskDialog(task)">
-          <div class="task-body">
+          <div class="flex justify-content-between flex-wrap">
             <h4>{{ task.title }}</h4>
+            <p>{{task.abbreviation}}</p>
             <p>{{ task.description }}</p>
           </div>
           <div class="flex justify-content-between" style="font-size: smaller; padding-top: 0.25rem;">
@@ -150,5 +154,8 @@
           [style]="{width: '50vw'}"
           [maximizable]="true"
           header="Task Information">
-  <app-detailed-task [id]="selectedTask!.id"></app-detailed-task>
+  <app-detailed-task [id]="selectedTask!.id"
+                     (updatedStatusTaskEvent)="updatedStatusTaskHandler($event, TaskStatus.IN_PROGRESS.valueOf())">
+
+  </app-detailed-task>
 </p-dialog>

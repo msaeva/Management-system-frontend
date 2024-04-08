@@ -1,5 +1,4 @@
 import {Component, OnInit} from '@angular/core';
-import {TaskComponent} from "@feature/project/components/task/task.component";
 import {TaskService} from "@core/services/task.service";
 import {ActivatedRoute} from "@angular/router";
 import {Task} from "@core/types/tasks/task";
@@ -17,7 +16,6 @@ import {ToastService} from "@core/services/toast.service";
   selector: 'app-project-task-list',
   standalone: true,
   imports: [
-    TaskComponent,
     NgForOf,
     DragDropModule,
     ButtonModule,
@@ -69,7 +67,7 @@ export class TaskListComponent implements OnInit {
     this.draggedTask = task;
   }
 
-  drop(type: string, event: any) {
+  drop(type: string) {
     const sourceColumn = this.draggedTask.status as string;
     const targetColumn = type;
 
@@ -113,6 +111,7 @@ export class TaskListComponent implements OnInit {
     const taskStatus = task.status;
     const taskId = task.id;
 
+
     if (!this.isDropDisabled) {
       if (this.type === TaskStatus.TODO.valueOf()) {
         task.status = TaskStatus.TODO.valueOf();
@@ -125,6 +124,21 @@ export class TaskListComponent implements OnInit {
       } else {
         console.error("Invalid drop action. Drop action is disabled.");
       }
+
+      this.taskService.updateStatus(taskId, task.status).subscribe({
+        next: (response) => {
+          console.log(response);
+
+          this.toastService.showMessage({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Status updated successfully',
+            life: 3000
+          });
+        },
+        error: (err) => console.log(err)
+      })
+
 
       switch (taskStatus) {
         case TaskStatus.OPEN.valueOf():
@@ -171,4 +185,16 @@ export class TaskListComponent implements OnInit {
     this.selectedTask = task;
     this.visible = true
   }
+
+  updatedStatusTaskHandler(updatedTask: Task, newStatus: string) {
+    const foundTask: Task = this.tasks.find(task => task.id === updatedTask.id) as Task;
+
+    if (foundTask !== undefined) {
+      foundTask.status = newStatus;
+      this.filterTasks();
+    }
+
+  }
+
+  protected readonly TaskStatus = TaskStatus;
 }

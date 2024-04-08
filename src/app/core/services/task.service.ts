@@ -20,6 +20,12 @@ export class TaskService {
     return this.http.put(url, task);
   }
 
+  updateStatus(taskId: number, status: string) {
+    const url = API_URL + "/tasks/" + taskId;
+
+    return this.http.put(url, status, {responseType: 'text'});
+  }
+
   delete(taskId: number) {
     const url = API_URL_ADMIN + "/tasks/" + taskId;
     return this.http.delete(url);
@@ -34,5 +40,16 @@ export class TaskService {
 
       url = API_URL_ADMIN + "/tasks";
     return this.http.post<DetailedTask>(url, body);
+  }
+
+  setEstimationTime(id: number, estimationTime: number) {
+    const url = API_URL + "/tasks/" + id + "/estimation-time";
+    return this.http.put<Task>(url, estimationTime);
+  }
+
+  changeProgress(id: number, progress: number) {
+    const url = API_URL + "/tasks/" + id + "/progress";
+    return this.http.put<Task>(url, progress);
+
   }
 }

@@ -1,6 +1,5 @@
 import {Component, OnInit} from '@angular/core';
 import {NgForOf, NgIf} from "@angular/common";
-import {TaskComponent} from "@feature/project/components/task/task.component";
 import {ProjectComponent} from "@feature/project/project.component";
 import {AdminProjectComponent} from "@feature/admin/project/admin-project.component";
 import {ProjectService} from "@core/services/project.service";
@@ -24,7 +23,6 @@ import {SimpleUser} from "@core/types/users/simple-user";
   standalone: true,
   imports: [
     NgForOf,
-    TaskComponent,
     ProjectComponent,
     AdminProjectComponent,
     FieldsetModule,

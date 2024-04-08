@@ -10,6 +10,7 @@ import {Subscription} from "rxjs";
 import {LocalStorageService} from "@core/services/local-storage.service";
 import {DEFAULT_ROUTING} from "@core/constants";
 import {Role} from "@core/role.enum";
+import {ToastService} from "@core/services/toast.service";
 
 @Component({
   selector: 'app-login',
@@ -35,7 +36,8 @@ export class LoginComponent implements OnDestroy {
 
   constructor(private authService: AuthService,
               private router: Router,
-              private localStorageService: LocalStorageService) {
+              private localStorageService: LocalStorageService,
+              private toastService: ToastService) {
   }
 
   ngOnDestroy(): void {
@@ -51,8 +53,21 @@ export class LoginComponent implements OnDestroy {
 
               const url = DEFAULT_ROUTING.get(this.localStorageService.getRole() as Role)
               this.router.navigate(['/', url]);
+
+              this.toastService.showMessage({
+                severity: 'success',
+                summary: 'Success',
+                detail: 'LOGIN SUCCESS!',
+                life: 3000
+              });
             },
             error: (error) => {
+              this.toastService.showMessage({
+                severity: 'error',
+                summary: 'Error',
+                detail: 'Invalid Credentials',
+                life: 3000
+              });
               console.log(error);
             }
           }

@@ -4,10 +4,10 @@ import {ChipsModule} from "primeng/chips";
 import {ButtonModule} from "primeng/button";
 import {DividerModule} from "primeng/divider";
 import {PasswordModule} from "primeng/password";
-import {HttpClient} from "@angular/common/http";
 import {Router, RouterLink} from "@angular/router";
 import {AuthService} from "@core/services/auth.service";
 import {NgIf} from "@angular/common";
+import {ToastService} from "@core/services/toast.service";
 
 @Component({
   selector: 'app-register',
@@ -27,23 +27,41 @@ import {NgIf} from "@angular/common";
 })
 export class RegisterComponent {
 
-  constructor(private http: HttpClient, private router: Router, private authService: AuthService) {
+  constructor(private router: Router,
+              private authService: AuthService,
+              private toastService: ToastService) {
   }
 
   registerForm = new FormGroup({
-    username: new FormControl('', [Validators.minLength(3)]),
-    email: new FormControl('', [Validators.email]),
-    firstName: new FormControl('', [Validators.minLength(3)]),
-    lastName: new FormControl('', [Validators.minLength(3)]),
-    password: new FormControl('', [Validators.required, Validators.minLength(6)])
+    username: new FormControl('', [Validators.required, Validators.minLength(3)]),
+    email: new FormControl('', [Validators.required, Validators.email]),
+    firstName: new FormControl('', [Validators.required, Validators.minLength(3)]),
+    lastName: new FormControl('', [Validators.required, Validators.minLength(3)]),
+    password: new FormControl('', [Validators.required, Validators.required, Validators.minLength(6)])
   });
 
   register() {
     this.authService.register(this.registerForm.value).subscribe({
       next: (response) => {
         this.router.navigate(['/login']);
+
+        this.toastService.showMessage({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'REGISTRATION SUCCESS!',
+          life: 3000
+        });
       },
-      error: (err) => console.log(err)
+      error: (err) => {
+        this.registerForm.setErrors({ taken: true });
+
+        this.toastService.showMessage({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'REGISTRATION FAILED!',
+          life: 3000
+        });
+      }
     })
   }
 }
