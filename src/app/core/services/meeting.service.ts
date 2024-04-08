@@ -39,4 +39,9 @@ export class MeetingService {
     const url = API_URL_ADMIN + "/meetings/" + id;
     return this.http.delete(url);
   }
+
+  create(body: any) {
+    const url = API_URL_ADMIN + "/meetings";
+    return this.http.post<DetailedMeeting>(url, body);
+  }
 }

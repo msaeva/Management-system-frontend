@@ -16,7 +16,6 @@ export class UserService {
 
   deleteById(id: number) {
     const url = API_URL_ADMIN + "/users/" + id.toString();
-    console.log(url)
     return this.http.delete(url);
   }
 
@@ -34,7 +33,6 @@ export class UserService {
 
   getByRole(roles: string[]) {
     const url = API_URL_ADMIN + "/users/roles?roles=" + roles.join(',');
-    console.log(url);
     return this.http.get<SimpleUser[]>(url);
   }
 }

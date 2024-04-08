@@ -7,10 +7,10 @@ import {InputTextModule} from "primeng/inputtext";
 import {DatePipe, NgIf, NgStyle} from "@angular/common";
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {RippleModule} from "primeng/ripple";
-import {TableLazyLoadEvent, TableModule, TablePageEvent} from "primeng/table";
+import {TableLazyLoadEvent, TableModule} from "primeng/table";
 import {ProjectService} from "@core/services/project.service";
-import {DetailedTask} from "@core/types/detailed-task";
-import {ConfirmationService, LazyLoadEvent} from "primeng/api";
+import {DetailedTask} from "@core/types/tasks/detailed-task";
+import {ConfirmationService} from "primeng/api";
 import {ToastService} from "@core/services/toast.service";
 import {TaskService} from "@core/services/task.service";
 import {ConfirmDialogModule} from "primeng/confirmdialog";
@@ -120,17 +120,12 @@ export class AdminTaskListComponent implements OnInit {
   }
 
   showConfirmation(taskId: number) {
-    console.log("in show confirmation")
     this.confirmationService.confirm({
       message: 'Are you sure you want to delete this task?',
       header: 'Confirmation',
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
         this.deleteTask(taskId);
-      },
-      reject: () => {
-        // Message if user cancel
-        // this.toastService.showMessage({ severity: 'error', summary: 'Rejected', detail: 'You have rejected', life: 3000 });
       }
     });
 
@@ -169,7 +164,6 @@ export class AdminTaskListComponent implements OnInit {
 
     this.projectService.getAllProjectTasks(this.projectId, this.pagination).subscribe({
       next: (response: Pageable<DetailedTask>) => {
-        console.log(response)
         this.pagination.totalRecords = response.totalRecords;
         this.initializeForms(response.data);
         this.allTasks = response.data;

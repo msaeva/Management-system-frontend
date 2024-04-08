@@ -13,14 +13,11 @@ export class ErrorInterceptor implements HttpInterceptor {
 
     return next.handle(request).pipe(
       catchError((err: HttpErrorResponse) => {
-        console.log(err.status)
-        console.log(err)
         if (err) {
           switch (err.status) {
             case 400:
               break;
             case 401:
-              console.log("401")
               this.localStorageService.removeToken();
               this.router.navigate(['login']);
               break;

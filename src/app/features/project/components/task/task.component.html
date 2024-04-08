@@ -1,10 +1,26 @@
-<div class="w-full">
-  <p-card [header]="task.title" [subheader]="task.abbreviation" class="w-full">
-    <ng-template pTemplate="footer">
-      <p-button label="View" (click)="openModal(task.id)" [link]="true"></p-button>
-    </ng-template>
-  </p-card>
-</div>
+<!--<div class="w-full">-->
+<!--  <p-card [header]="task.title" [subheader]="task.abbreviation" class="w-full">-->
+<!--    <ng-template pTemplate="footer">-->
+<!--      <p-button label="View" (click)="openModal(task.id)" [link]="true"></p-button>-->
+<!--    </ng-template>-->
+<!--  </p-card>-->
+<!--</div>-->
+
+<!--<div class="list-item"-->
+<!--  pDraggable-->
+<!--  (onDragStart)="dragStart(task)"-->
+<!--  (onDragEnd)="dragEnd(task)"-->
+<!--  >-->
+<!--  <div class="task-body">-->
+<!--    <h4>{{ task.title }}</h4>-->
+<!--    <p>{{ task.description }}</p>-->
+<!--  </div>-->
+<!--  <div class="flex justify-content-between" style="font-size: smaller; padding-top: 0.25rem;">-->
+<!--    <span><i class="pi pi-user mr-2"></i>{{ task.userFullName }}</span>-->
+<!--    <p-chip styleClass="flex-auto" [label]="task.status | titlecase"></p-chip>-->
+<!--  </div>-->
+<!--</div>-->
+
 
 <p-dialog *ngIf="visible"
           [(visible)]="visible"

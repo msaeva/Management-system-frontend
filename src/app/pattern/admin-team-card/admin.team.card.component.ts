@@ -90,7 +90,6 @@ export class AdminTeamCardComponent implements OnInit {
 
   addNewUsersToTeam(teamId: number) {
     const userIds = this.selectedUsersToAddToTeam.map(user => user.id);
-    console.log(userIds)
     this.teamService.addUsersToTeam(teamId, userIds).subscribe({
       next: (response) => {
         this.team.users = response;

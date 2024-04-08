@@ -52,8 +52,6 @@ export class ProjectComponent implements OnInit {
     this.projectService.getById(this.projectId).subscribe({
       next: (project: DetailedProject) => {
         this.project = project;
-        console.log(project);
-        console.log(this.project);
       },
       error: () => {
         console.log("Error loading projects");

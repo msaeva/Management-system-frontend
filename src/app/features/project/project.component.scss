@@ -1,0 +1,12 @@
+:host {
+  display: block;
+  height: 100%;
+
+  .project-view-container {
+    display: grid;
+    grid-template-rows: auto 0 1fr;
+    height: 100%;
+  }
+}
+
+

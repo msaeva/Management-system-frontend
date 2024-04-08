@@ -21,13 +21,12 @@ import {Meeting} from "@core/types/meeting";
 import {MeetingService} from "@core/services/meeting.service";
 import {AdminDetailedMeetingComponent} from "@feature/admin/admin-detailed-meeting/admin-detailed-meeting.component";
 import {SimpleUser} from "@core/types/users/simple-user";
-import {Project} from "@core/types/projects/project";
-import {User} from "@core/types/users/user";
 import {UserService} from "@core/services/user-service";
 import {Role} from "@core/role.enum";
 import {ProjectService} from "@core/services/project.service";
 import {ProjectUser} from "@core/types/projects/project-user";
 import {ToastService} from "@core/services/toast.service";
+import {CreateMeetingComponent} from "@feature/admin/create-meeting/create-meeting.component";
 
 @Component({
   selector: 'app-meetings-list',
@@ -46,7 +45,8 @@ import {ToastService} from "@core/services/toast.service";
     TableModule,
     FullCalendarModule,
     DetailedMeetingComponent,
-    AdminDetailedMeetingComponent
+    AdminDetailedMeetingComponent,
+    CreateMeetingComponent
   ],
   templateUrl: './admin-meetings.component.html',
   styleUrl: './admin-meetings.component.scss'
@@ -63,6 +63,8 @@ export class AdminMeetingsComponent implements OnInit {
   projects: ProjectUser[] = [];
   selectedProject!: ProjectUser;
   filteredProjects: ProjectUser[] = [];
+
+  selectInfo!: DateSelectArg;
 
   calendarOptions: CalendarOptions = {
     initialView: 'timeGridWeek',
@@ -88,6 +90,7 @@ export class AdminMeetingsComponent implements OnInit {
   selectedMeeting: Meeting | undefined;
 
   visibleMeetingInformationDialog: boolean = false;
+  visibleCreateMeetingDialog: boolean = false;
 
   constructor(private changeDetector: ChangeDetectorRef,
               private meetingService: MeetingService,
@@ -145,20 +148,20 @@ export class AdminMeetingsComponent implements OnInit {
   }
 
   handleDateSelect(selectInfo: DateSelectArg) {
-    const title = prompt('Please enter a new title for your event');
-    const calendarApi = selectInfo.view.calendar;
+    this.selectInfo = selectInfo;
 
-    calendarApi.unselect(); // clear date selection
+    const today = new Date();
 
-    if (title) {
-      calendarApi.addEvent({
-        id: "1",
-        title,
-        start: selectInfo.startStr,
-        end: selectInfo.endStr,
-        allDay: selectInfo.allDay
+    if (selectInfo.start < today) {
+      this.toastService.showMessage({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Cannot create meeting for past dates.',
+        life: 3000
       });
+      return;
     }
+    this.visibleCreateMeetingDialog = true;
   }
 
 
@@ -176,7 +179,6 @@ export class AdminMeetingsComponent implements OnInit {
 
   updateMeetingHandler(updatedMeeting: Meeting) {
     const updatedEventIndex = this.events.findIndex(event => event.id === updatedMeeting.id.toString());
-    console.log(updatedEventIndex);
 
     if (updatedEventIndex !== -1) {
       const updatedEvents = [...this.events];
@@ -245,4 +247,34 @@ export class AdminMeetingsComponent implements OnInit {
     }
   }
 
+  newMeetingHandler(meeting: DetailedMeeting, selectInfo: DateSelectArg) {
+    this.events.push({
+      id: meeting.id.toString(),
+      title: meeting.title,
+      date: new Date(meeting.start).toISOString().slice(0, 10),
+      start: meeting.start,
+      end: meeting.end
+    })
+
+    const calendarApi = selectInfo.view.calendar;
+
+    calendarApi.unselect();
+
+    calendarApi.addEvent({
+      id: meeting.id.toString(),
+      title: meeting.title,
+      start: meeting.start,
+      end: meeting.end,
+    });
+
+    this.visibleCreateMeetingDialog = false;
+
+    this.toastService.showMessage({
+      severity: 'success',
+      summary: 'Success',
+      detail: 'Meeting created successfully',
+      life: 3000
+    });
+
+  }
 }

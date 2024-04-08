@@ -5,7 +5,7 @@ import {InputTextareaModule} from "primeng/inputtextarea";
 import {MultiSelectModule} from "primeng/multiselect";
 import {NgIf} from "@angular/common";
 import {FormBuilder, FormControl, ReactiveFormsModule, Validators} from "@angular/forms";
-import {DetailedTask} from "@core/types/detailed-task";
+import {DetailedTask} from "@core/types/tasks/detailed-task";
 import {TaskService} from "@core/services/task.service";
 import {ToastService} from "@core/services/toast.service";
 

@@ -32,7 +32,6 @@ export class AuthService {
 
   register(user: any) {
     const url = API_URL + '/register';
-    console.log(user);
     return this.http.post<User>(url, user);
   }
 }

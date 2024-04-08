@@ -8,7 +8,6 @@ import {Meeting} from "@core/types/meeting";
 import {MeetingService} from "@core/services/meeting.service";
 import {ToastService} from "@core/services/toast.service";
 import {ConfirmationService} from "primeng/api";
-import {getXHRResponse} from "rxjs/internal/ajax/getXHRResponse";
 
 @Component({
   selector: 'app-admin-detailed-meeting',
@@ -34,10 +33,10 @@ export class AdminDetailedMeetingComponent {
 
   private _meeting!: Meeting;
 
-  @Output() updatedMeeting: EventEmitter<Meeting> = new EventEmitter<Meeting>();
+  @Output() updatedMeetingEvent: EventEmitter<Meeting> = new EventEmitter<Meeting>();
   updateMeetingFormGroup!: FormGroup;
 
-  @Output() deletedMeeting: EventEmitter<number> = new EventEmitter<number>();
+  @Output() deletedMeetingEvent: EventEmitter<number> = new EventEmitter<number>();
 
   constructor(private formBuilder: FormBuilder,
               private meetingService: MeetingService,
@@ -69,27 +68,16 @@ export class AdminDetailedMeetingComponent {
   }
 
   updateMeeting() {
-    console.log(this.updateMeetingFormGroup.value);
-    console.log(this.updateMeetingFormGroup.value.end);
-
     const updatedMeetingFormValue = {
       ...this.updateMeetingFormGroup.value,
       start: this.updateMeetingFormGroup.value.start.getTime(),
       end: this.updateMeetingFormGroup.value.end.getTime()
     };
-console.log(updatedMeetingFormValue)
+
     this.meetingService.updateMeeting(this._meeting.id, updatedMeetingFormValue).subscribe({
       next: (response) => {
         this.toggleEditMode();
-
-        this.updatedMeeting.emit(response);
-
-        // this.toastService.showMessage({
-        //   severity: 'success',
-        //   summary: 'Success',
-        //   detail: 'Meeting updated successfully',
-        //   life: 3000
-        // });
+        this.updatedMeetingEvent.emit(response);
       },
       error: (err) => {
         console.log(err);
@@ -124,7 +112,7 @@ console.log(updatedMeetingFormValue)
   private deleteMeeting(id: number) {
     this.meetingService.deleteMeeting(id).subscribe({
       next: (response) => {
-        this.deletedMeeting.emit(id);
+        this.deletedMeetingEvent.emit(id);
       },
       error: (err) => {
         console.log(err);

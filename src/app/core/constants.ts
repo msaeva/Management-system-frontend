@@ -1,6 +1,6 @@
 import {Role} from "@core/role.enum";
 import {ProjectStatus} from "@core/project-status";
-import {TaskStatus} from "@core/types/task-status";
+import {TaskStatus} from "@core/task-status";
 
 export const JWT_LOCAL_STORAGE_KEY = "token"
 export const API_URL = 'http://localhost:8080/system-management-1.0-SNAPSHOT/api';
@@ -28,6 +28,5 @@ export  const taskStatus: { value: string, label: string }[] = [
   {value: TaskStatus.OPEN.valueOf(), label: 'Open'},
   {value: TaskStatus.TODO.valueOf(), label: 'Todo'},
   {value: TaskStatus.DONE.valueOf(), label: 'Done'},
-  {value: TaskStatus.IN_PROGRESS.valueOf(), label: 'In Progress'},
-  {value: TaskStatus.RE_OPEN.valueOf(), label: 'Re-Open'}
+  {value: TaskStatus.IN_PROGRESS.valueOf(), label: 'In Progress'}
 ];

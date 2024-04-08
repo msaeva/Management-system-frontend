@@ -1,53 +1,154 @@
-<div class="grid w-full">
-  <div class="lg:col-3 sm:col-12 p-2">
-    <div class="p-grid p-justify-center  shadow-1 mb-2">
-      <div class="p-col-12 header">
-        <p class="font-bold">TODO</p>
-      </div>
+<!--class="grid gap-3 mx-3 xl:mx-4 py-4"-->
+<div class="kanban-wrapper">
+  <!--  <div class="col">-->
+  <p-card [pDroppableDisabled]="isDropDisabled"
+          (onDrop)="drop('OPEN', $event)"
+          pDroppable styleClass="OPEN">
+    <h2>
+        <span>OPEN
+          <p-chip
+            [label]="(this.openTasks.length ? this.openTasks.length : 0).toString()">
+          </p-chip>
+        </span>
+      <p-button icon="pi pi-plus"
+                styleClass="p-button-rounded p-button-help p-button-outlined p-button-sm">
+      </p-button>
+    </h2>
+    <div class="list">
+      <ng-container *ngFor="let task of this.openTasks let i = index">
+        <div class="list-item"
+             pDraggable
+             (onDragStart)="dragStart(task)"
+             (onDragEnd)="dragEnd(task)"
+             (click)="openDetailedTaskDialog(task)"
+        >
+          <div class="task-body">
+            <h4>{{ task.title }}</h4>
+            <p>{{ task.description }}</p>
+          </div><!-- body -->
+          <div class="task-footer flex justify-content-between">
+            <span><i class="pi pi-user mr-2"></i>{{ task.userFullName ? task.userFullName : 'No assigned user' }}</span>
+            <p-chip styleClass="flex-auto" [label]="task.status | titlecase"></p-chip>
+          </div>
+        </div>
+        <div *ngIf="i !== this.openTasks.length - 1" class="divider"></div>
+      </ng-container>
     </div>
-    <div class="grid">
-      <div class="col-12" *ngFor="let task of todoTasks">
-        <app-task [task]="task"></app-task>
-      </div>
-    </div>
-  </div>
+  </p-card>
+  <!--  </div>-->
 
-  <div class="lg:col-3 sm:col-12  p-2">
-    <div class="p-grid p-justify-center shadow-1mb-2">
-      <div class="p-col-12 header">
-        <p class="font-bold">OPEN</p>
-      </div>
+  <!--  <div class="col">-->
+  <p-card [pDroppableDisabled]="isDropDisabled"
+          (onDrop)="drop('TODO', $event)"
+          pDroppable styleClass="TODO">
+    <h2>
+        <span>TODO
+          <p-chip [label]="(this.todoTasks.length ? this.todoTasks.length : 0).toString()">
+          </p-chip>
+        </span>
+      <p-button icon="pi pi-plus"
+                styleClass="p-button-rounded p-button-help p-button-outlined p-button-sm">
+      </p-button>
+    </h2>
+    <div class="list">
+      <ng-container *ngFor="let task of this.todoTasks let i = index">
+        <div class="list-item"
+             pDraggable
+             (onDragStart)="dragStart(task)"
+             (onDragEnd)="dragEnd(task)"
+             (click)="openDetailedTaskDialog(task)">
+          <div class="task-body">
+            <h4>{{ task.title }}</h4>
+            <p>{{ task.description }}</p>
+          </div>
+          <div class="task-footer flex justify-content-between">
+            <span><i class="pi pi-user mr-2"></i>{{ task.userFullName }}</span>
+            <p-chip styleClass="flex-auto" [label]="task.status | titlecase"></p-chip>
+          </div>
+        </div>
+        <div *ngIf="i !== this.todoTasks.length - 1" class="divider"></div>
+      </ng-container>
     </div>
-    <div class="grid">
-      <div class="col-12" *ngFor="let task of openTasks">
-        <app-task [task]="task"></app-task>
-      </div>
-    </div>
-  </div>
+  </p-card>
+  <!--  </div>-->
 
-  <div class="lg:col-3 sm:col-12 p-2">
-    <div class="p-grid p-justify-center shadow-1 mb-2">
-      <div class="p-col-12 header">
-        <p class="font-bold">IN PROGRESS</p>
-      </div>
+  <!--  <div class="col">-->
+  <p-card [pDroppableDisabled]="isDropDisabled"
+          (onDrop)="drop('IN_PROGRESS', $event)"
+          pDroppable styleClass="IN_PROGRESS">
+    <h2>
+        <span>IN PROGRESS <p-chip
+          [label]="(this.inProgressTasks.length ? this.inProgressTasks.length : 0).toString()"></p-chip></span>
+      <p-button icon="pi pi-plus"
+                styleClass="p-button-rounded p-button-help p-button-outlined p-button-sm"></p-button>
+    </h2>
+    <div class="list">
+      <ng-container *ngFor="let task of this.inProgressTasks let i = index">
+        <div class="list-item"
+             pDraggable
+             (onDragStart)="dragStart(task)"
+             (onDragEnd)="dragEnd(task)"
+             (click)="openDetailedTaskDialog(task)">
+          <div class="task-body">
+            <h4>{{ task.title }}</h4>
+            <p>{{ task.description }}</p>
+          </div><!-- body -->
+          <div class="task-footer flex justify-content-between">
+            <span><i class="pi pi-user mr-2"></i>{{ task.userFullName }}</span>
+            <p-chip styleClass="flex-auto" [label]="task.status | titlecase"></p-chip>
+          </div>
+        </div>
+        <div *ngIf="i !== this.inProgressTasks.length - 1" class="divider"></div>
+      </ng-container>
     </div>
-    <div class="grid">
-      <div class="col-12" *ngFor="let task of inProgressTasks">
-        <app-task [task]="task"></app-task>
-      </div>
-    </div>
-  </div>
+  </p-card>
+  <!--  </div>-->
 
-  <div class="lg:col-3 sm:col-12 p-2">
-    <div class="p-grid p-justify-center shadow-1 mb-2">
-      <div class="p-col-12 header">
-        <p class="font-bold">DONE</p>
-      </div>
+  <!--  <div class="col">-->
+  <p-card [pDroppableDisabled]="isDropDisabled"
+          (onDrop)="drop('DONE', $event)"
+          pDroppable styleClass="DONE">
+    <ng-template pTemplate="header">
+    </ng-template>
+    <h2>
+        <span>DONE
+          <p-chip [label]="(this.doneTasks.length ? this.doneTasks.length : 0).toString()">
+          </p-chip>
+        </span>
+      <p-button icon="pi pi-plus"
+                styleClass="p-button-rounded p-button-help p-button-outlined p-button-sm">
+      </p-button>
+    </h2>
+    <div class="list">
+      <ng-container *ngFor="let task of this.doneTasks let i = index">
+        <div class="list-item"
+             pDraggable
+             (onDragStart)="dragStart(task)"
+             (onDragEnd)="dragEnd(task)"
+             (click)="openDetailedTaskDialog(task)">
+          <div class="task-body">
+            <h4>{{ task.title }}</h4>
+            <p>{{ task.description }}</p>
+          </div>
+          <div class="flex justify-content-between" style="font-size: smaller; padding-top: 0.25rem;">
+              <span><i
+                class="pi pi-user mr-2"></i>{{ task.userFullName }}</span>
+            <p-chip styleClass="flex-auto" [label]="task.status | titlecase"></p-chip>
+          </div>
+        </div>
+        <div *ngIf="i !== this.doneTasks.length - 1" class="divider"></div>
+      </ng-container>
     </div>
-    <div class="grid">
-      <div class="col-12" *ngFor="let task of doneTasks">
-        <app-task [task]="task"></app-task>
-      </div>
-    </div>
-  </div>
+  </p-card>
 </div>
+<!--</div>-->
+
+
+<p-dialog *ngIf="visible && selectedTask"
+          [(visible)]="visible"
+          [modal]="true"
+          [style]="{width: '50vw'}"
+          [maximizable]="true"
+          header="Task Information">
+  <app-detailed-task [id]="selectedTask!.id"></app-detailed-task>
+</p-dialog>

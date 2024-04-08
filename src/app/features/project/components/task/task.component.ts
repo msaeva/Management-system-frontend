@@ -1,11 +1,12 @@
 import {Component, Input} from '@angular/core';
 import {CardModule} from "primeng/card";
 import {ButtonModule} from "primeng/button";
-import {Task} from "@core/types/task";
+import {Task} from "@core/types/tasks/task";
 import {DetailedTaskComponent} from "@feature/project/components/detailed-task/detailed-task.component";
-import {NgIf} from "@angular/common";
-import {SingleTaskService} from "@core/services/single-task.service";
+import {NgIf, TitleCasePipe} from "@angular/common";
 import {DialogModule} from "primeng/dialog";
+import {DragDropModule} from "primeng/dragdrop";
+import {ChipModule} from "primeng/chip";
 
 @Component({
   selector: 'app-task',
@@ -15,7 +16,10 @@ import {DialogModule} from "primeng/dialog";
     ButtonModule,
     DetailedTaskComponent,
     NgIf,
-    DialogModule
+    DialogModule,
+    DragDropModule,
+    ChipModule,
+    TitleCasePipe
   ],
   templateUrl: './task.component.html',
   styleUrl: './task.component.scss'

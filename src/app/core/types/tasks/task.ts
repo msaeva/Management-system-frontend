@@ -4,4 +4,6 @@ export interface Task {
   description: string;
   status: string;
   abbreviation: string;
+  userFullName: string;
+  userId: number
 }

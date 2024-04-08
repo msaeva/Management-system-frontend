@@ -47,7 +47,6 @@ export class LoginComponent implements OnDestroy {
       this.authService.login(this.username!.value as string, this.password!.value as string)
         .subscribe({
             next: (response: string) => {
-              console.log(response)
               this.localStorageService.setToken(response);
 
               const url = DEFAULT_ROUTING.get(this.localStorageService.getRole() as Role)

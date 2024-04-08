@@ -1,7 +1,7 @@
 import {Injectable} from "@angular/core";
 import {API_URL} from "@core/constants";
 import {HttpClient} from "@angular/common/http";
-import {SingleTask} from "@core/types/single-task";
+import {SingleTask} from "@core/types/tasks/single-task";
 
 @Injectable({
   providedIn: 'root'

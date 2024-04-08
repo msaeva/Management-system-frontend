@@ -4,10 +4,11 @@ import {HttpClient, HttpParams} from "@angular/common/http";
 import {DetailedProject} from "@core/types/projects/detailed-project";
 import {User} from "@core/types/users/user";
 import {ProjectTask} from "@core/types/projects/project-task";
-import {DetailedTask} from "@core/types/detailed-task";
+import {DetailedTask} from "@core/types/tasks/detailed-task";
 import {Pagination} from "@core/types/pagination";
 import {Pageable} from "@core/types/pageable";
 import {ProjectUser} from "@core/types/projects/project-user";
+import {ProjectTeam} from "@core/types/projects/project-team";
 
 @Injectable({providedIn: 'root'})
 export class ProjectService {
@@ -84,5 +85,10 @@ export class ProjectService {
   getProjectsWithUsers() {
     const url = `${API_URL_ADMIN}/projects/users`;
     return this.http.get<ProjectUser[]>(url);
+  }
+
+  getAllProjectsWithTeams() {
+    const url = `${API_URL_ADMIN}/projects/teams`;
+    return this.http.get<ProjectTeam[]>(url);
   }
 }

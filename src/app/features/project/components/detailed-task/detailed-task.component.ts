@@ -2,7 +2,7 @@ import {Component, Input, OnInit} from '@angular/core';
 import {ButtonModule} from "primeng/button";
 import {DialogModule} from "primeng/dialog";
 import {SingleTaskService} from "@core/services/single-task.service";
-import {SingleTask} from "@core/types/single-task";
+import {SingleTask} from "@core/types/tasks/single-task";
 import {CardModule} from "primeng/card";
 import {AvatarModule} from "primeng/avatar";
 import {InputTextareaModule} from "primeng/inputtextarea";
@@ -10,6 +10,7 @@ import {CommentService} from "@core/services/comment.service";
 import {DatePipe, NgForOf} from "@angular/common";
 import {Comment} from "@core/types/comment";
 import {FormsModule} from "@angular/forms";
+import {ChipsModule} from "primeng/chips";
 
 @Component({
   selector: 'app-detailed-task',
@@ -21,14 +22,16 @@ import {FormsModule} from "@angular/forms";
     AvatarModule,
     InputTextareaModule,
     NgForOf,
-    FormsModule
+    FormsModule,
+    ChipsModule,
+    DatePipe
   ],
   templateUrl: './detailed-task.component.html',
   styleUrl: './detailed-task.component.scss'
 })
 export class DetailedTaskComponent implements OnInit {
   @Input() id: number | undefined;
-  task: SingleTask | undefined;
+  task!: SingleTask;
   comments: Comment[] = [];
   newCommentInput: string = '';
 
@@ -48,8 +51,6 @@ export class DetailedTaskComponent implements OnInit {
     this.commentService.getTaskComments(taskId).subscribe({
       next: (response) => {
         this.comments = response;
-        console.log(response);
-        console.log(this.comments);
       }, error: () => {
         console.log("Error loading tasks");
       }

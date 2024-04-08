@@ -70,7 +70,6 @@ export class AdminProjectListComponent implements OnInit {
       next: (project) => {
         this.selectedProject = project;
         this.loadingProjectById = false;
-        console.log(this.selectedProject);
       },
       error: (err) => {
         console.log(err);

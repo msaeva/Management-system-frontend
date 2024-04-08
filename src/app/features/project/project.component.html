@@ -1,44 +1,50 @@
-<p-button (click)="showDialog()" icon="pi pi-external-link" label="DetailedProject Information"></p-button>
-
-<p-dialog header="DetailedProject Information" [(visible)]="visible" [modal]="true" [style]="{ width: '50rem' }" [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }">
-  <ng-template pTemplate="header">
-    <div class="p-d-flex p-ai-center">
-      <p-avatar image="https://primefaces.org/cdn/primeng/images/avatar/amyelsner.png" shape="circle"></p-avatar>
-      <span class="p-ml-2 font-weight-bold">DetailedProject Information</span>
-    </div>
-  </ng-template>
-
-  <div class="p-grid p-dir-col p-text-left">
-    <div class="p-col">
-      <b>Title:</b> {{ project.title }}
-    </div>
-    <div class="p-col">
-      <b>Description:</b> {{ project.description }}
-    </div>
-    <div class="p-col">
-      <b>Status:</b> {{ project.status }}
-    </div>
-    <div class="p-col">
-      <b>Created Date:</b> {{ project.createdDate | date: 'medium' }}
-    </div>
-    <div class="p-col">
-      <b>Teams:</b>
-      <ul>
-        <li *ngFor="let team of project?.teams">
-          <span>{{ team.name }} -</span>
-          <ul>
-            <li *ngFor="let user of team.users">
-              {{ user.username }} ({{ user.email }})
-            </li>
-          </ul>
-        </li>
-      </ul>
-    </div>
+<div class="project-view-container">
+  <div class="pl-5 pt-2">
+    <p-button (click)="showDialog()" icon="pi pi-external-link" label="Detailed Project Information"></p-button>
   </div>
 
-  <ng-template pTemplate="footer">
-    <p-button icon="pi pi-check" (click)="visible = false" label="Close" pAutoFocus [autofocus]="true"></p-button>
-  </ng-template>
-</p-dialog>
-<app-project-task-list></app-project-task-list>
+  <p-dialog header="DetailedProject Information" [(visible)]="visible" [modal]="true" [style]="{ width: '50rem' }" [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }">
+    <ng-template pTemplate="header">
+      <div class="p-d-flex p-ai-center">
+        <p-avatar image="https://primefaces.org/cdn/primeng/images/avatar/amyelsner.png" shape="circle"></p-avatar>
+        <span class="p-ml-2 font-weight-bold">DetailedProject Information</span>
+      </div>
+    </ng-template>
+
+    <div class="p-grid p-dir-col p-text-left">
+      <div class="p-col">
+        <b>Title:</b> {{ project.title }}
+      </div>
+      <div class="p-col">
+        <b>Description:</b> {{ project.description }}
+      </div>
+      <div class="p-col">
+        <b>Status:</b> {{ project.status }}
+      </div>
+      <div class="p-col">
+        <b>Created Date:</b> {{ project.createdDate | date: 'medium' }}
+      </div>
+      <div class="p-col">
+        <b>Teams:</b>
+        <ul>
+          <li *ngFor="let team of project?.teams">
+            <span>{{ team.name }} -</span>
+            <ul>
+              <li *ngFor="let user of team.users">
+                {{ user.username }} ({{ user.email }})
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <ng-template pTemplate="footer">
+      <p-button icon="pi pi-check" (click)="visible = false" label="Close" pAutoFocus [autofocus]="true"></p-button>
+    </ng-template>
+  </p-dialog>
+  <app-project-task-list></app-project-task-list>
+</div>
+
+
 

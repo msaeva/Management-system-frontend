@@ -39,18 +39,8 @@ export class RegisterComponent {
   });
 
   register() {
-    // const body = {
-    //   username: this.registerForm.value.username,
-    //   email: this.registerForm.value.email,
-    //   firstName: this.registerForm.value.firstName,
-    //   lastName: this.registerForm.value.lastName,
-    //   password: this.registerForm.value.password,
-    //   role: "USER"
-    // };
-
     this.authService.register(this.registerForm.value).subscribe({
       next: (response) => {
-        console.log('Register successful:', response)
         this.router.navigate(['/login']);
       },
       error: (err) => console.log(err)

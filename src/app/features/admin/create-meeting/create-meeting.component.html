@@ -1,0 +1,57 @@
+<div class="grid justify-content-center align-items-center">
+
+  <div class="flex flex-column mt-3 pt-3 w-full">
+    <p-treeSelect class="w-full" containerStyleClass="w-full"
+                  [(ngModel)]="selectedData" [options]="options"
+                  (onNodeSelect)="onSelect()"
+                  display="chip" [metaKeySelection]="false"
+                  selectionMode="checkbox"
+                  placeholder="Select Item">
+    </p-treeSelect>
+  </div>
+
+
+  <div class="grid gap-4 mt-4">
+    <div class="p-col-2">
+      <div class="flex flex-column gap-2">
+        <label>Start</label>
+        <span class="p-inputgroup">
+                <input [disabled]="true"
+                       [ngModel]="selectInfo.start | date:'medium'"
+                       pInputText id="start"/>
+                <span class="p-inputgroup-addon">
+                  <i class="pi pi-calendar" style="color: var(--primary-color)"></i>
+                </span>
+              </span>
+      </div>
+    </div>
+    <div class="p-col-2">
+      <div class="flex flex-column gap-2">
+        <label>End</label>
+        <span class="p-inputgroup">
+                <input [disabled]="true"
+                       [ngModel]="selectInfo.end | date:'medium'"
+                       pInputText id="end"/>
+                <span class="p-inputgroup-addon">
+                  <i class="pi pi-calendar" style="color: var(--primary-color)"></i>
+                </span>
+      </span>
+      </div>
+    </div>
+  </div>
+
+  <div class="flex flex-column mt-3 pt-3 w-full">
+    <span class="p-float-label">
+      <input pInputText id="title" [(ngModel)]="title"/>
+      <label for="title">Title</label>
+    </span>
+  </div>
+
+  <div class="justify-content-center align-items-center gap-2 mt-5">
+    <p-button (click)="createMeeting()"
+              [disabled]="!selectedData && !title"
+              label="Create"
+              styleClass="w-10rem">
+    </p-button>
+  </div>
+</div>

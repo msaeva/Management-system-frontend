@@ -20,7 +20,6 @@ export class LocalStorageService {
     const token = this.getToken();
     if (token) {
       const decodedToken: any = jwtDecode(token);
-      console.log(decodedToken.auth)
       return decodedToken.auth;
     }
     return null;

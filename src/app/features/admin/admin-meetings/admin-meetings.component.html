@@ -1,44 +1,48 @@
 <div class="ml-4 mr-4 mt-1">
-  <p-dropdown [options]="users"
-              [(ngModel)]="selectedUser"
-              optionLabel="fullName"
-              [filter]="true"
-              filterBy="fullName"
-              [showClear]="true"
-              (onChange)="onUserChange()"
-              placeholder="Filter by User">
-    <ng-template let-user pTemplate="selectedItem">
-      <div class="flex align-items-center gap-2">
-        <div>{{ user.fullName }}</div>
-      </div>
-    </ng-template>
-    <ng-template let-user pTemplate="item">
-      <div class="flex align-items-center gap-2">
-        <div>{{ user.fullName }}</div>
-      </div>
-    </ng-template>
-  </p-dropdown>
-
-  <p-dropdown [options]="filteredProjects"
-              [(ngModel)]="selectedProject"
-              optionLabel="title"
-              [filter]="true"
-              filterBy="title"
-              [showClear]="true"
-              (onChange)="onProjectChange()"
-              placeholder="Filter by Project">
-    <ng-template pTemplate="selectedItem" let-selectedOption>
-      <div class="flex align-items-center gap-2">
-        <div>{{ selectedOption.title }}</div>
-      </div>
-    </ng-template>
-    <ng-template let-project pTemplate="item">
-      <div class="flex align-items-center gap-2">
-        <div>{{ project.title }}</div>
-      </div>
-    </ng-template>
-  </p-dropdown>
-
+  <div class="flex flex-row p-4 gap-2">
+    <div class="flex">
+      <p-dropdown [options]="users"
+                  [(ngModel)]="selectedUser"
+                  optionLabel="fullName"
+                  [filter]="true"
+                  filterBy="fullName"
+                  [showClear]="true"
+                  (onChange)="onUserChange()"
+                  placeholder="Filter by User">
+        <ng-template let-user pTemplate="selectedItem">
+          <div class="flex align-items-center gap-2">
+            <div>{{ user.fullName }}</div>
+          </div>
+        </ng-template>
+        <ng-template let-user pTemplate="item">
+          <div class="flex align-items-center gap-2">
+            <div>{{ user.fullName }}</div>
+          </div>
+        </ng-template>
+      </p-dropdown>
+    </div>
+    <div class="flex align-items-center">
+      <p-dropdown [options]="filteredProjects"
+                  [(ngModel)]="selectedProject"
+                  optionLabel="title"
+                  [filter]="true"
+                  filterBy="title"
+                  [showClear]="true"
+                  (onChange)="onProjectChange()"
+                  placeholder="Filter by Project">
+        <ng-template pTemplate="selectedItem" let-selectedOption>
+          <div class="flex align-items-center gap-2">
+            <div>{{ selectedOption.title }}</div>
+          </div>
+        </ng-template>
+        <ng-template let-project pTemplate="item">
+          <div class="flex align-items-center gap-2">
+            <div>{{ project.title }}</div>
+          </div>
+        </ng-template>
+      </p-dropdown>
+    </div>
+  </div>
   <full-calendar
     [options]="calendarOptions"
     [events]="events">
@@ -53,8 +57,21 @@
           [resizable]="false">
   <app-admin-detailed-meeting *ngIf="selectedMeeting"
                               [meeting]="selectedMeeting!"
-                              (updatedMeeting)="updateMeetingHandler($event)"
-                              (deletedMeeting)="deleteMeetingHandler($event)">
+                              (updatedMeetingEvent)="updateMeetingHandler($event)"
+                              (deletedMeetingEvent)="deleteMeetingHandler($event)">
   </app-admin-detailed-meeting>
 </p-dialog>
+
+<p-dialog header="Create Meeting"
+          [(visible)]="visibleCreateMeetingDialog"
+          [modal]="true"
+          [style]="{ width: '48vw', height: '30vw' }"
+          [draggable]="false"
+          [resizable]="false">
+  <app-create-meeting [selectInfo]="selectInfo"
+                      (newMeetingEvent)="newMeetingHandler($event, selectInfo)"
+                      *ngIf="visibleCreateMeetingDialog">
+  </app-create-meeting>
+</p-dialog>
+
 
