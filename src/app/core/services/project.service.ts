@@ -1,5 +1,5 @@
 import {Injectable} from "@angular/core";
-import {API_URL, API_URL_ADMIN} from "@core/constants";
+import {API_URL, API_URL_ADMIN, API_URL_PM} from "@core/constants";
 import {HttpClient, HttpParams} from "@angular/common/http";
 import {DetailedProject} from "@core/types/projects/detailed-project";
 import {User} from "@core/types/users/user";
@@ -90,5 +90,15 @@ export class ProjectService {
   getAllProjectsWithTeams() {
     const url = `${API_URL_ADMIN}/projects/teams`;
     return this.http.get<ProjectTeam[]>(url);
+  }
+
+  getPMProjectsWithTeams() {
+    const url = `${API_URL_PM}/projects/teams`;
+    return this.http.get<ProjectTeam[]>(url);
+  }
+
+  getPMProjectsWithUsers() {
+    const url = `${API_URL_PM}/projects/users`;
+    return this.http.get<ProjectUser[]>(url);
   }
 }

@@ -1,12 +1,12 @@
 import {Routes} from '@angular/router';
-import {ProjectManagementComponent} from "@layouts/project-management/project-management.component";
+import {ProjectManagementLayout} from "@layouts/project-management/project-management-layout.component";
 import {ProjectComponent} from "@feature/project/project.component";
 import {MeetingsComponent} from "@feature/project/components/meetings/meetings.component";
 
 export default <Routes>[
   {
     path: '',
-    component: ProjectManagementComponent,
+    component: ProjectManagementLayout,
     children: [
       {
         path: 'project/:id',

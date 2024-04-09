@@ -1,63 +1,81 @@
-<div *ngIf="getAuthUserId() === task.userId && task.status === TaskStatus.TODO.valueOf()"
-     class="flex justify-content-end flex-wrap">
-  <p-button (onClick)="startTask()" [text]="true" label="Start Task" severity="info"></p-button>
-</div>
+<p-progressSpinner *ngIf="loading.task; else content" styleClass="w-4rem h-4rem" strokeWidth="8"
+                   fill="var(--surface-ground)" animationDuration=".5s">
+</p-progressSpinner>
 
-<div *ngIf="getAuthUserId() === task.userId && task.status === TaskStatus.TODO.valueOf()"
-     class="flex justify-content-end flex-wrap">
-  <div class="block font-bold mb-2">
-    <label for="estimation" class="block">Enter Estimation Time: </label>
-    <p-inputNumber [(ngModel)]="estimationTime"
-                   id="estimation"
-                   [showButtons]="true"
-                   [min]="1" [max]="50"
-                   mode="decimal">
-    </p-inputNumber>
-
-    <p-button (onClick)="submitEstimationTime()" label="Submit" [text]="true" severity="info"></p-button>
+<ng-template #content>
+  <div *ngIf="getAuthUserId() === task.userId && task.status === TaskStatus.TODO.valueOf()"
+       class="flex justify-content-end flex-wrap">
+    <p-button (onClick)="startTask()" [text]="true" label="Start Task" severity="info"></p-button>
   </div>
-</div>
-
-<div>
   <div>
-    <div class="flex flex-column gap-2">
-      <div class="grid gap-4 mt-3">
-        <div class="p-col-2">
-          <div class="flex flex-column gap-2">
-            <label>Title</label>
-            <input [disabled]="true"
-                   [ngModel]="task.title"
-                   pInputText id="start"/>
+    <div>
+      <div class="flex flex-column gap-2">
+        <div class="grid gap-4 mt-3">
+          <div class="p-col-2">
+            <div class="flex flex-column gap-2">
+              <label class="font-bold">Title</label>
+              <input [disabled]="true"
+                     [ngModel]="task.title"
+                     pInputText id="start"/>
+            </div>
           </div>
-        </div>
-        <div class="p-col-2">
-          <div class="flex flex-column gap-2">
-            <label>Status</label>
-            <input [disabled]="true"
-                   [ngModel]="task.status"
-                   pInputText id="end"/>
+          <div class="p-col-2">
+            <div class="flex flex-column gap-2">
+              <label class="font-bold">Status</label>
+              <input [disabled]="true"
+                     [ngModel]="task.status"
+                     pInputText id="end"/>
+            </div>
+          </div>
+          <div class="p-col-2">
+            <div class="flex flex-column gap-2">
+              <label class="font-bold">Assignee</label>
+              <input [disabled]="true"
+                     [ngModel]="task.userFullName"
+                     pInputText id="author"/>
+            </div>
+          </div>
+
+          <div *ngIf="getAuthUserId() === task.userId && task.status === TaskStatus.TODO.valueOf()"
+               class="flex flex-column gap-2">
+            <div class="block font-bold mb-2">
+              <label for="estimation" class="block">Enter Estimation Time: </label>
+              <p-inputNumber [(ngModel)]="estimationTime"
+                             id="estimation"
+                             suffix=" (hours)"
+                             [showButtons]="true"
+                             [min]="1" [max]="50"
+                             mode="decimal">
+              </p-inputNumber>
+
+              <p-button (onClick)="submitEstimationTime()" label="Submit" [text]="true" severity="info"></p-button>
+            </div>
           </div>
         </div>
       </div>
 
-      <div class="flex flex-column gap-2">
-        <label for="description">Description</label>
+      <div class="flex flex-column gap-2 mt-3">
+        <label class="font-bold" for="description">Description</label>
         <input pInputText id="description"
                aria-describedby="username-help"
                [disabled]="true"
                [ngModel]="task?.description"/>
       </div>
 
-      <div *ngIf="getAuthUserId() === task.userId && task.status === TaskStatus.IN_PROGRESS.valueOf()" class="flex flex-column gap-2 mt-4">
-        <label for="estimation">Estimation Time</label>
+      <div *ngIf="getAuthUserId() === task.userId && task.status === TaskStatus.IN_PROGRESS.valueOf()"
+           class="flex flex-column gap-2 mt-4">
+        <label for="progress">Progress</label>
         <p-progressBar [value]="progress"></p-progressBar>
         <p-inputNumber
           [(ngModel)]="progress"
           [showButtons]="true"
           (ngModelChange)="onProgressChange($event)"
+          [max]="100"
+          [min]="0"
+          [step]="10"
           buttonLayout="horizontal"
           inputId="horizontal"
-          [step]="10"
+          id="progress"
           decrementButtonClass="p-button-danger"
           incrementButtonClass="p-button-success"
           incrementButtonIcon="pi pi-plus"
@@ -68,7 +86,7 @@
       </div>
     </div>
     <div class="mt-7">
-      <h3>Comments</h3>
+      <h4>Comments</h4>
       <ng-container *ngFor="let comment of comments">
         <div class="mt-4">
           <app-comment-card [comment]="comment"
@@ -96,4 +114,6 @@
       </div>
     </div>
   </div>
-</div>
+
+</ng-template>
+

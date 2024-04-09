@@ -13,7 +13,7 @@
         <div class="grid gap-4">
           <div class="p-col-2">
             <div class="flex flex-column gap-2">
-              <label for="id">ID</label>
+              <label class="font-bold" for="id">ID</label>
               <input formControlName="id"
                      pInputText id="id"/>
             </div>
@@ -21,7 +21,7 @@
 
           <div class="p-col-2">
             <div class="flex flex-column gap-2">
-              <label for="title">Title</label>
+              <label class="font-bold" for="title">Title</label>
               <input pInputText id="title"
                      formControlName="title"/>
               <div
@@ -41,13 +41,13 @@
           <div class="grid gap-4">
             <div class="p-col-2">
               <div class="flex flex-column gap-2">
-                <label>Start</label>
+                <label class="font-bold">Start</label>
                 <p-calendar formControlName="start" [showIcon]="true" [showTime]="true"></p-calendar>
               </div>
             </div>
             <div class="p-col-2">
               <div class="flex flex-column gap-2">
-                <label>End</label>
+                <label class="font-bold">End</label>
                 <p-calendar formControlName="end"
                             [showIcon]="true"
                             [showTime]="true">

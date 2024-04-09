@@ -23,10 +23,10 @@ import {ConfirmDialogModule} from "primeng/confirmdialog";
     SharedModule,
     NgStyle
   ],
-  templateUrl: './project-management.component.html',
-  styleUrl: './project-management.component.scss'
+  templateUrl: './project-management-layout.component.html',
+  styleUrl: './project-management-layout.component.scss'
 })
-export class ProjectManagementComponent implements OnInit {
+export class ProjectManagementLayout implements OnInit {
   menuItems: MenuItem[] = [];
   showSidebar$ = this.layoutService.getValue();
 

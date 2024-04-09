@@ -1,56 +1,43 @@
 import {ChangeDetectorRef, Component, OnInit, signal} from '@angular/core';
-import {ButtonModule} from "primeng/button";
-import {CreateTaskComponent} from "@feature/admin/create-task/create-task.component";
+import {DetailedMeetingComponent} from "@feature/shared/detailed-meeting/detailed-meeting.component";
+import {CreateMeetingComponent} from "@feature/shared/create-meeting/create-meeting.component";
 import {DialogModule} from "primeng/dialog";
 import {DropdownModule} from "primeng/dropdown";
-import {FormGroup, FormsModule, ReactiveFormsModule} from "@angular/forms";
-import {InputTextModule} from "primeng/inputtext";
-import {NgIf} from "@angular/common";
-import {RippleModule} from "primeng/ripple";
-import {SharedModule} from "primeng/api";
-import {TableModule} from "primeng/table";
-import {DetailedMeeting} from "@core/types/detailed-meeting";
 import {FullCalendarModule} from "@fullcalendar/angular";
+import {NgIf} from "@angular/common";
+import {SharedModule} from "primeng/api";
 import {CalendarOptions, DateSelectArg, EventApi, EventClickArg, EventInput} from "@fullcalendar/core";
-import dayGridPlugin from '@fullcalendar/daygrid';
+import {FormGroup, FormsModule} from "@angular/forms";
+import {DetailedMeeting} from "@core/types/detailed-meeting";
+import {SimpleUser} from "@core/types/users/simple-user";
+import {ProjectUser} from "@core/types/projects/project-user";
 import interactionPlugin from "@fullcalendar/interaction";
+import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import listPlugin from "@fullcalendar/list";
 import {Meeting} from "@core/types/meeting";
 import {MeetingService} from "@core/services/meeting.service";
-import {DetailedMeetingComponent} from "@feature/shared/detailed-meeting/detailed-meeting.component";
-import {SimpleUser} from "@core/types/users/simple-user";
 import {UserService} from "@core/services/user-service";
-import {Role} from "@core/role.enum";
 import {ProjectService} from "@core/services/project.service";
-import {ProjectUser} from "@core/types/projects/project-user";
 import {ToastService} from "@core/services/toast.service";
-import {CreateMeetingComponent} from "@feature/shared/create-meeting/create-meeting.component";
 
 @Component({
-  selector: 'app-meetings-list',
+  selector: 'app-pm-meetings',
   standalone: true,
   imports: [
-    ButtonModule,
-    CreateTaskComponent,
+    DetailedMeetingComponent,
+    CreateMeetingComponent,
     DialogModule,
     DropdownModule,
-    FormsModule,
-    InputTextModule,
-    NgIf,
-    ReactiveFormsModule,
-    RippleModule,
-    SharedModule,
-    TableModule,
     FullCalendarModule,
-    DetailedMeetingComponent,
-    DetailedMeetingComponent,
-    CreateMeetingComponent
+    NgIf,
+    SharedModule,
+    FormsModule
   ],
-  templateUrl: './admin-meetings.component.html',
-  styleUrl: './admin-meetings.component.scss'
+  templateUrl: './pm-meetings.component.html',
+  styleUrl: './pm-meetings.component.scss'
 })
-export class AdminMeetingsComponent implements OnInit {
+export class PmMeetingsComponent implements OnInit {
   currentEvents = signal<EventApi[]>([]);
   forms: FormGroup[] = [];
   meetings: DetailedMeeting[] = [];
@@ -99,16 +86,18 @@ export class AdminMeetingsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.loadUsers();
-    this.loadProjects();
+    // this.loadUsers();
+    // this.loadProjects();
     this.loadMeetings();
   }
 
   loadProjects() {
-    this.projectService.getProjectsWithUsers().subscribe({
+    console.log("in load projects")
+    this.projectService.getPMProjectsWithUsers().subscribe({
       next: (response) => {
         this.projects = response;
         this.filteredProjects = response;
+        console.log(response)
       },
       error: (err) => {
         console.log(err);
@@ -116,22 +105,23 @@ export class AdminMeetingsComponent implements OnInit {
     })
   }
 
-  private loadUsers() {
-    this.userService.getByRole([Role.USER.valueOf(), Role.PM.valueOf()]).subscribe({
-      next: (response) => {
-        this.users = response;
-      },
-      error: (err) => {
-        console.log(err);
-      }
-    })
-  }
+  // private loadUsers() {
+  //   this.userService.getByRole([Role.USER.valueOf(), Role.PM.valueOf()]).subscribe({
+  //     next: (response) => {
+  //       this.users = response;
+  //     },
+  //     error: (err) => {
+  //       console.log(err);
+  //     }
+  //   })
+  // }
 
   loadMeetings() {
-    this.meetingService.getMeetings(null, null).subscribe({
+    this.meetingService.getPMMeetings().subscribe({
       next: (response: DetailedMeeting[]) => {
         this.meetings = response;
 
+        console.log(response);
         this.events = this.meetings.map(meeting => ({
           id: meeting.id.toString(),
           title: meeting.title,
@@ -210,18 +200,18 @@ export class AdminMeetingsComponent implements OnInit {
     });
   }
 
-  onUserChange() {
-    if (this.selectedUser) {
-      this.meetingService.getMeetings(this.selectedUser.id, this.selectedProject ? this.selectedProject.id : null)
-        .subscribe((meetings: DetailedMeeting[]) => {
-          this.filteredMeetings = meetings;
-          this.mapEvents();
-        });
-    } else {
-      this.filteredMeetings = this.meetings.slice();
-      this.mapEvents();
-    }
-  }
+  // onUserChange() {
+  //   if (this.selectedUser) {
+  //     this.meetingService.getMeetings(this.selectedUser.id, this.selectedProject ? this.selectedProject.id : null)
+  //       .subscribe((meetings: DetailedMeeting[]) => {
+  //         this.filteredMeetings = meetings;
+  //         this.mapEvents();
+  //       });
+  //   } else {
+  //     this.filteredMeetings = this.meetings.slice();
+  //     this.mapEvents();
+  //   }
+  // }
 
   private mapEvents() {
     this.events = this.filteredMeetings.map(meeting => ({
@@ -255,6 +245,7 @@ export class AdminMeetingsComponent implements OnInit {
       end: meeting.end
     })
 
+
     const calendarApi = selectInfo.view.calendar;
 
     calendarApi.unselect();
@@ -266,8 +257,9 @@ export class AdminMeetingsComponent implements OnInit {
       end: meeting.end,
     });
 
-    this.visibleCreateMeetingDialog = false;
     this.meetings.push(meeting);
+
+    this.visibleCreateMeetingDialog = false;
     this.toastService.showMessage({
       severity: 'success',
       summary: 'Success',

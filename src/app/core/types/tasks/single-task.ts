@@ -5,4 +5,7 @@ export interface SingleTask {
   description: string;
   status: string;
   abbreviation: string;
+  userFullName: string;
+  progress: number;
+  estimationTime: number;
 }

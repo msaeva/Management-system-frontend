@@ -24,10 +24,10 @@ import {ConfirmDialogModule} from "primeng/confirmdialog";
     SharedModule,
     NgStyle
   ],
-  templateUrl: './admin.component.html',
-  styleUrl: './admin.component.scss'
+  templateUrl: './admin-layout.component.html',
+  styleUrl: './admin-layout.component.scss'
 })
-export class AdminComponent implements OnInit, OnDestroy {
+export class AdminLayout implements OnInit, OnDestroy {
   menuItems: MenuItem[] = [];
   sidebarSubject = this.layoutService.showSidebarSubject;
   subscriptions: Subscription = new Subscription();

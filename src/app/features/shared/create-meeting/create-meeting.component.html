@@ -6,7 +6,7 @@
                   (onNodeSelect)="onSelect()"
                   display="chip" [metaKeySelection]="false"
                   selectionMode="checkbox"
-                  placeholder="Select Item">
+                  placeholder="Select Project">
     </p-treeSelect>
   </div>
 
@@ -14,28 +14,16 @@
   <div class="grid gap-4 mt-4">
     <div class="p-col-2">
       <div class="flex flex-column gap-2">
-        <label>Start</label>
-        <span class="p-inputgroup">
-                <input [disabled]="true"
-                       [ngModel]="selectInfo.start | date:'medium'"
-                       pInputText id="start"/>
-                <span class="p-inputgroup-addon">
-                  <i class="pi pi-calendar" style="color: var(--primary-color)"></i>
-                </span>
-              </span>
+        <label class="font-bold">Start</label>
+        <p-calendar [ngModel]="start"
+                    [showIcon]="true" [showTime]="true"></p-calendar>
       </div>
     </div>
     <div class="p-col-2">
       <div class="flex flex-column gap-2">
-        <label>End</label>
-        <span class="p-inputgroup">
-                <input [disabled]="true"
-                       [ngModel]="selectInfo.end | date:'medium'"
-                       pInputText id="end"/>
-                <span class="p-inputgroup-addon">
-                  <i class="pi pi-calendar" style="color: var(--primary-color)"></i>
-                </span>
-      </span>
+        <label class="font-bold">End</label>
+        <p-calendar [ngModel]="end"
+                    [showIcon]="true" [showTime]="true"></p-calendar>
       </div>
     </div>
   </div>
@@ -43,7 +31,7 @@
   <div class="flex flex-column mt-3 pt-3 w-full">
     <span class="p-float-label">
       <input pInputText id="title" [(ngModel)]="title"/>
-      <label for="title">Title</label>
+      <label  class="font-bold" for="title">Title</label>
     </span>
   </div>
 

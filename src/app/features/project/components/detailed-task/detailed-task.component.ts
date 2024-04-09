@@ -17,9 +17,9 @@ import {LocalStorageService} from "@core/services/local-storage.service";
 import {TaskService} from "@core/services/task.service";
 import {TaskStatus} from "@core/task-status";
 import {Task} from "@core/types/tasks/task";
-import {T} from "@fullcalendar/core/internal-common";
 import {PaginatorModule} from "primeng/paginator";
 import {FileUploadModule} from "primeng/fileupload";
+import {ProgressSpinnerModule} from "primeng/progressspinner";
 
 @Component({
   selector: 'app-detailed-task',
@@ -38,7 +38,8 @@ import {FileUploadModule} from "primeng/fileupload";
     ReactiveFormsModule,
     NgIf,
     PaginatorModule,
-    FileUploadModule
+    FileUploadModule,
+    ProgressSpinnerModule
   ],
   templateUrl: './detailed-task.component.html',
   styleUrl: './detailed-task.component.scss'
@@ -54,6 +55,11 @@ export class DetailedTaskComponent implements OnInit {
 
   createCommentFormControl: FormControl = new FormControl();
 
+  loading: { task: boolean, comments: boolean } = {
+    task: true,
+    comments: true,
+  }
+
   constructor(private singleTaskService: SingleTaskService,
               private commentService: CommentService,
               private toastService: ToastService,
@@ -63,7 +69,6 @@ export class DetailedTaskComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadTask();
-    // TODO add loading
     this.loadComments(this.id!);
     this.initializeCommentFormGroup();
   }
@@ -88,10 +93,12 @@ export class DetailedTaskComponent implements OnInit {
     })
   }
 
-  loadTask() {
+   loadTask() {
     this.singleTaskService.getById(this.id).subscribe({
       next: (task: SingleTask) => {
         this.task = task;
+        this.loading.task = false;
+        this.progress = this.task.progress;
       }, error: () => {
         console.log("Error loading tasks");
       }

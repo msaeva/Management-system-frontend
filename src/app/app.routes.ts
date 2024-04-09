@@ -6,6 +6,7 @@ import {privateGuard} from "@core/guards/private.guard";
 import {ProfileComponent} from "@feature/project/components/profile/profile.component";
 import {adminGuard} from "@core/guards/admin.guard";
 import {userGuard} from "@core/guards/user.guard";
+import {pmGuard} from "@core/guards/pm.guard";
 import {publicGuard} from "@core/guards/public.guard";
 
 export const routes: Routes = [
@@ -18,6 +19,11 @@ export const routes: Routes = [
     path: 'admin',
     loadChildren: () => import('@layouts/admin/admin.routes'),
     canActivate: [privateGuard, adminGuard]
+  },
+  {
+    path: 'project-manager',
+    loadChildren: () => import('@layouts/project-manager/project-manager.routes'),
+    canActivate: [privateGuard, pmGuard]
   },
   {
     path: 'login',

@@ -3,7 +3,7 @@ import {ProjectService} from "@core/services/project.service";
 import {TreeSelectModule} from "primeng/treeselect";
 import {TreeNode} from "primeng/api";
 import {ListboxModule} from "primeng/listbox";
-import {FormsModule} from "@angular/forms";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {lastValueFrom} from "rxjs";
 import {ProjectTeam} from "@core/types/projects/project-team";
 import {ChipsModule} from "primeng/chips";
@@ -12,6 +12,9 @@ import {DateSelectArg} from '@fullcalendar/core';
 import {DatePipe} from "@angular/common";
 import {MeetingService} from "@core/services/meeting.service";
 import {DetailedMeeting} from "@core/types/detailed-meeting";
+import {LocalStorageService} from "@core/services/local-storage.service";
+import {Role} from "@core/role.enum";
+import {CalendarModule} from "primeng/calendar";
 
 @Component({
   selector: 'app-create-meeting',
@@ -22,7 +25,9 @@ import {DetailedMeeting} from "@core/types/detailed-meeting";
     FormsModule,
     ChipsModule,
     ButtonModule,
-    DatePipe
+    DatePipe,
+    CalendarModule,
+    ReactiveFormsModule
   ],
   templateUrl: './create-meeting.component.html',
   styleUrl: './create-meeting.component.scss'
@@ -35,9 +40,13 @@ export class CreateMeetingComponent implements OnInit {
   selectedData!: any[];
   title: string = '';
 
+  start!: Date;
+  end!: Date;
+
 
   constructor(private projectService: ProjectService,
-              private meetingService: MeetingService) {
+              private meetingService: MeetingService,
+              private localStorageService: LocalStorageService) {
   }
 
   async ngOnInit() {
@@ -60,10 +69,16 @@ export class CreateMeetingComponent implements OnInit {
       }))
       this.options.push(record);
     }
+    this.start = this.selectInfo.start;
+    this.end = this.selectInfo.end;
   }
 
   async loadProjects() {
-    this.projects = await lastValueFrom(this.projectService.getAllProjectsWithTeams());
+    if (this.localStorageService.getRole() === Role.PM.valueOf()) {
+      this.projects = await lastValueFrom(this.projectService.getPMProjectsWithTeams());
+    } else if (this.localStorageService.getRole() === Role.ADMIN.valueOf()) {
+      this.projects = await lastValueFrom(this.projectService.getAllProjectsWithTeams());
+    }
   }
 
   onSelect() {
@@ -78,10 +93,24 @@ export class CreateMeetingComponent implements OnInit {
       start: this.selectInfo.start.getTime(),
       end: this.selectInfo.end.getTime(),
     }
-    this.meetingService.create(body).subscribe({
-      next: (response: DetailedMeeting) => {
-        this.newMeetingEvent.emit(response);
-      }
-    })
+    if (this.localStorageService.getRole() === Role.PM.valueOf()) {
+      this.meetingService.createPm(body).subscribe({
+        next: (response: DetailedMeeting) => {
+          this.newMeetingEvent.emit(response);
+        },
+        error: (err) => {
+          console.log(err);
+        }
+      })
+    } else if (this.localStorageService.getRole() === Role.ADMIN.valueOf()) {
+      this.meetingService.createAdmin(body).subscribe({
+        next: (response: DetailedMeeting) => {
+          this.newMeetingEvent.emit(response);
+        },
+        error: (err) => {
+          console.log(err);
+        }
+      })
+    }
   }
 }

@@ -55,11 +55,11 @@
           [style]="{ width: '50vw', height: '40vw' }"
           [draggable]="false"
           [resizable]="false">
-  <app-admin-detailed-meeting *ngIf="selectedMeeting"
+  <app-detailed-meeting *ngIf="selectedMeeting"
                               [meeting]="selectedMeeting!"
                               (updatedMeetingEvent)="updateMeetingHandler($event)"
                               (deletedMeetingEvent)="deleteMeetingHandler($event)">
-  </app-admin-detailed-meeting>
+  </app-detailed-meeting>
 </p-dialog>
 
 <p-dialog header="Create Meeting"
