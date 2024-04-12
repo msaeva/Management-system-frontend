@@ -16,10 +16,6 @@
             [label]="(this.openTasks.length ? this.openTasks.length : 0).toString()">
           </p-chip>
         </span>
-        <p-button *ngIf="getAuthUserRole() === Role.PM" icon="pi pi-plus"
-                  (onClick)="showCreateNewTaskDialog()"
-                  styleClass="p-button-rounded p-button-help p-button-outlined p-button-sm">
-        </p-button>
       </h2>
       <hr *ngIf="openTasks.length > 0" class="divider-header">
       <div class="list">
@@ -36,9 +32,9 @@
             </div>
             <p>{{ task.description }}</p>
             <div class="task-footer flex justify-content-between">
-              <span><i
-                class="pi pi-user mr-2"></i>{{ task.userFullName ? task.userFullName : 'No assigned user' }}</span>
-              <p-chip styleClass="flex-auto" [label]="task.status | titlecase"></p-chip>
+              <span>
+                <i class="pi pi-user mr-2"></i>{{ task.userFullName ? task.userFullName : 'No assigned user' }}</span>
+              <p-chip styleClass="flex-auto bg-red-300 text-0" [label]="task.status | titlecase"></p-chip>
             </div>
           </div>
           <div *ngIf="i !== this.openTasks.length - 1" class="divider"></div>
@@ -73,7 +69,7 @@
             <p>{{ task.description }}</p>
             <div class="task-footer flex justify-content-between">
               <span><i class="pi pi-user mr-2"></i>{{ task.userFullName }}</span>
-              <p-chip styleClass="flex-auto" [label]="task.status | titlecase"></p-chip>
+              <p-chip styleClass="flex-auto bg-primary-300 text-0" [label]="task.status | titlecase"></p-chip>
             </div>
           </div>
           <div *ngIf="i !== this.todoTasks.length - 1" class="divider"></div>
@@ -85,7 +81,7 @@
     <!--  <div class="col">-->
     <p-card [pDroppableDisabled]="isDropDisabled"
             (onDrop)="drop('IN_PROGRESS')"
-            pDroppable styleClass="IN_PROGRESS">
+            pDroppable>
       <h2>
         <span>IN PROGRESS <p-chip
           [label]="(this.inProgressTasks.length ? this.inProgressTasks.length : 0).toString()"></p-chip></span>
@@ -106,7 +102,7 @@
             <p>{{ task.description }}</p>
             <div class="task-footer flex justify-content-between">
               <span><i class="pi pi-user mr-2"></i>{{ task.userFullName }}</span>
-              <p-chip styleClass="flex-auto" [label]="task.status | titlecase"></p-chip>
+              <p-chip styleClass="flex-auto bg-yellow-400 text-0" [label]="task.status | titlecase"></p-chip>
             </div>
           </div>
           <div *ngIf="i !== this.inProgressTasks.length - 1" class="divider"></div>
@@ -142,9 +138,12 @@
             </div>
             <p>{{ task.description }}</p>
             <div class="flex justify-content-between" style="font-size: smaller; padding-top: 0.25rem;">
-              <span><i
-                class="pi pi-user mr-2"></i>{{ task.userFullName }}</span>
-              <p-chip styleClass="flex-auto" [label]="task.status | titlecase"></p-chip>
+              <span>
+                <i class="pi pi-user mr-2"></i>
+                {{ task.userFullName }}
+              </span>
+              <p-chip styleClass="flex-auto bg-teal-400 text-0" [label]="task.status | titlecase">
+              </p-chip>
             </div>
           </div>
           <div *ngIf="i !== this.doneTasks.length - 1" class="divider"></div>
@@ -170,15 +169,3 @@
   </app-detailed-task>
 </p-dialog>
 
-<p-dialog header="Create New Task"
-          [(visible)]="visibleCreateTaskDialog"
-          [modal]="true"
-          [style]="{ width: '40vw', height: '40vw' }"
-          [draggable]="false"
-          [resizable]="false">
-
-  <app-pm-create-task (newTaskEvent)="newTaskHandler($event)"
-                      [projectId]="projectId">
-  </app-pm-create-task>
-
-</p-dialog>
