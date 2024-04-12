@@ -42,6 +42,15 @@
         </ng-template>
       </p-dropdown>
     </div>
+    <div class="flex align-items-center">
+      <p-checkbox
+        [(ngModel)]="filterFinished"
+        [binary]="true"
+        value="filterFinished"
+        (onChange)="applyFilter()"
+        id="finishedCheckbox"></p-checkbox>
+      <label class="p-1" for="finishedCheckbox">Finished</label>
+    </div>
   </div>
   <full-calendar
     [options]="calendarOptions"
@@ -56,16 +65,16 @@
           [draggable]="false"
           [resizable]="false">
   <app-detailed-meeting *ngIf="selectedMeeting"
-                              [meeting]="selectedMeeting!"
-                              (updatedMeetingEvent)="updateMeetingHandler($event)"
-                              (deletedMeetingEvent)="deleteMeetingHandler($event)">
+                        [meeting]="selectedMeeting!"
+                        (updatedMeetingEvent)="updateMeetingHandler($event)"
+                        (deletedMeetingEvent)="deleteMeetingHandler($event)">
   </app-detailed-meeting>
 </p-dialog>
 
 <p-dialog header="Create Meeting"
           [(visible)]="visibleCreateMeetingDialog"
           [modal]="true"
-          [style]="{ width: '48vw', height: '30vw' }"
+          [style]="{ width: '45vw', height: '34vw' }"
           [draggable]="false"
           [resizable]="false">
   <app-create-meeting [selectInfo]="selectInfo"

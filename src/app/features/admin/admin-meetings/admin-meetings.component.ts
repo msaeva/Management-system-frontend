@@ -1,6 +1,5 @@
 import {ChangeDetectorRef, Component, OnInit, signal} from '@angular/core';
 import {ButtonModule} from "primeng/button";
-import {CreateTaskComponent} from "@feature/admin/create-task/create-task.component";
 import {DialogModule} from "primeng/dialog";
 import {DropdownModule} from "primeng/dropdown";
 import {FormGroup, FormsModule, ReactiveFormsModule} from "@angular/forms";
@@ -26,13 +25,13 @@ import {ProjectService} from "@core/services/project.service";
 import {ProjectUser} from "@core/types/projects/project-user";
 import {ToastService} from "@core/services/toast.service";
 import {CreateMeetingComponent} from "@feature/shared/create-meeting/create-meeting.component";
+import {CheckboxModule} from "primeng/checkbox";
 
 @Component({
   selector: 'app-meetings-list',
   standalone: true,
   imports: [
     ButtonModule,
-    CreateTaskComponent,
     DialogModule,
     DropdownModule,
     FormsModule,
@@ -45,7 +44,8 @@ import {CreateMeetingComponent} from "@feature/shared/create-meeting/create-meet
     FullCalendarModule,
     DetailedMeetingComponent,
     DetailedMeetingComponent,
-    CreateMeetingComponent
+    CreateMeetingComponent,
+    CheckboxModule
   ],
   templateUrl: './admin-meetings.component.html',
   styleUrl: './admin-meetings.component.scss'
@@ -62,6 +62,7 @@ export class AdminMeetingsComponent implements OnInit {
   projects: ProjectUser[] = [];
   selectedProject!: ProjectUser;
   filteredProjects: ProjectUser[] = [];
+  filterFinished: boolean = false;
 
   selectInfo!: DateSelectArg;
 
@@ -275,5 +276,26 @@ export class AdminMeetingsComponent implements OnInit {
       life: 3000
     });
 
+  }
+
+  applyFilter() {
+    console.log(this.meetings)
+    if (this.filterFinished) {
+      if (this.selectedUser || this.selectedProject) {
+        console.log("in if")
+        this.filteredMeetings = this.filteredMeetings.filter(meeting => {
+          return new Date(meeting.end) < new Date();
+        });
+      } else {
+        this.filteredMeetings = this.meetings.filter(meeting => {
+          return new Date(meeting.end) < new Date();
+        });
+      }
+    } else {
+      if (!this.selectedUser || this.selectedProject) {
+        this.filteredMeetings = this.meetings;
+      }
+    }
+    this.mapEvents();
   }
 }

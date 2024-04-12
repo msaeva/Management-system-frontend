@@ -1,6 +1,6 @@
 <div class="flex justify-content-end p-4">
   <p-button [rounded]="true"
-            (onClick)="showCreateUserDialog()"
+            (onClick)="showCreateProjectDialog()"
             severity="success"
             icon="pi pi-plus">
   </p-button>
@@ -14,7 +14,7 @@
         </ng-template>
         <div class="p-grid mb-2">
           <div class="p-col-12 header">
-            <p class="font-bold">{{ project.description }}</p>
+            <p class="font-bold">{{ project.description | transform }}</p>
           </div>
         </div>
         <div class="p-grid">
@@ -37,8 +37,9 @@
 
   <ng-container *ngIf="!loadingProjectManagers && !loadingProjectById">
     <app-detailed-project [project]="selectedProject"
-                          [allProjectManagersOptions]="allProjectManagersOptions "
-                          (projectDeleted)="removeDeletedProject($event)">
+                          [allProjectManagersOptions]="allProjectManagersOptions"
+                          (projectDeleted)="removeDeletedProjectHandler($event)"
+                          (projectUpdated)="updateProjectHandler($event)">
     </app-detailed-project>
   </ng-container>
 

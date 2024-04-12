@@ -8,9 +8,14 @@ import {ButtonModule} from "primeng/button";
 import {CardModule} from "primeng/card";
 import {ChipModule} from "primeng/chip";
 import {TaskStatus} from "@core/task-status";
-import {DetailedTaskComponent} from "@feature/project/components/detailed-task/detailed-task.component";
+import {DetailedTaskComponent} from "@feature/shared/detailed-task/detailed-task.component";
 import {DialogModule} from "primeng/dialog";
 import {ToastService} from "@core/services/toast.service";
+import {LocalStorageService} from "@core/services/local-storage.service";
+import {Role} from "@core/role.enum";
+import {PmCreateTaskComponent} from "@feature/project-manager/pm-create-task/pm-create-task.component";
+import {DividerModule} from "primeng/divider";
+import {ProgressSpinnerModule} from "primeng/progressspinner";
 
 @Component({
   selector: 'app-project-task-list',
@@ -24,7 +29,10 @@ import {ToastService} from "@core/services/toast.service";
     TitleCasePipe,
     NgIf,
     DetailedTaskComponent,
-    DialogModule
+    DialogModule,
+    PmCreateTaskComponent,
+    DividerModule,
+    ProgressSpinnerModule
   ],
   templateUrl: './task-list.component.html',
   styleUrl: './task-list.component.scss'
@@ -45,18 +53,28 @@ export class TaskListComponent implements OnInit {
     [TaskStatus.DONE.valueOf()]: []
   };
 
-  projectId: string = "";
-  visible: boolean = false;
+  projectId!: number;
+  visibleDetailedTask: boolean = false;
+  visibleCreateTaskDialog: boolean = false;
   selectedTask: Task | null = null;
+
+  loading: { tasks: boolean } = {
+    tasks: true,
+  }
 
   constructor(private taskService: TaskService,
               private activatedRoute: ActivatedRoute,
-              private toastService: ToastService) {
+              private toastService: ToastService,
+              private localStorageService: LocalStorageService) {
   }
 
   ngOnInit() {
-    this.projectId = this.activatedRoute.snapshot.paramMap.get('id') as string;
-    this.loadTasks();
+    this.activatedRoute.params.subscribe({
+      next: params => {
+        this.projectId = params['id'];
+        this.loadTasks();
+      }
+    });
   }
 
   public type = '';
@@ -160,17 +178,34 @@ export class TaskListComponent implements OnInit {
     }
   }
 
+  getAuthUserRole(): string | null {
+    return this.localStorageService.getAuthUserRole()
+  }
 
   loadTasks() {
-    this.taskService.getTasksByProject(this.projectId).subscribe({
-      next: (tasks: Task[]) => {
-        this.tasks = tasks;
-        this.filterTasks();
-      },
-      error: () => {
-        console.log("Error loading tasks");
-      }
-    });
+    if (this.getAuthUserRole() === Role.USER.valueOf()) {
+      this.taskService.getTasksForUserTeamsByProjectId(this.projectId).subscribe({
+        next: (tasks: Task[]) => {
+          this.tasks = tasks;
+          this.filterTasks();
+          this.loading.tasks = false;
+        },
+        error: () => {
+          console.log("Error loading tasks");
+        }
+      });
+    } else if (this.getAuthUserRole() === Role.PM.valueOf()) {
+      this.taskService.getAllTasksByProject(this.projectId).subscribe({
+        next: (tasks: Task[]) => {
+          this.tasks = tasks;
+          this.filterTasks();
+          this.loading.tasks = false;
+        },
+        error: () => {
+          console.log("Error loading tasks");
+        }
+      });
+    }
   }
 
   private filterTasks() {
@@ -183,7 +218,7 @@ export class TaskListComponent implements OnInit {
 
   openDetailedTaskDialog(task: Task) {
     this.selectedTask = task;
-    this.visible = true
+    this.visibleDetailedTask = true
   }
 
   updatedStatusTaskHandler(updatedTask: Task, newStatus: string) {
@@ -193,8 +228,29 @@ export class TaskListComponent implements OnInit {
       foundTask.status = newStatus;
       this.filterTasks();
     }
-
   }
 
   protected readonly TaskStatus = TaskStatus;
+  protected readonly Role = Role;
+
+
+  showCreateNewTaskDialog() {
+    this.visibleCreateTaskDialog = true;
+  }
+
+  newTaskHandler(task: Task) {
+    // this.initializeForms([...this.projects, project]);
+    this.tasks.push(task);
+    this.filterTasks();
+    this.visibleCreateTaskDialog = false;
+  }
+
+  assignedUserToTaskHandler(updatedTask: Task) {
+    const index = this.tasks.findIndex(task => task.id === updatedTask.id);
+    if (index !== -1) {
+      this.tasks[index] = updatedTask;
+      this.filterTasks();
+      this.visibleDetailedTask = false;
+    }
+  }
 }

@@ -1,27 +1,26 @@
-<div class="grid justify-content-center align-items-center">
+<div class="grid justify-content-center align-items-center p-2">
 
   <div class="flex flex-column mt-3 pt-3 w-full">
+    <label class="font-bold">Select Project</label>
     <p-treeSelect class="w-full" containerStyleClass="w-full"
                   [(ngModel)]="selectedData" [options]="options"
-                  (onNodeSelect)="onSelect()"
+                  (onNodeSelect)="onSelect($event)"
                   display="chip" [metaKeySelection]="false"
                   selectionMode="checkbox"
                   placeholder="Select Project">
     </p-treeSelect>
   </div>
 
-
-  <div class="grid gap-4 mt-4">
-    <div class="p-col-2">
-      <div class="flex flex-column gap-2">
-        <label class="font-bold">Start</label>
+  <div class="flex flex-column mt-3 pt-3 w-full">
+    <div class="flex flex-wrap gap-5">
+      <div class="flex flex-column mt-3 pt-3">
+        <label class="font-bold">Start Date</label>
         <p-calendar [ngModel]="start"
                     [showIcon]="true" [showTime]="true"></p-calendar>
       </div>
-    </div>
-    <div class="p-col-2">
-      <div class="flex flex-column gap-2">
-        <label class="font-bold">End</label>
+
+      <div class="flex flex-column mt-3 pt-3">
+        <label class="font-bold">End Date</label>
         <p-calendar [ngModel]="end"
                     [showIcon]="true" [showTime]="true"></p-calendar>
       </div>
@@ -29,17 +28,19 @@
   </div>
 
   <div class="flex flex-column mt-3 pt-3 w-full">
+    <label class="font-bold">Title</label>
     <span class="p-float-label">
       <input pInputText id="title" [(ngModel)]="title"/>
-      <label  class="font-bold" for="title">Title</label>
+      <label for="title">Title</label>
     </span>
   </div>
 
   <div class="justify-content-center align-items-center gap-2 mt-5">
     <p-button (click)="createMeeting()"
-              [disabled]="!selectedData && !title"
+              [disabled]="!selectedData || !title"
               label="Create"
               styleClass="w-10rem">
     </p-button>
   </div>
+
 </div>

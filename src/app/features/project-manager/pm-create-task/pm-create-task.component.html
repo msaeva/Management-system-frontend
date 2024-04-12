@@ -1,0 +1,75 @@
+<form [formGroup]="createTaskFormGroup">
+  <div class="grid justify-content-center align-items-center">
+    <div class="flex flex-column mt-3 pt-3 w-full">
+      <span class="p-float-label w-full">
+        <input pInputText id="title" formControlName="title" class="w-full"/>
+        <label for="title">Title</label>
+      </span>
+      <div
+        *ngIf="createTaskFormGroup.get('title')?.invalid && (createTaskFormGroup.get('title')?.dirty || createTaskFormGroup.get('title')?.touched)"
+        class="p-error">
+        <small *ngIf="createTaskFormGroup.get('title')?.errors?.['required']" class="p-error">
+          Title is required.
+        </small>
+        <small *ngIf="createTaskFormGroup.get('title')?.errors?.['minlength']" class="p-error">
+          Title must be at least 4 characters long.
+        </small>
+      </div>
+    </div>
+    <div class="flex flex-column mt-3 pt-3 w-full">
+      <span class="p-float-label w-full">
+        <textarea id="float-input"
+                  rows="5" cols="30"
+                  pInputTextarea
+                  formControlName="description"
+                  class="w-full">
+        </textarea>
+        <label for="float-input">Project Description</label>
+      </span>
+      <div
+        *ngIf="createTaskFormGroup.get('description')?.invalid && (createTaskFormGroup.get('description')?.dirty || createTaskFormGroup.get('description')?.touched)"
+        class="p-error">
+        <small *ngIf="createTaskFormGroup.get('description')?.errors?.['required']" class="p-error">
+          Description is required.
+        </small>
+        <small *ngIf="createTaskFormGroup.get('description')?.errors?.['minlength']" class="p-error">
+          Description should be between 10 and 1000 characters long.
+        </small>
+        <small *ngIf="createTaskFormGroup.get('description')?.errors?.['maxlength']" class="p-error">
+          Description should be between 10 and 1000 characters long.
+        </small>
+      </div>
+      <small class="text-muted">{{ createTaskFormGroup.get('description')?.value?.length || 0 }} / 1000</small>
+    </div>
+
+    <div class="flex flex-column mt-3 pt-3 w-full">
+      <p-dropdown [options]="usersOptions"
+                  formControlName="assignee"
+                  optionLabel="fullName"
+                  [filter]="true"
+                  filterBy="fullName"
+                  [showClear]="true"
+                  placeholder="Assign User">
+        <ng-template let-user pTemplate="selectedItem">
+          <div class="flex align-items-center gap-2">
+            <div>{{ user.fullName }}</div>
+          </div>
+        </ng-template>
+        <ng-template let-user pTemplate="item">
+          <div class="flex align-items-center gap-2">
+            <div>{{ user.fullName }}</div>
+          </div>
+        </ng-template>
+      </p-dropdown>
+    </div>
+    <div class="justify-content-center align-items-center gap-2 mt-5">
+      <p-button (click)="createTask()"
+                [disabled]="createTaskFormGroup.invalid"
+                label="Create"
+                icon="pi pi-user"
+                styleClass="w-10rem mx-auto">
+      </p-button>
+    </div>
+  </div>
+</form>
+

@@ -1,6 +1,6 @@
-import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
-import {Inplace, InplaceModule} from "primeng/inplace";
-import {FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {InplaceModule} from "primeng/inplace";
+import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
 import {NgForOf, NgIf, NgStyle} from "@angular/common";
 import {DetailedProject} from "@core/types/projects/detailed-project";
 import {ProjectService} from "@core/services/project.service";
@@ -23,7 +23,8 @@ import {
 } from "@pattern/admin-project-manager-table/admin-project-manager-table.component";
 import {CalendarModule} from "primeng/calendar";
 import {InputTextareaModule} from "primeng/inputtextarea";
-import {projectStatus, roleOptions} from "@core/constants";
+import {projectStatus} from "@core/constants";
+import {ActivatedRoute} from "@angular/router";
 
 @Component({
   selector: 'app-detailed-project',
@@ -55,6 +56,7 @@ export class DetailedProjectComponent implements OnInit {
 
   @Input({required: true}) allProjectManagersOptions!: SimpleUser[];
   @Output() projectDeleted = new EventEmitter<number>();
+  @Output() projectUpdated = new EventEmitter<DetailedProject>();
   @Output() teamDeleted = new EventEmitter<number>();
 
   updateProjectFormGroup!: FormGroup;
@@ -67,10 +69,17 @@ export class DetailedProjectComponent implements OnInit {
               private confirmationService: ConfirmationService,
               private toastService: ToastService,
               private userService: UserService,
-              private formBuilder: FormBuilder) {
+              private formBuilder: FormBuilder,
+              private route: ActivatedRoute) {
   }
 
   ngOnInit(): void {
+    this.route.paramMap.subscribe(params => {
+      const state = window.history.state;
+      if (state && state.project) {
+        this.project = state.project;
+      }
+    });
     this.loadFormGroup();
     this.loadUsersToAddToTeam();
   }
@@ -136,8 +145,8 @@ export class DetailedProjectComponent implements OnInit {
     this.projectService.update(id, this.updateProjectFormGroup.value).subscribe({
       next: (response) => {
         this.project = response;
+        this.projectUpdated.emit(response);
         this.toggleEditMode();
-        console.log(response);
 
       }, error: (err) => {
         console.log(err);

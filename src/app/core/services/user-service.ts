@@ -1,17 +1,27 @@
 import {Injectable} from "@angular/core";
 import {API_URL_ADMIN} from "@core/constants";
-import {HttpClient} from "@angular/common/http";
+import {HttpClient, HttpParams} from "@angular/common/http";
 import {DetailedUser} from "@core/types/users/detailed-user";
 import {SimpleUser} from "@core/types/users/simple-user";
+import {Pagination} from "@core/types/pagination";
+import {Pageable} from "@core/types/pageable";
 
 @Injectable({providedIn: 'root'})
 export class UserService {
   constructor(private http: HttpClient) {
   }
 
-  getAllUsers() {
+  getAllUsers(pagination: Pagination) {
     const url = API_URL_ADMIN + "/users";
-    return this.http.get<DetailedUser[]>(url);
+
+    let params = new HttpParams();
+
+    Object.entries(pagination).filter((entry) => entry[0] !== "totalRecords")
+      .forEach((entry) => {
+        params = params.append(entry[0], entry[1]);
+      });
+
+    return this.http.get<Pageable<DetailedUser>>(url, {params: params});
   }
 
   deleteById(id: number) {

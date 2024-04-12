@@ -51,7 +51,7 @@ export class LoginComponent implements OnDestroy {
             next: (response: string) => {
               this.localStorageService.setToken(response);
 
-              const url = DEFAULT_ROUTING.get(this.localStorageService.getRole() as Role)
+              const url = DEFAULT_ROUTING.get(this.localStorageService.getAuthUserRole() as Role)
               this.router.navigate(['/', url]);
 
               this.toastService.showMessage({

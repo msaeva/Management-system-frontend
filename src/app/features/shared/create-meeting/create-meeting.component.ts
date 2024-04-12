@@ -74,15 +74,19 @@ export class CreateMeetingComponent implements OnInit {
   }
 
   async loadProjects() {
-    if (this.localStorageService.getRole() === Role.PM.valueOf()) {
+    if (this.localStorageService.getAuthUserRole() === Role.PM.valueOf()) {
       this.projects = await lastValueFrom(this.projectService.getPMProjectsWithTeams());
-    } else if (this.localStorageService.getRole() === Role.ADMIN.valueOf()) {
+    } else if (this.localStorageService.getAuthUserRole() === Role.ADMIN.valueOf()) {
       this.projects = await lastValueFrom(this.projectService.getAllProjectsWithTeams());
     }
   }
 
-  onSelect() {
-    console.log(this.selectedData)
+  onSelect(event: any) {
+    const selectedNode = event.node;
+
+    if (selectedNode.children && selectedNode.children.length > 0) {
+      this.selectedData = [selectedNode];
+    }
   }
 
   createMeeting() {
@@ -93,7 +97,7 @@ export class CreateMeetingComponent implements OnInit {
       start: this.selectInfo.start.getTime(),
       end: this.selectInfo.end.getTime(),
     }
-    if (this.localStorageService.getRole() === Role.PM.valueOf()) {
+    if (this.localStorageService.getAuthUserRole() === Role.PM.valueOf()) {
       this.meetingService.createPm(body).subscribe({
         next: (response: DetailedMeeting) => {
           this.newMeetingEvent.emit(response);
@@ -102,7 +106,7 @@ export class CreateMeetingComponent implements OnInit {
           console.log(err);
         }
       })
-    } else if (this.localStorageService.getRole() === Role.ADMIN.valueOf()) {
+    } else if (this.localStorageService.getAuthUserRole() === Role.ADMIN.valueOf()) {
       this.meetingService.createAdmin(body).subscribe({
         next: (response: DetailedMeeting) => {
           this.newMeetingEvent.emit(response);

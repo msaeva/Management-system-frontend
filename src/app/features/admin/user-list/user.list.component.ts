@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {NgForOf, NgIf, NgStyle} from "@angular/common";
 import {ToastModule} from "primeng/toast";
-import {TableModule} from "primeng/table";
+import {TableLazyLoadEvent, TableModule} from "primeng/table";
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
 import {DropdownModule} from "primeng/dropdown";
 import {ButtonModule} from "primeng/button";
@@ -16,6 +16,10 @@ import {DialogModule} from "primeng/dialog";
 import {PasswordModule} from "primeng/password";
 import {CreateUserComponent} from "@feature/admin/create-user/create-user.component";
 import {roleOptions} from "@core/constants";
+import {Pagination} from "@core/types/pagination";
+import {ProgressSpinnerModule} from "primeng/progressspinner";
+import {last} from "rxjs";
+import {RouterLink} from "@angular/router";
 
 @Component({
   selector: 'app-user-list',
@@ -36,6 +40,8 @@ import {roleOptions} from "@core/constants";
     PasswordModule,
     ReactiveFormsModule,
     CreateUserComponent,
+    ProgressSpinnerModule,
+    RouterLink,
   ],
   templateUrl: './user.list.component.html',
   styleUrl: './user.list.component.scss'
@@ -48,15 +54,26 @@ export class UserListComponent implements OnInit {
 
   visible: boolean = false;
 
-  showCreateNewUserDialog() {
-    this.visible = true;
+  pagination: Pagination = {
+    page: 0,
+    size: 5,
+    sort: "id",
+    order: "asc",
+    totalRecords: -1
   }
 
+  loading: { users: boolean } = {
+    users: true,
+  }
 
   constructor(private userService: UserService,
               private toastService: ToastService,
               private confirmationService: ConfirmationService,
               private formBuilder: FormBuilder) {
+  }
+
+  showCreateNewUserDialog() {
+    this.visible = true;
   }
 
   newUserHandler(user: DetailedUser) {
@@ -72,24 +89,31 @@ export class UserListComponent implements OnInit {
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
         this.deleteUser(userId);
-      },
-      reject: () => {
-        // Message if user cancel
-        // this.toastService.showMessage({ severity: 'error', summary: 'Rejected', detail: 'You have rejected', life: 3000 });
       }
     });
   }
 
   ngOnInit(): void {
-    this.loadUsers();
+    // this.loadUsers();
   }
 
-  loadUsers() {
-    this.userService.getAllUsers().subscribe(
+  loadUsers($event: TableLazyLoadEvent) {
+    const rowsPerPage = $event.rows != null ? $event.rows as number : this.pagination.page;
+    const pageNumber = Math.ceil(($event.first as number) / rowsPerPage);
+
+    this.pagination.sort = $event.sortField as string;
+    this.pagination.order = $event.sortOrder === 1 ? 'asc' : 'desc' as string;
+
+    this.loading.users = true;
+    this.userService.getAllUsers({...this.pagination, page: pageNumber + 1}).subscribe(
       {
-        next: (users) => {
-          this.initializeForms(users);
-          this.users = users;
+        next: (response) => {
+          this.pagination.totalRecords = response.totalRecords;
+          this.initializeForms(response.data);
+          this.users = response.data;
+          this.loading.users = false;
+
+          console.log(this.users)
         },
         error: () => {
           console.log("Error loading users");
@@ -150,4 +174,5 @@ export class UserListComponent implements OnInit {
   }
 
   protected readonly roleOptions = roleOptions;
+  protected readonly last = last;
 }

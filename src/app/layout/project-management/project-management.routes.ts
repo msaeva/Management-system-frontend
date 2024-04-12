@@ -1,7 +1,7 @@
 import {Routes} from '@angular/router';
 import {ProjectManagementLayout} from "@layouts/project-management/project-management-layout.component";
-import {ProjectComponent} from "@feature/project/project.component";
-import {MeetingsComponent} from "@feature/project/components/meetings/meetings.component";
+import {ProjectComponent} from "@feature/shared/project/project.component";
+import {MeetingsComponent} from "@feature/user/meetings/meetings.component";
 
 export default <Routes>[
   {
@@ -15,6 +15,9 @@ export default <Routes>[
       {
         path: 'meetings',
         component: MeetingsComponent
+      },
+      {
+        path: '', redirectTo: '/project-management/meetings', pathMatch: 'full'
       }
     ]
   }

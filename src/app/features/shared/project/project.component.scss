@@ -1,0 +1,42 @@
+:host {
+  display: block;
+  height: 100%;
+
+  .project-view-container {
+    display: grid;
+    grid-template-rows: auto 0 1fr;
+    height: 100%;
+  }
+}
+.landing-page-content {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  padding: 2rem;
+}
+
+.project-info {
+  margin-bottom: 2rem;
+}
+
+.title {
+  font-size: 1.7rem;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+.description {
+  font-size: 1rem;
+  color: #666;
+  margin-bottom: 1.5rem;
+}
+
+.status-created-date {
+  display: flex;
+  align-items: center;
+}
+
+.status, .created-date {
+  font-size: 1.2rem;
+  color: #888;
+  margin-right: 2rem;
+}

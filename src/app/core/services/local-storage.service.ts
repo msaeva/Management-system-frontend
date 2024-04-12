@@ -16,7 +16,7 @@ export class LocalStorageService {
     localStorage.removeItem(JWT_LOCAL_STORAGE_KEY);
   }
 
-  getRole(): string | null {
+  getAuthUserRole(): string | null {
     const token = this.getToken();
     if (token) {
       const decodedToken: any = jwtDecode(token);

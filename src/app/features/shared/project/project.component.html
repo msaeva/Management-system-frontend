@@ -1,0 +1,63 @@
+<div class="p-grid project-view-container">
+  <div class="grid p-col-12 p-md-6 pr-3 py-2 justify-content-end">
+    <button (click)="showDialog()"
+            pButton type="button"
+            icon="pi pi-external-link"
+            label="Detailed Project Information"
+            class="p-button-raised p-button-rounded p-button-success m-3">
+    </button>
+  </div>
+
+  <p-dialog header="Detailed Project Information"
+            [(visible)]="visible"
+            [modal]="true"
+            [style]="{ 'max-width': '50rem', 'border-radius': '8px', 'box-shadow': '0px 4px 10px rgba(0, 0, 0, 0.1)' }">
+
+    <div class="landing-page-content">
+      <div class="project-info">
+        <div class="title">
+          <h3>{{ project.title }}</h3>
+        </div>
+        <div class="description">
+          <p>{{ project.description }}</p>
+        </div>
+        <div class="status-created-date">
+          <div class="status">
+            <b>Status:</b> {{ project.status }}
+          </div>
+          <div class="created-date">
+            <b>Created Date:</b> {{ project.createdDate | date: 'medium' }}
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <h4>Teams</h4>
+        <ul>
+          <li *ngFor="let team of project?.teams">
+            <span>{{ team.name }} </span>
+            <ul>
+              <li *ngFor="let user of team.users">
+                {{ user.username }} ({{ user.email }})
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+
+      <div>
+        <h4>Project Managers</h4>
+        <ul>
+          <li *ngFor="let pm of project?.pms">
+            {{ pm.username }} ({{ pm.email }})
+          </li>
+        </ul>
+      </div>
+    </div>
+  </p-dialog>
+
+
+  <div class="p-col-12 p-md-6 project-tasks">
+    <app-project-task-list></app-project-task-list>
+  </div>
+</div>

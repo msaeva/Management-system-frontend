@@ -17,9 +17,9 @@ import timeGridPlugin from "@fullcalendar/timegrid";
 import listPlugin from "@fullcalendar/list";
 import {Meeting} from "@core/types/meeting";
 import {MeetingService} from "@core/services/meeting.service";
-import {UserService} from "@core/services/user-service";
 import {ProjectService} from "@core/services/project.service";
 import {ToastService} from "@core/services/toast.service";
+import {ProgressSpinnerModule} from "primeng/progressspinner";
 
 @Component({
   selector: 'app-pm-meetings',
@@ -32,7 +32,8 @@ import {ToastService} from "@core/services/toast.service";
     FullCalendarModule,
     NgIf,
     SharedModule,
-    FormsModule
+    FormsModule,
+    ProgressSpinnerModule
   ],
   templateUrl: './pm-meetings.component.html',
   styleUrl: './pm-meetings.component.scss'
@@ -48,9 +49,12 @@ export class PmMeetingsComponent implements OnInit {
 
   projects: ProjectUser[] = [];
   selectedProject!: ProjectUser;
-  filteredProjects: ProjectUser[] = [];
 
   selectInfo!: DateSelectArg;
+
+  loading: { meeting: boolean } = {
+    meeting: true,
+  }
 
   calendarOptions: CalendarOptions = {
     initialView: 'timeGridWeek',
@@ -80,48 +84,20 @@ export class PmMeetingsComponent implements OnInit {
 
   constructor(private changeDetector: ChangeDetectorRef,
               private meetingService: MeetingService,
-              private userService: UserService,
               private projectService: ProjectService,
               private toastService: ToastService) {
   }
 
   ngOnInit(): void {
-    // this.loadUsers();
-    // this.loadProjects();
     this.loadMeetings();
   }
-
-  loadProjects() {
-    console.log("in load projects")
-    this.projectService.getPMProjectsWithUsers().subscribe({
-      next: (response) => {
-        this.projects = response;
-        this.filteredProjects = response;
-        console.log(response)
-      },
-      error: (err) => {
-        console.log(err);
-      }
-    })
-  }
-
-  // private loadUsers() {
-  //   this.userService.getByRole([Role.USER.valueOf(), Role.PM.valueOf()]).subscribe({
-  //     next: (response) => {
-  //       this.users = response;
-  //     },
-  //     error: (err) => {
-  //       console.log(err);
-  //     }
-  //   })
-  // }
 
   loadMeetings() {
     this.meetingService.getPMMeetings().subscribe({
       next: (response: DetailedMeeting[]) => {
         this.meetings = response;
+        this.loading.meeting = false;
 
-        console.log(response);
         this.events = this.meetings.map(meeting => ({
           id: meeting.id.toString(),
           title: meeting.title,

@@ -1,103 +1,119 @@
-<div class="p-grid p-fluid">
-  <div class="p-col-12 p-md-4">
-    <div class="flex justify-content-end flex-wrap w-full p-3">
-      <p-button type="button"
-                icon="pi pi-times"
-                label="Delete"
-                severity="danger"
-                (click)="showDeleteMeetingConfirmation()">
-      </p-button>
-    </div>
-    <form [formGroup]="updateMeetingFormGroup">
-      <div class="p-grid">
-        <div class="grid gap-4">
-          <div class="p-col-2">
-            <div class="flex flex-column gap-2">
-              <label class="font-bold" for="id">ID</label>
-              <input formControlName="id"
-                     pInputText id="id"/>
-            </div>
-          </div>
 
-          <div class="p-col-2">
-            <div class="flex flex-column gap-2">
-              <label class="font-bold" for="title">Title</label>
-              <input pInputText id="title"
-                     formControlName="title"/>
-              <div
-                *ngIf="updateMeetingFormGroup.get('title')?.invalid && (updateMeetingFormGroup.get('title')?.dirty || updateMeetingFormGroup.get('title')?.touched)"
-                class="alert alert-danger">
-                <small *ngIf="updateMeetingFormGroup.get('title')?.errors?.['required']">
-                  Title is required.
-                </small>
-                <small *ngIf="updateMeetingFormGroup.get('title')?.errors?.['minlength']"
-                       class="alert alert-danger">
-                  Title must be at least 4 characters long.
-                </small>
-              </div>
-            </div>
-          </div>
+<!--<div class="p-grid justify-content-center align-items-center p-2">-->
 
-          <div class="grid gap-4">
-            <div class="p-col-2">
-              <div class="flex flex-column gap-2">
-                <label class="font-bold">Start</label>
-                <p-calendar formControlName="start" [showIcon]="true" [showTime]="true"></p-calendar>
-              </div>
-            </div>
-            <div class="p-col-2">
-              <div class="flex flex-column gap-2">
-                <label class="font-bold">End</label>
-                <p-calendar formControlName="end"
-                            [showIcon]="true"
-                            [showTime]="true">
-                </p-calendar>
-              </div>
-            </div>
-          </div>
-        </div>
+<div class="p-col-12 p-md-4">
+  <div *ngIf="(getAuthUserRole() === Role.ADMIN) || (getAuthUserRole() === Role.PM)"
+  class="flex justify-content-end pr-5">
+    <p-button (onClick)="showDeleteMeetingConfirmation()"
+              [rounded]="true"
+              [text]="true"
+              severity="danger"
+              icon="pi pi-trash">
+    </p-button>
+    <p-button *ngIf="updateMeetingFormGroup.get('title')!.disabled"
+              (onClick)="toggleEditMode()"
+              [rounded]="true"
+              [text]="true"
+              icon="pi pi-pencil">
+    </p-button>
 
-        <div class="grid gap-4 mt-4">
-          <div class="p-col">
-            <div class="p-col-2">
-              <div class="flex flex-column gap-2">
-                <label for="status">Status</label>
-                <input
-                  pInputText id="status"
-                  formControlName="status"/>
-              </div>
-            </div>
-          </div>
-        </div>
+    <p-button *ngIf="!updateMeetingFormGroup.get('title')!.disabled"
+              (onClick)="updateMeeting()"
+              [disabled]="!updateMeetingFormGroup.dirty && updateMeetingFormGroup.valid"
+              [rounded]="true"
+              [text]="true"
+              severity="success"
+              icon="pi pi-check">
+    </p-button>
 
-        <div class="flex justify-content-end mt-3">
-          <div class="">
-            <button type="button"
-                    pButton icon="pi pi-pencil"
-                    label="Edit"
-                    class="p-button-primary"
-                    *ngIf="updateMeetingFormGroup.get('title')!.disabled"
-                    (click)="toggleEditMode()">
-            </button>
-            <button type="button"
-                    pButton icon="pi pi-check"
-                    label="Save"
-                    [disabled]="!updateMeetingFormGroup.dirty && updateMeetingFormGroup.valid"
-                    class="p-button-success mt-2"
-                    *ngIf="!updateMeetingFormGroup.get('title')!.disabled"
-                    (click)="updateMeeting()">
-            </button>
-            <button type="button"
-                    pButton icon="pi pi-times"
-                    label="Cancel"
-                    class="p-button-danger mt-2"
-                    *ngIf="!updateMeetingFormGroup.get('title')!.disabled"
-                    (click)="cancelUpdateMeeting()">
-            </button>
+    <p-button *ngIf="!updateMeetingFormGroup.get('title')!.disabled"
+              (onClick)="cancelUpdateMeeting()"
+              [rounded]="true"
+              [text]="true"
+              severity="danger"
+              icon="pi pi-times-circle">
+    </p-button>
+
+  </div>
+
+  <!--  <div *ngIf="(getAuthUserRole() === Role.ADMIN) || (getAuthUserRole() === Role.PM)"-->
+  <!--       class="flex justify-content-end mt-3">-->
+  <!--    <div class="">-->
+  <!--      <button type="button"-->
+  <!--              pButton icon="pi pi-pencil"-->
+  <!--              label="Edit"-->
+  <!--              class="p-button-primary"-->
+  <!--              *ngIf="updateMeetingFormGroup.get('title')!.disabled"-->
+  <!--              (click)="toggleEditMode()">-->
+  <!--      </button>-->
+  <!--      <button type="button"-->
+  <!--              pButton icon="pi pi-check"-->
+  <!--              label="Save"-->
+  <!--              [disabled]="!updateMeetingFormGroup.dirty && updateMeetingFormGroup.valid"-->
+  <!--              class="p-button-success mt-2"-->
+  <!--              *ngIf="!updateMeetingFormGroup.get('title')!.disabled"-->
+  <!--              (click)="updateMeeting()">-->
+  <!--      </button>-->
+  <!--      <button type="button"-->
+  <!--              pButton icon="pi pi-times"-->
+  <!--              label="Cancel"-->
+  <!--              class="p-button-danger mt-2"-->
+  <!--              *ngIf="!updateMeetingFormGroup.get('title')!.disabled"-->
+  <!--              (click)="cancelUpdateMeeting()">-->
+  <!--      </button>-->
+  <!--    </div>-->
+  <!--  </div>-->
+
+
+  <form [formGroup]="updateMeetingFormGroup">
+    <div class="grid p-2">
+      <div class="flex flex-column mt-3 pt-3 w-full">
+        <div class="flex  flex-wrap gap-5">
+          <div class="flex flex-column gap-2">
+            <label class="font-bold" for="id">ID</label>
+            <input formControlName="id"
+                   pInputText id="id"/>
+          </div>
+          <div class="flex flex-column gap-2">
+            <label class="font-bold" for="title">Title</label>
+            <input pInputText id="title"
+                   formControlName="title"/>
+            <div
+              *ngIf="updateMeetingFormGroup.get('title')?.invalid && (updateMeetingFormGroup.get('title')?.dirty || updateMeetingFormGroup.get('title')?.touched)"
+              class="alert alert-danger">
+              <small *ngIf="updateMeetingFormGroup.get('title')?.errors?.['required']">
+                Title is required.
+              </small>
+              <small *ngIf="updateMeetingFormGroup.get('title')?.errors?.['minlength']"
+                     class="alert alert-danger">
+                Title must be at least 4 characters long.
+              </small>
+            </div>
           </div>
         </div>
       </div>
-    </form>
-  </div>
+
+      <div class="flex flex-column mt-3 pt-3 w-full">
+        <div class="flex  flex-wrap gap-5">
+          <div class="flex flex-column gap-2">
+            <label class="font-bold">Start Date</label>
+            <p-calendar formControlName="start" [showIcon]="true" [showTime]="true"></p-calendar>
+          </div>
+          <div class="flex flex-column gap-2">
+            <label class="font-bold">End Date</label>
+            <p-calendar formControlName="end" [showIcon]="true" [showTime]="true"></p-calendar>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex flex-column mt-3 pt-3">
+        <label class="font-bold" for="status">Status</label>
+        <input disabled pInputText id="status" [value]="currentStatus" readonly/>
+      </div>
+    </div>
+  </form>
 </div>
+<!--</div>-->
+
+
 

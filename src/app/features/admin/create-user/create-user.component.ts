@@ -34,7 +34,7 @@ export class CreateUserComponent {
     firstName: new FormControl('', [Validators.required, Validators.minLength(3)]),
     lastName: new FormControl('', [Validators.required, Validators.minLength(3)]),
     password: new FormControl('', [Validators.required, Validators.minLength(6)]),
-    role: new FormControl('Select a Role', [Validators.required])
+    role: new FormControl(roleOptions[1].value, [Validators.required])
   })
 
   constructor(private authService: AuthService,
@@ -62,11 +62,13 @@ export class CreateUserComponent {
         this.createUserFormGroup.reset();
       },
       error: (err) => {
+        this.createUserFormGroup.setErrors({ taken: true });
+
         console.log(err);
         this.toastService.showMessage({
           severity: 'error',
           summary: 'Error',
-          detail: 'Failed to create user',
+          detail: 'REGISTRATION FAILED!',
           life: 3000
         });
       }

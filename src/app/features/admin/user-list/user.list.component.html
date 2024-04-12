@@ -1,3 +1,8 @@
+<!--<p-progressSpinner *ngIf="loading.users; else content" styleClass="w-4rem h-4rem" strokeWidth="8"-->
+<!--                   fill="var(&#45;&#45;surface-ground)" animationDuration=".5s">-->
+<!--</p-progressSpinner>-->
+
+<!--<ng-template #content>-->
 <div class="card">
   <div class="flex justify-content-end mb-3">
 
@@ -8,8 +13,20 @@
 
     </p-button>
   </div>
-  <p-table [value]="users" dataKey="id" editMode="row" styleClass="p-datatable-striped"
-           [tableStyle]="{'min-width': '40rem'}">
+  <p-table [value]="users"
+           [lazy]="true"
+           [loading]="loading.users"
+           [paginator]="true"
+           [(rows)]="pagination.size"
+           [(first)]="pagination.page"
+           [totalRecords]="pagination.totalRecords"
+           (onLazyLoad)="loadUsers($event)"
+           [rowsPerPageOptions]="[5, 10, 25, 50]"
+           dataKey="id"
+           editMode="row"
+           styleClass="p-datatable-striped"
+           sortField="id"
+           [tableStyle]="{'min-width': '40rem'}">>
     <ng-template pTemplate="header">
       <tr>
         <th style="width:10%;">Id</th>
@@ -18,11 +35,12 @@
         <th style="width:15%;">Username</th>
         <th style="width:15%;">Email</th>
         <th style="width:10%;">Role</th>
+        <th style="width:20%; text-align: center;">Projects</th>
         <th style="width:20%; text-align: center;">Actions</th>
       </tr>
     </ng-template>
-    <ng-template pTemplate="body" let-user let-editing="editing" let-i="rowIndex">
-      <tr [pEditableRow]="user" [formGroup]="forms[i]">
+    <ng-template pTemplate="body" let-user let-editing="editing" let-index="rowIndex">
+      <tr [pEditableRow]="user" [formGroup]="forms[index % pagination.size]">
         <td>
           <p-cellEditor>
             <ng-template pTemplate="input">
@@ -38,10 +56,11 @@
             <ng-template pTemplate="input">
               <input pInputText type="text" formControlName="firstName">
               <div
-                *ngIf="forms[i]?.get('firstName')?.['invalid'] && (forms[i]?.get('firstName')?.dirty ||forms[i]?.get('firstName')?.touched)"
+                *ngIf="forms[index % pagination.size]?.get('firstName')?.['invalid'] && (forms[index % pagination.size]?.get('firstName')?.dirty ||forms[index % pagination.size]?.get('firstName')?.touched)"
                 class="text-danger">
-                <small *ngIf="forms[i]?.get('firstName')?.errors?.['required']">Last Name is required.</small>
-                <small *ngIf="forms[i]?.get('firstName')?.errors?.['minlength']">
+                <small *ngIf="forms[index % pagination.size]?.get('firstName')?.errors?.['required']">Last Name is
+                  required.</small>
+                <small *ngIf="forms[index % pagination.size]?.get('firstName')?.errors?.['minlength']">
                   Last Name must be at least 3 characters long.
                 </small>
               </div>
@@ -56,10 +75,11 @@
             <ng-template pTemplate="input">
               <input pInputText type="text" formControlName="lastName">
               <div
-                *ngIf="forms[i]?.get('lastName')?.['invalid'] && (forms[i]?.get('lastName')?.dirty ||forms[i]?.get('lastName')?.touched)"
+                *ngIf="forms[index % pagination.size]?.get('lastName')?.['invalid'] && (forms[index % pagination.size]?.get('lastName')?.dirty ||forms[index % pagination.size]?.get('lastName')?.touched)"
                 class="text-danger">
-                <small *ngIf="forms[i]?.get('lastName')?.errors?.['required']">Last Name is required.</small>
-                <small *ngIf="forms[i]?.get('lastName')?.errors?.['minlength']">
+                <small *ngIf="forms[index % pagination.size]?.get('lastName')?.errors?.['required']">Last Name is
+                  required.</small>
+                <small *ngIf="forms[index % pagination.size]?.get('lastName')?.errors?.['minlength']">
                   Last Name must be at least 3 characters long.
                 </small>
               </div>
@@ -106,15 +126,30 @@
           </p-cellEditor>
         </td>
         <td>
+          <p-cellEditor>
+            <ng-template pTemplate="input">
+            </ng-template>
+            <ng-template pTemplate="output">
+              <ng-container *ngFor="let project of user.projects">
+                <a [routerLink]="['/admin/projects', project.id]"
+                [state]="{project: project}">
+                  {{ project.title }}
+                </a>
+                <br *ngIf="last">
+              </ng-container>
+            </ng-template>
+          </p-cellEditor>
+        </td>
+        <td>
           <div class="flex align-items-center justify-content-center gap-2">
             <button *ngIf="!editing" pButton pRipple type="button"
                     pInitEditableRow icon="pi pi-pencil" (click)="onRowEditInit(user)"
                     class="p-button-rounded p-button-text"></button>
             <button *ngIf="editing" pButton pRipple type="button"
-                    pSaveEditableRow icon="pi pi-check" (click)="onRowEditSave((forms[i].value))"
+                    pSaveEditableRow icon="pi pi-check" (click)="onRowEditSave((forms[index % pagination.size].value))"
                     class="p-button-rounded p-button-text p-button-success mr-2"></button>
             <button *ngIf="editing" pButton pRipple type="button"
-                    pCancelEditableRow icon="pi pi-times" (click)="onRowEditCancel(user, i)"
+                    pCancelEditableRow icon="pi pi-times" (click)="onRowEditCancel(user, index)"
                     class="p-button-rounded p-button-text p-button-danger"></button>
             <button pButton pRipple type="button" icon="pi pi-trash" (click)="showConfirmation(user.id)"
                     class="p-button-rounded p-button-text p-button-danger"></button>
@@ -124,7 +159,7 @@
     </ng-template>
   </p-table>
 </div>
-
+<!--</ng-template>-->
 <p-dialog header="Create New User"
           [(visible)]="visible"
           [modal]="true"

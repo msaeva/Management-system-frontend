@@ -5,6 +5,7 @@ import {AdminProjectListComponent} from "@feature/admin/project-list/admin-proje
 import {AdminProjectsTaskListComponent} from "@feature/admin/project-task-list/admin-projects-task-list.component";
 import {AdminTaskListComponent} from "@feature/admin/admin-task-list/admin-task-list.component";
 import {AdminMeetingsComponent} from "@feature/admin/admin-meetings/admin-meetings.component";
+import {DetailedProjectComponent} from "@feature/admin/detailed-project/detailed-project.component";
 
 export default <Routes>[
   {
@@ -24,12 +25,19 @@ export default <Routes>[
         component: AdminProjectListComponent
       },
       {
+        path: 'projects/:id',
+        component: DetailedProjectComponent
+      },
+      {
         path: 'tasks',
         component: AdminProjectsTaskListComponent
       },
       {
         path: 'meetings',
         component: AdminMeetingsComponent
+      },
+      {
+        path: '', redirectTo: '/admin/users', pathMatch: 'full'
       }
     ]
   }

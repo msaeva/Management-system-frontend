@@ -7,20 +7,18 @@ import timeGridPlugin from '@fullcalendar/timegrid';
 import listPlugin from '@fullcalendar/list';
 import {MeetingService} from "@core/services/meeting.service";
 import {Meeting} from "@core/types/meeting";
-import {CreateTaskComponent} from "@feature/admin/create-task/create-task.component";
 import {DialogModule} from "primeng/dialog";
-import {DetailedMeetingComponent} from "@feature/project/components/detailed-meeting/detailed-meeting.component";
 import {NgIf} from "@angular/common";
+import {DetailedMeetingComponent} from "@feature/shared/detailed-meeting/detailed-meeting.component";
 
 @Component({
   selector: 'app-meetings',
   standalone: true,
   imports: [
     FullCalendarModule,
-    CreateTaskComponent,
     DialogModule,
-    DetailedMeetingComponent,
-    NgIf
+    NgIf,
+    DetailedMeetingComponent
   ],
   templateUrl: './meetings.component.html',
   styleUrl: './meetings.component.scss'

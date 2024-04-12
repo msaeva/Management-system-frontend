@@ -8,6 +8,6 @@ export const adminGuard: CanActivateFn = () => {
   const localStorageService = inject(LocalStorageService);
   const router = inject(Router);
 
-  const role = localStorageService.getRole() as Role;
+  const role = localStorageService.getAuthUserRole() as Role;
   return role === Role.ADMIN ? true : router.navigate([DEFAULT_ROUTING.get(role)]);
 }

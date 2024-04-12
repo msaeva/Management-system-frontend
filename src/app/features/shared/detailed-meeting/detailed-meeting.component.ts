@@ -24,11 +24,12 @@ import {LocalStorageService} from "@core/services/local-storage.service";
   templateUrl: './detailed-meeting.component.html',
   styleUrl: './detailed-meeting.component.scss'
 })
-export class DetailedMeetingComponent implements OnInit{
+export class DetailedMeetingComponent implements OnInit {
   @Input() set meeting(value: Meeting) {
     if (value) {
       this.setUpUpdateMeetingFormGroup(value);
       this._meeting = value;
+      this.calculateStatus();
     }
   };
 
@@ -36,7 +37,9 @@ export class DetailedMeetingComponent implements OnInit{
   @Output() deletedMeetingEvent: EventEmitter<number> = new EventEmitter<number>();
 
   updateMeetingFormGroup!: FormGroup;
+  currentStatus: string = ''
   private _meeting!: Meeting;
+
   constructor(private formBuilder: FormBuilder,
               private meetingService: MeetingService,
               private localStorageService: LocalStorageService,
@@ -44,9 +47,8 @@ export class DetailedMeetingComponent implements OnInit{
   }
 
   ngOnInit(): void {
-    console.log("in detailed component")
-    console.log(this._meeting)
-    }
+    // this.calculateStatus();
+  }
 
   private setUpUpdateMeetingFormGroup(meeting: Meeting) {
     this.updateMeetingFormGroup = this.formBuilder.group({
@@ -78,7 +80,7 @@ export class DetailedMeetingComponent implements OnInit{
       end: this.updateMeetingFormGroup.value.end.getTime()
     };
 
-    if (this.localStorageService.getRole() === Role.ADMIN.valueOf()) {
+    if (this.getAuthUserRole() === Role.ADMIN.valueOf()) {
       this.meetingService.updateMeeting(this._meeting.id, updatedMeetingFormValue).subscribe({
         next: (response) => {
           this.toggleEditMode();
@@ -88,7 +90,7 @@ export class DetailedMeetingComponent implements OnInit{
           console.log(err);
         }
       })
-    } else if (this.localStorageService.getRole() === Role.PM.valueOf()) {
+    } else if (this.getAuthUserRole() === Role.PM.valueOf()) {
       this.meetingService.updateMeetingPM(this._meeting.id, updatedMeetingFormValue).subscribe({
         next: (response) => {
           this.toggleEditMode();
@@ -125,7 +127,7 @@ export class DetailedMeetingComponent implements OnInit{
   }
 
   private deleteMeeting(id: number) {
-    if (this.localStorageService.getRole() === Role.ADMIN.valueOf()){
+    if (this.getAuthUserRole() === Role.ADMIN.valueOf()) {
       this.meetingService.deleteMeeting(id).subscribe({
         next: (response) => {
           this.deletedMeetingEvent.emit(id);
@@ -134,7 +136,7 @@ export class DetailedMeetingComponent implements OnInit{
           console.log(err);
         }
       });
-    }else if(this.localStorageService.getRole() === Role.PM.valueOf()){
+    } else if (this.getAuthUserRole() === Role.PM.valueOf()) {
       this.meetingService.deleteMeetingPM(id).subscribe({
         next: (response) => {
           this.deletedMeetingEvent.emit(id);
@@ -146,4 +148,24 @@ export class DetailedMeetingComponent implements OnInit{
     }
 
   }
+
+  getAuthUserRole() {
+    return this.localStorageService.getAuthUserRole();
+  }
+
+  calculateStatus(): void {
+    const now = new Date();
+    const start = new Date(this.updateMeetingFormGroup.get('start')!.value);
+    const end = new Date(this.updateMeetingFormGroup.get('end')!.value);
+
+    if (now < start) {
+      this.currentStatus = 'NOT_STARTED';
+    } else if (now > end) {
+      this.currentStatus = 'FINISHED';
+    } else {
+      this.currentStatus = 'IN_PROGRESS';
+    }
+  }
+
+  protected readonly Role = Role;
 }

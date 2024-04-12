@@ -7,7 +7,7 @@ import {DEFAULT_ROUTING} from "@core/constants";
 export const publicGuard: CanActivateFn = () => {
   const localStorageService = inject(LocalStorageService);
   const router = inject(Router);
-  const role = localStorageService.getRole() as Role;
+  const role = localStorageService.getAuthUserRole() as Role;
 
   return localStorageService.getToken() === null ? true : router.navigate([DEFAULT_ROUTING.get(role)]);
 }

@@ -1,54 +1,15 @@
-<div class="ml-4 mr-4 mt-1">
-  <div class="flex flex-row p-4 gap-2">
-    <div class="flex">
-<!--      <p-dropdown [options]="users"-->
-<!--                  [(ngModel)]="selectedUser"-->
-<!--                  optionLabel="fullName"-->
-<!--                  [filter]="true"-->
-<!--                  filterBy="fullName"-->
-<!--                  [showClear]="true"-->
-<!--                  (onChange)="onUserChange()"-->
-<!--                  placeholder="Filter by User">-->
-<!--        <ng-template let-user pTemplate="selectedItem">-->
-<!--          <div class="flex align-items-center gap-2">-->
-<!--            <div>{{ user.fullName }}</div>-->
-<!--          </div>-->
-<!--        </ng-template>-->
-<!--        <ng-template let-user pTemplate="item">-->
-<!--          <div class="flex align-items-center gap-2">-->
-<!--            <div>{{ user.fullName }}</div>-->
-<!--          </div>-->
-<!--        </ng-template>-->
-<!--      </p-dropdown>-->
-    </div>
-<!--    <div class="flex align-items-center">-->
-<!--      <p-dropdown [options]="filteredProjects"-->
-<!--                  [(ngModel)]="selectedProject"-->
-<!--                  optionLabel="title"-->
-<!--                  [filter]="true"-->
-<!--                  filterBy="title"-->
-<!--                  [showClear]="true"-->
-<!--                  (onChange)="onProjectChange()"-->
-<!--                  placeholder="Filter by Project">-->
-<!--        <ng-template pTemplate="selectedItem" let-selectedOption>-->
-<!--          <div class="flex align-items-center gap-2">-->
-<!--            <div>{{ selectedOption.title }}</div>-->
-<!--          </div>-->
-<!--        </ng-template>-->
-<!--        <ng-template let-project pTemplate="item">-->
-<!--          <div class="flex align-items-center gap-2">-->
-<!--            <div>{{ project.title }}</div>-->
-<!--          </div>-->
-<!--        </ng-template>-->
-<!--      </p-dropdown>-->
-<!--    </div>-->
-  </div>
-  <full-calendar
-    [options]="calendarOptions"
-    [events]="events">
-  </full-calendar>
-</div>
+<p-progressSpinner *ngIf="loading.meeting; else content" styleClass="w-4rem h-4rem" strokeWidth="8"
+                   fill="var(--surface-ground)" animationDuration=".5s">
+</p-progressSpinner>
 
+<ng-template #content>
+  <div class="ml-4 mr-4 mt-1">
+    <full-calendar
+      [options]="calendarOptions"
+      [events]="events">
+    </full-calendar>
+  </div>
+</ng-template>
 <p-dialog header="Meeting Information"
           [(visible)]="visibleMeetingInformationDialog"
           [modal]="true"
@@ -56,16 +17,16 @@
           [draggable]="false"
           [resizable]="false">
   <app-detailed-meeting *ngIf="selectedMeeting"
-                              [meeting]="selectedMeeting!"
-                              (updatedMeetingEvent)="updateMeetingHandler($event)"
-                              (deletedMeetingEvent)="deleteMeetingHandler($event)">
+                        [meeting]="selectedMeeting!"
+                        (updatedMeetingEvent)="updateMeetingHandler($event)"
+                        (deletedMeetingEvent)="deleteMeetingHandler($event)">
   </app-detailed-meeting>
 </p-dialog>
 
 <p-dialog header="Create Meeting"
           [(visible)]="visibleCreateMeetingDialog"
           [modal]="true"
-          [style]="{ width: '48vw', height: '30vw' }"
+          [style]="{ width: '45vw', height: '34vw' }"
           [draggable]="false"
           [resizable]="false">
   <app-create-meeting [selectInfo]="selectInfo"

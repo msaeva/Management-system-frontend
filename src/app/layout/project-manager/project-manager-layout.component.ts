@@ -7,6 +7,8 @@ import {MenuItem, SharedModule} from "primeng/api";
 import {LayoutService} from "@core/services/layout.service";
 import {ButtonModule} from "primeng/button";
 import {ConfirmDialogModule} from "primeng/confirmdialog";
+import {ProjectService} from "@core/services/project.service";
+import {Project} from "@core/types/projects/project";
 
 @Component({
   selector: 'app-project-manager',
@@ -27,7 +29,8 @@ import {ConfirmDialogModule} from "primeng/confirmdialog";
 })
 export class ProjectManagerLayout implements OnInit {
 
-  constructor(private layoutService: LayoutService) {
+  constructor(private layoutService: LayoutService,
+              private projectService: ProjectService) {
   }
 
   menuItems: MenuItem[] = [];
@@ -50,15 +53,15 @@ export class ProjectManagerLayout implements OnInit {
   }
 
   loadProjects() {
-    // this.projectService.getPMProjects().subscribe({
-    //   next: (response: any) => {
-    //     console.log(response);
-    //     this.mapProjectsToMenuItems(response);
-    //   },
-    //   error: () => {
-    //     console.log("error");
-    //   }
-    // })
+    this.projectService.getPMProjects().subscribe({
+      next: (response: Project[]) => {
+        console.log(response);
+        this.mapProjectsToMenuItems(response);
+      },
+      error: () => {
+        console.log("error");
+      }
+    })
   }
 
   mapProjectsToMenuItems(projects: any[]) {

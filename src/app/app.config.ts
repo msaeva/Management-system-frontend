@@ -1,5 +1,5 @@
 import {ApplicationConfig, importProvidersFrom} from '@angular/core';
-import {provideRouter} from '@angular/router';
+import {provideRouter, withRouterConfig} from '@angular/router';
 
 import {routes} from './app.routes';
 import {HTTP_INTERCEPTORS, HttpClientModule} from "@angular/common/http";
@@ -7,9 +7,9 @@ import {provideAnimations} from "@angular/platform-browser/animations";
 import {ErrorInterceptor} from "@core/interceptors/error.interceptor";
 import {JwtInterceptor} from "@core/interceptors/jwt.interceptor";
 import {ConfirmationService, MessageService} from "primeng/api";
-import {ToastModule} from "primeng/toast";
 import {DatePipe} from "@angular/common";
 import {FullCalendarModule} from "@fullcalendar/angular";
+import {TextTransformPipe} from "@core/pipes/text-transform.pipe";
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -23,11 +23,12 @@ export const appConfig: ApplicationConfig = {
       useClass: JwtInterceptor,
       multi: true
     },
+    TextTransformPipe,
     DatePipe,
     MessageService,
     ConfirmationService,
     FullCalendarModule,
-    provideRouter(routes),
+    provideRouter(routes, withRouterConfig({onSameUrlNavigation: 'reload', urlUpdateStrategy: "eager"})),
     importProvidersFrom(HttpClientModule),
     provideAnimations()
   ]

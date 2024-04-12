@@ -1,16 +1,17 @@
 import {Injectable} from "@angular/core";
 import {HttpClient} from "@angular/common/http";
-import {API_URL, API_URL_ADMIN} from "@core/constants";
+import {API_URL, API_URL_ADMIN, API_URL_PM} from "@core/constants";
 import {Observable} from "rxjs";
 import {Task} from "@core/types/tasks/task";
 import {DetailedTask} from "@core/types/tasks/detailed-task";
+import {SingleTask} from "@core/types/tasks/single-task";
 
 @Injectable({providedIn: 'root'})
 export class TaskService {
   constructor(private http: HttpClient) {
   }
 
-  getTasksByProject(projectId: string | null): Observable<Task[]> {
+  getTasksForUserTeamsByProjectId(projectId: number): Observable<Task[]> {
     const url = API_URL + "/projects/" + projectId + "/tasks";
     return this.http.get<Task[]>(url);
   }
@@ -31,14 +32,14 @@ export class TaskService {
     return this.http.delete(url);
   }
 
-  create(task: any, projectId: number) {
+  createTaskAdmin(task: any, projectId: number) {
     const body = {
-        title: task.title,
-        description: task.description,
-        projectId: projectId,
-      },
+      title: task.title,
+      description: task.description,
+      projectId: projectId,
+    }
 
-      url = API_URL_ADMIN + "/tasks";
+    const url = API_URL_ADMIN + "/tasks";
     return this.http.post<DetailedTask>(url, body);
   }
 
@@ -51,5 +52,33 @@ export class TaskService {
     const url = API_URL + "/tasks/" + id + "/progress";
     return this.http.put<Task>(url, progress);
 
+  }
+
+  getAllTasksByProject(projectId: number) {
+    const url = API_URL_PM + "/projects/" + projectId + "/tasks";
+    return this.http.get<Task[]>(url);
+  }
+
+  getById(id: number | undefined) {
+    const url = API_URL + "/tasks/" + id;
+    return this.http.get<SingleTask>(url);
+  }
+
+  createTaskPm(task: any, projectId: number) {
+    const body = {
+      title: task.title,
+      description: task.description,
+      projectId: projectId,
+      userId: task.assignee.id
+    }
+    console.log(body)
+
+    const url = API_URL_PM + "/tasks";
+    return this.http.post<Task>(url, body);
+  }
+
+  assignUser(taskId: number, userId: number) {
+    const url = API_URL_PM + "/tasks/" + taskId + "/users/" + userId;
+    return this.http.put<Task>(url, {});
   }
 }

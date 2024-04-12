@@ -4,11 +4,12 @@ import {DialogModule} from "primeng/dialog";
 import {AvatarModule} from "primeng/avatar";
 import {ButtonModule} from "primeng/button";
 import {AutoFocusModule} from "primeng/autofocus";
-import {TaskListComponent} from "@feature/project/components/task-list/task-list.component";
+import {TaskListComponent} from "@feature/shared/task-list/task-list.component";
 import {ActivatedRoute} from "@angular/router";
 import {ProjectService} from "@core/services/project.service";
 import {DetailedProject} from "@core/types/projects/detailed-project";
 import {DatePipe, NgForOf} from "@angular/common";
+
 
 @Component({
   selector: 'app-project',
@@ -28,26 +29,26 @@ import {DatePipe, NgForOf} from "@angular/common";
 })
 export class ProjectComponent implements OnInit {
   visible: boolean = false;
-  projectId: string = '';
-  project: DetailedProject;
+  project: DetailedProject = {} as DetailedProject;
 
   constructor(private projectService: ProjectService,
               private activatedRoute: ActivatedRoute) {
-    this.project = {} as DetailedProject;
   }
 
   showDialog() {
     this.visible = true;
-    this.loadProject();
   }
 
   ngOnInit(): void {
-    this.projectId = this.activatedRoute.snapshot.paramMap.get('id') as string;
-    this.loadProject();
+    this.activatedRoute.params.subscribe({
+      next: params => {
+        this.loadProject(params['id']);
+      }
+    })
   }
 
-  loadProject() {
-    this.projectService.getById(this.projectId).subscribe({
+  private loadProject(id: string) {
+    this.projectService.getById(id).subscribe({
       next: (project: DetailedProject) => {
         this.project = project;
       },

@@ -8,10 +8,11 @@
 }
 
 .layout-sidebar {
-  width : max-content;
+  width: max-content;
   min-width: max-content;
 }
 
 .router-outlet-container {
   flex: 1;
+  padding: 1rem;
 }

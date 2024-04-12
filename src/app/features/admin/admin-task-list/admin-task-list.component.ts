@@ -16,9 +16,9 @@ import {TaskService} from "@core/services/task.service";
 import {ConfirmDialogModule} from "primeng/confirmdialog";
 import {CreateProjectComponent} from "@feature/admin/create-project/create-project.component";
 import {DialogModule} from "primeng/dialog";
-import {CreateTaskComponent} from "@feature/admin/create-task/create-task.component";
 import {Pagination} from "@core/types/pagination";
 import {Pageable} from "@core/types/pageable";
+import {AdminCreateTaskComponent} from "@feature/admin/admin-create-task/admin-create-task.component";
 
 @Component({
   selector: 'app-admin-task-list',
@@ -35,7 +35,7 @@ import {Pageable} from "@core/types/pageable";
     NgStyle,
     CreateProjectComponent,
     DialogModule,
-    CreateTaskComponent
+    AdminCreateTaskComponent,
   ],
   templateUrl: './admin-task-list.component.html',
   styleUrl: './admin-task-list.component.scss'
@@ -94,15 +94,16 @@ export class AdminTaskListComponent implements OnInit {
     })
   }
 
-  private initializeForms(users: DetailedTask[]) {
-    this.forms = users.map(user => {
+  private initializeForms(tasks: DetailedTask[]) {
+    console.log(tasks)
+    this.forms = tasks.map(task => {
       return this.formBuilder.group({
-        id: [user.id, [Validators.required]],
-        title: [user.title, [Validators.required, Validators.minLength(3)]],
-        abbreviation: [user.abbreviation, [Validators.required, Validators.minLength(3)]],
-        description: [user.description, [Validators.required, Validators.minLength(5), Validators.maxLength(300)]],
-        status: [user.status, [Validators.required]],
-        createdDate: [user.status, [Validators.required]],
+        id: [task.id, [Validators.required]],
+        title: [task.title, [Validators.required, Validators.minLength(3)]],
+        abbreviation: [task.abbreviation, [Validators.required, Validators.minLength(3)]],
+        description: [task.description, [Validators.required, Validators.minLength(5), Validators.maxLength(300)]],
+        status: [task.status, [Validators.required]],
+        createdDate: [task.createdDate, [Validators.required]],
       });
     });
   }
@@ -156,18 +157,19 @@ export class AdminTaskListComponent implements OnInit {
   readonly taskStatus = taskStatus;
 
   loadTasks($event: TableLazyLoadEvent) {
-    console.log($event);
-    this.pagination.page = $event.first as number;
-    this.pagination.size = $event.rows as number;
+    const rowsPerPage = $event.rows != null ? $event.rows as number : this.pagination.page;
+
+    const pageNumber = Math.ceil(($event.first as number) / rowsPerPage);
+
     this.pagination.sort = $event.sortField as string;
     this.pagination.order = $event.sortOrder === 1 ? 'asc' : 'desc' as string;
 
-    this.projectService.getAllProjectTasks(this.projectId, this.pagination).subscribe({
+
+    this.projectService.getAllProjectTasks(this.projectId, {...this.pagination, page: pageNumber + 1}).subscribe({
       next: (response: Pageable<DetailedTask>) => {
         this.pagination.totalRecords = response.totalRecords;
-        this.initializeForms(response.data);
         this.allTasks = response.data;
-
+        this.initializeForms(this.allTasks);
       }, error: (err) => {
         console.log(err);
       }

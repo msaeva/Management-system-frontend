@@ -12,12 +12,13 @@
     [value]="allTasks"
     [lazy]="true"
     [paginator]="true"
-    [rows]="pagination.size"
-    [first]="pagination.page"
+    [(rows)]="pagination.size"
+    [(first)]="pagination.page"
     [totalRecords]="pagination.totalRecords"
     (onLazyLoad)="loadTasks($event)"
-    [rowsPerPageOptions]="[1, 10, 25, 50]"
-    dataKey="id" editMode="row"
+    [rowsPerPageOptions]="[5, 10, 25, 50]"
+    dataKey="id"
+    editMode="row"
     styleClass="p-datatable-striped"
     sortField="id"
     [tableStyle]="{'min-width': '40rem'}">
@@ -54,8 +55,9 @@
         <th style="width:20%; text-align: center;">Actions</th>
       </tr>
     </ng-template>
-    <ng-template pTemplate="body" let-task let-editing="editing" let-i="rowIndex">
-      <tr [pEditableRow]="task" [formGroup]="forms[i]">
+    <ng-template pTemplate="body" let-task let-editing="editing" let-index="rowIndex">
+      <tr [pEditableRow]="task" [formGroup]="forms[index % pagination.size]">
+
         <td>
           <p-cellEditor>
             <ng-template pTemplate="input">
@@ -71,10 +73,10 @@
             <ng-template pTemplate="input">
               <input pInputText type="text" formControlName="title">
               <div
-                *ngIf="forms[i]?.get('title')?.['invalid'] && (forms[i]?.get('title')?.dirty ||forms[i]?.get('title')?.touched)"
+                *ngIf="forms[index % pagination.size]?.get('title')?.['invalid'] && (forms[index % pagination.size]?.get('title')?.dirty ||forms[index % pagination.size]?.get('title')?.touched)"
                 class="text-danger">
-                <small *ngIf="forms[i]?.get('title')?.errors?.['required']">Last Name is required.</small>
-                <small *ngIf="forms[i]?.get('title')?.errors?.['minlength']">
+                <small *ngIf="forms[index % pagination.size]?.get('title')?.errors?.['required']">Last Name is required.</small>
+                <small *ngIf="forms[index % pagination.size]?.get('title')?.errors?.['minlength']">
                   Last Name must be at least 3 characters long.
                 </small>
               </div>
@@ -89,10 +91,10 @@
             <ng-template pTemplate="input">
               <input pInputText type="text" formControlName="abbreviation">
               <div
-                *ngIf="forms[i]?.get('abbreviation')?.['invalid'] && (forms[i]?.get('abbreviation')?.dirty ||forms[i]?.get('abbreviation')?.touched)"
+                *ngIf="forms[index % pagination.size]?.get('abbreviation')?.['invalid'] && (forms[index % pagination.size]?.get('abbreviation')?.dirty ||forms[index % pagination.size]?.get('abbreviation')?.touched)"
                 class="text-danger">
-                <small *ngIf="forms[i]?.get('abbreviation')?.errors?.['required']">Last Name is required.</small>
-                <small *ngIf="forms[i]?.get('abbreviation')?.errors?.['minlength']">
+                <small *ngIf="forms[index % pagination.size]?.get('abbreviation')?.errors?.['required']">Last Name is required.</small>
+                <small *ngIf="forms[index % pagination.size]?.get('abbreviation')?.errors?.['minlength']">
                   Abbreviation must be at least 3 characters long.
                 </small>
               </div>
@@ -107,15 +109,15 @@
             <ng-template pTemplate="input">
               <input pInputText type="text" formControlName="description">
               <div
-                *ngIf="forms[i]?.get('description')?.['invalid'] && (forms[i]?.get('description')?.dirty ||forms[i]?.get('description')?.touched)"
+                *ngIf="forms[index % pagination.size]?.get('description')?.['invalid'] && (forms[index % pagination.size]?.get('description')?.dirty ||forms[index % pagination.size]?.get('description')?.touched)"
                 class="text-danger">
-                <small *ngIf="forms[i]?.get('description')?.errors?.['required']">
+                <small *ngIf="forms[index % pagination.size]?.get('description')?.errors?.['required']">
                   Description is required.
                 </small>
-                <small *ngIf="forms[i]?.get('description')?.errors?.['minlength']">
+                <small *ngIf="forms[index % pagination.size]?.get('description')?.errors?.['minlength']">
                   Description should be between 5 and 300 characters long.
                 </small>
-                <small *ngIf="forms[i]?.get('description')?.errors?.['maxLength']">
+                <small *ngIf="forms[index % pagination.size]?.get('description')?.errors?.['maxLength']">
                   Description should be between 5 and 300 characters long.
                 </small>
               </div>
@@ -157,10 +159,10 @@
                     pInitEditableRow icon="pi pi-pencil" (click)="onRowEditInit(task)"
                     class="p-button-rounded p-button-text"></button>
             <button *ngIf="editing" pButton pRipple type="button"
-                    pSaveEditableRow icon="pi pi-check" (click)="onRowEditSave((forms[i].value))"
+                    pSaveEditableRow icon="pi pi-check" (click)="onRowEditSave((forms[index % pagination.size].value))"
                     class="p-button-rounded p-button-text p-button-success mr-2"></button>
             <button *ngIf="editing" pButton pRipple type="button"
-                    pCancelEditableRow icon="pi pi-times" (click)="onRowEditCancel(task, i)"
+                    pCancelEditableRow icon="pi pi-times" (click)="onRowEditCancel(task, index)"
                     class="p-button-rounded p-button-text p-button-danger"></button>
             <button pButton pRipple type="button" icon="pi pi-trash" (click)="showConfirmation(task.id)"
                     class="p-button-rounded p-button-text p-button-danger"></button>
@@ -176,7 +178,7 @@
           [style]="{ width: '40vw', height: '35vw' }"
           [draggable]="false"
           [resizable]="false">
-  <app-create-task (newTaskEvent)="newTaskHandler($event)"
+  <app-admin-create-task (newTaskEvent)="newTaskHandler($event)"
                    [projectId]="projectId">
-  </app-create-task>
+  </app-admin-create-task>
 </p-dialog>

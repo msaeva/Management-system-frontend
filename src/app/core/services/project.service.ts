@@ -9,9 +9,12 @@ import {Pagination} from "@core/types/pagination";
 import {Pageable} from "@core/types/pageable";
 import {ProjectUser} from "@core/types/projects/project-user";
 import {ProjectTeam} from "@core/types/projects/project-team";
+import {Project} from "@core/types/projects/project";
+import {SimpleUser} from "@core/types/users/simple-user";
 
 @Injectable({providedIn: 'root'})
 export class ProjectService {
+
   constructor(private http: HttpClient) {
   }
 
@@ -74,6 +77,8 @@ export class ProjectService {
     const url = `${API_URL_ADMIN}/projects/${projectId}/tasks`;
     let params = new HttpParams();
 
+
+
     Object.entries(pagination).filter((entry) => entry[0] !== "totalRecords")
       .forEach((entry) => {
       params = params.append(entry[0], entry[1]);
@@ -100,5 +105,15 @@ export class ProjectService {
   getPMProjectsWithUsers() {
     const url = `${API_URL_PM}/projects/users`;
     return this.http.get<ProjectUser[]>(url);
+  }
+
+  getPMProjects() {
+    const url = API_URL_PM + "/projects/user";
+    return this.http.get<Project[]>(url);
+  }
+
+  getAllUsersInProject(projectId: number) {
+    const url = API_URL_PM + "/projects/" + projectId + "/users";
+    return this.http.get<SimpleUser[]>(url);
   }
 }

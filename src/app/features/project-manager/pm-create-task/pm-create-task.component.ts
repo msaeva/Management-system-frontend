@@ -1,46 +1,69 @@
-import {Component, EventEmitter, Input, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Task} from "@core/types/tasks/task";
 import {ButtonModule} from "primeng/button";
 import {InputTextModule} from "primeng/inputtext";
 import {InputTextareaModule} from "primeng/inputtextarea";
-import {MultiSelectModule} from "primeng/multiselect";
 import {NgIf} from "@angular/common";
 import {FormBuilder, FormControl, ReactiveFormsModule, Validators} from "@angular/forms";
-import {DetailedTask} from "@core/types/tasks/detailed-task";
 import {TaskService} from "@core/services/task.service";
 import {ToastService} from "@core/services/toast.service";
+import {DropdownModule} from "primeng/dropdown";
+import {ProjectService} from "@core/services/project.service";
+import {SimpleUser} from "@core/types/users/simple-user";
 
 @Component({
-  selector: 'app-create-task',
+  selector: 'app-pm-create-task',
   standalone: true,
   imports: [
     ButtonModule,
     InputTextModule,
     InputTextareaModule,
-    MultiSelectModule,
     NgIf,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    DropdownModule
   ],
-  templateUrl: './create-task.component.html',
-  styleUrl: './create-task.component.scss'
+  templateUrl: './pm-create-task.component.html',
+  styleUrl: './pm-create-task.component.scss'
 })
-export class CreateTaskComponent {
-  @Output() newTaskEvent = new EventEmitter<DetailedTask>();
+export class PmCreateTaskComponent implements OnInit {
   @Input({required: true}) projectId!: number;
+  @Output() newTaskEvent: EventEmitter<Task> = new EventEmitter<Task>();
 
   createTaskFormGroup = this.formBuilder.group({
     title: new FormControl('', [Validators.required, Validators.minLength(3)]),
     description: new FormControl('', [Validators.required, Validators.minLength(10), Validators.maxLength(200)]),
+    assignee: new FormControl(null, Validators.required)
   });
+
+  usersOptions: SimpleUser[] = [];
 
   constructor(private formBuilder: FormBuilder,
               private taskService: TaskService,
-              private toastService: ToastService) {
+              private toastService: ToastService,
+              private projectService: ProjectService) {
+  }
+
+  ngOnInit(): void {
+    this.loadUsersToAddToTask()
+  }
+
+  loadUsersToAddToTask() {
+    this.projectService.getAllUsersInProject(this.projectId).subscribe({
+      next: (response) => {
+        this.usersOptions = response;
+        console.log(this.usersOptions)
+      },
+      error: (err) => {
+        console.log(err);
+      }
+
+    })
   }
 
   createTask() {
     console.log(this.createTaskFormGroup.value)
-    this.taskService.create(this.createTaskFormGroup.value, this.projectId).subscribe({
-      next: (task) => {
+    this.taskService.createTaskPm(this.createTaskFormGroup.value, this.projectId).subscribe({
+      next: (task: Task) => {
         this.newTaskEvent.emit(task);
 
         this.toastService.showMessage({
@@ -56,4 +79,5 @@ export class CreateTaskComponent {
       error: (err) => console.log(err)
     })
   }
+
 }

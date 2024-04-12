@@ -27,13 +27,38 @@
                      pInputText id="end"/>
             </div>
           </div>
-          <div class="p-col-2">
-            <div class="flex flex-column gap-2">
-              <label class="font-bold">Assignee</label>
-              <input [disabled]="true"
-                     [ngModel]="task.userFullName"
-                     pInputText id="author"/>
+          <ng-container *ngIf="task.userFullName">
+            <div class="p-col-2">
+              <div class="flex flex-column gap-2">
+                <label class="font-bold">Assignee</label>
+                <input [disabled]="true"
+                       [ngModel]="task.userFullName"
+                       pInputText id="author"/>
+              </div>
             </div>
+          </ng-container>
+          <div *ngIf="!task.userFullName &&  getAuthUserRole() === Role.PM" class="block gap-2 mt-1 mb-1">
+            <p-dropdown [options]="assignUserOptions"
+                        [(ngModel)]="selectedUserToAssign"
+                        optionLabel="fullName"
+                        [filter]="true"
+                        filterBy="fullName"
+                        [showClear]="true"
+                        placeholder="Assign User">
+              <ng-template let-user pTemplate="selectedItem">
+                <div class="flex align-items-center gap-2">
+                  <div>{{ user.fullName }}</div>
+                </div>
+              </ng-template>
+              <ng-template let-user pTemplate="item">
+                <div class="flex align-items-center gap-2">
+                  <div>{{ user.fullName }}</div>
+                </div>
+              </ng-template>
+            </p-dropdown>
+
+            <p-button (onClick)="assignUser()" label="Submit" [text]="true" severity="info"></p-button>
+
           </div>
 
           <div *ngIf="getAuthUserId() === task.userId && task.status === TaskStatus.TODO.valueOf()"
@@ -56,13 +81,15 @@
 
       <div class="flex flex-column gap-2 mt-3">
         <label class="font-bold" for="description">Description</label>
-        <input pInputText id="description"
-               aria-describedby="username-help"
-               [disabled]="true"
-               [ngModel]="task?.description"/>
+        <textarea pInputTextarea id="description"
+                  aria-describedby="username-help"
+                  rows="3" cols="25"
+                  [disabled]="true"
+                  [ngModel]="task?.description"></textarea>
       </div>
 
-      <div *ngIf="getAuthUserId() === task.userId && task.status === TaskStatus.IN_PROGRESS.valueOf()"
+      <div *ngIf="(getAuthUserId() === task.userId && task.status === TaskStatus.IN_PROGRESS.valueOf())
+            || (getAuthUserRole() === Role.PM.valueOf() && task.status === TaskStatus.IN_PROGRESS.valueOf())"
            class="flex flex-column gap-2 mt-4">
         <label for="progress">Progress</label>
         <p-progressBar [value]="progress"></p-progressBar>
@@ -73,6 +100,7 @@
           [max]="100"
           [min]="0"
           [step]="10"
+          [disabled]="!(getAuthUserId() === task.userId && task.status === TaskStatus.IN_PROGRESS.valueOf())"
           buttonLayout="horizontal"
           inputId="horizontal"
           id="progress"

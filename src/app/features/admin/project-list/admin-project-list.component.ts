@@ -1,7 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {NgForOf, NgIf} from "@angular/common";
-import {ProjectComponent} from "@feature/project/project.component";
-import {AdminProjectComponent} from "@feature/admin/project/admin-project.component";
+import {ProjectComponent} from "@feature/shared/project/project.component";
 import {ProjectService} from "@core/services/project.service";
 import {DetailedProject} from "@core/types/projects/detailed-project";
 import {FieldsetModule} from "primeng/fieldset";
@@ -16,6 +15,7 @@ import {CreateProjectComponent} from "@feature/admin/create-project/create-proje
 import {Role} from "@core/role.enum";
 import {UserService} from "@core/services/user-service";
 import {SimpleUser} from "@core/types/users/simple-user";
+import {TextTransformPipe} from "@core/pipes/text-transform.pipe";
 
 
 @Component({
@@ -24,7 +24,6 @@ import {SimpleUser} from "@core/types/users/simple-user";
   imports: [
     NgForOf,
     ProjectComponent,
-    AdminProjectComponent,
     FieldsetModule,
     ButtonModule,
     DialogModule,
@@ -34,7 +33,8 @@ import {SimpleUser} from "@core/types/users/simple-user";
     NgIf,
     DetailedProjectComponent,
     CreateUserComponent,
-    CreateProjectComponent
+    CreateProjectComponent,
+    TextTransformPipe
   ],
   templateUrl: './admin-project-list.component.html',
   styleUrl: './admin-project-list.component.scss'
@@ -90,7 +90,7 @@ export class AdminProjectListComponent implements OnInit {
 
   loadProjects() {
     this.projectService.getAll().subscribe({
-      next: (projects) => {
+      next: (projects: DetailedProject[]) => {
         this.projects = projects;
         console.log(projects);
       },
@@ -106,12 +106,22 @@ export class AdminProjectListComponent implements OnInit {
     this.visibleCreateProjectDialog = false;
   }
 
-  removeDeletedProject(deletedProjectId: number) {
+  removeDeletedProjectHandler(deletedProjectId: number) {
     this.visibleDetailedProjectDialog = false;
     this.projects = this.projects.filter(p => p.id != deletedProjectId);
   }
 
-  showCreateUserDialog() {
+  showCreateProjectDialog() {
     this.visibleCreateProjectDialog = true;
+  }
+
+  updateProjectHandler(updatedProject: DetailedProject) {
+    this.visibleDetailedProjectDialog = false;
+
+    const index = this.projects.findIndex(p => p.id === updatedProject.id);
+    if (index !== -1) {
+      this.projects[index] = updatedProject;
+      this.visibleDetailedProjectDialog = false;
+    }
   }
 }

@@ -1,7 +1,7 @@
 <app-navigation ></app-navigation>
 <div class="layout">
   <ng-container class="content-container">
-    <div class="layout-sidebar" *ngIf="showSidebar$ | async">
+    <div class="layout-sidebar m-3" *ngIf="showSidebar$ | async">
       <app-sidebar [menuItems]="menuItems" >
       </app-sidebar>
     </div>

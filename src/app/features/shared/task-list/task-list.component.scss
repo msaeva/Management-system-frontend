@@ -118,3 +118,8 @@ h2 {
   height: 100%;
   padding-inline: 1rem;
 }
+.divider-header {
+  margin: 10px 0;
+  border: none;
+  border-top: 2px solid var(--primary-color);
+}

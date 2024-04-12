@@ -1,7 +1,6 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {ButtonModule} from "primeng/button";
 import {DialogModule} from "primeng/dialog";
-import {SingleTaskService} from "@core/services/single-task.service";
 import {SingleTask} from "@core/types/tasks/single-task";
 import {CardModule} from "primeng/card";
 import {AvatarModule} from "primeng/avatar";
@@ -20,6 +19,9 @@ import {Task} from "@core/types/tasks/task";
 import {PaginatorModule} from "primeng/paginator";
 import {FileUploadModule} from "primeng/fileupload";
 import {ProgressSpinnerModule} from "primeng/progressspinner";
+import {SimpleUser} from "@core/types/users/simple-user";
+import {ProjectService} from "@core/services/project.service";
+import {Role} from "@core/role.enum";
 
 @Component({
   selector: 'app-detailed-task',
@@ -45,13 +47,18 @@ import {ProgressSpinnerModule} from "primeng/progressspinner";
   styleUrl: './detailed-task.component.scss'
 })
 export class DetailedTaskComponent implements OnInit {
-  @Input() id: number | undefined;
+  @Input({required: true}) id!: number;
+  @Input({required: true}) projectId!: number;
   @Output() updatedStatusTaskEvent = new EventEmitter<Task>();
+  @Output() assignedUserToTaskEvent = new EventEmitter<Task>();
 
   task!: SingleTask;
   comments: Comment[] = [];
-  estimationTime: number = 2;
+  estimationTime!: number;
   progress: number = 0;
+  assignUserOptions: SimpleUser[] = [];
+  selectedUserToAssign!: SimpleUser;
+
 
   createCommentFormControl: FormControl = new FormControl();
 
@@ -60,10 +67,10 @@ export class DetailedTaskComponent implements OnInit {
     comments: true,
   }
 
-  constructor(private singleTaskService: SingleTaskService,
-              private commentService: CommentService,
+  constructor(private commentService: CommentService,
               private toastService: ToastService,
               private taskService: TaskService,
+              private projectService: ProjectService,
               private localStorageService: LocalStorageService) {
   }
 
@@ -71,6 +78,24 @@ export class DetailedTaskComponent implements OnInit {
     this.loadTask();
     this.loadComments(this.id!);
     this.initializeCommentFormGroup();
+    this.loadAssignUsers();
+
+  }
+
+  loadAssignUsers() {
+    this.projectService.getAllUsersInProject(this.projectId).subscribe({
+      next: (response) => {
+        this.assignUserOptions = response;
+      },
+      error: (err) => {
+        console.log(err);
+      }
+
+    })
+  }
+
+  getAuthUserRole() {
+    return this.localStorageService.getAuthUserRole();
   }
 
   initializeCommentFormGroup() {
@@ -93,12 +118,15 @@ export class DetailedTaskComponent implements OnInit {
     })
   }
 
-   loadTask() {
-    this.singleTaskService.getById(this.id).subscribe({
+  loadTask() {
+    this.taskService.getById(this.id).subscribe({
       next: (task: SingleTask) => {
+        console.log(task)
         this.task = task;
         this.loading.task = false;
         this.progress = this.task.progress;
+        this.estimationTime = this.task.estimationTime;
+        console.log(this.task)
       }, error: () => {
         console.log("Error loading tasks");
       }
@@ -171,6 +199,8 @@ export class DetailedTaskComponent implements OnInit {
       next: (response) => {
         console.log(response);
 
+        this.task.estimationTime = this.estimationTime;
+
         this.toastService.showMessage({
           severity: 'success',
           summary: 'Success',
@@ -196,5 +226,25 @@ export class DetailedTaskComponent implements OnInit {
     })
 
   }
+
+  assignUser() {
+    this.taskService.assignUser(this.task.id, this.selectedUserToAssign.id).subscribe({
+      next: (response: Task) => {
+        this.assignedUserToTaskEvent.emit(response);
+        this.toastService.showMessage({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Estimation time added successfully',
+          life: 3000
+        });
+      },
+      error: (err) => {
+        console.log(err)
+      }
+    })
+    console.log(this.selectedUserToAssign)
+  }
+
+  protected readonly Role = Role;
 }
 
