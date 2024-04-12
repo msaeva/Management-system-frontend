@@ -78,8 +78,10 @@ export class DetailedTaskComponent implements OnInit {
     this.loadTask();
     this.loadComments(this.id!);
     this.initializeCommentFormGroup();
-    this.loadAssignUsers();
 
+    if (this.getAuthUserRole() === Role.PM) {
+      this.loadAssignUsers();
+    }
   }
 
   loadAssignUsers() {

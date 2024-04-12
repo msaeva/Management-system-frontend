@@ -1,17 +1,16 @@
-<div class="ml-4 mr-4 mt-1">
+<div class="p-4 bg-white border-round-xl overflow-hidden">
   <full-calendar
     [options]="calendarOptions"
     [events]="events">
   </full-calendar>
+  <p-dialog header="Meeting Information"
+            [(visible)]="visibleMeetingInformationDialog"
+            [modal]="true"
+            [style]="{ width: '50vw', height: '40vw' }"
+            [draggable]="false"
+            [resizable]="false">
+    <app-detailed-meeting *ngIf="selectedMeeting"
+                          [meeting]="selectedMeeting!">
+    </app-detailed-meeting>
+  </p-dialog>
 </div>
-
-<p-dialog header="Meeting Information"
-          [(visible)]="visibleMeetingInformationDialog"
-          [modal]="true"
-          [style]="{ width: '50vw', height: '40vw' }"
-          [draggable]="false"
-          [resizable]="false">
-  <app-detailed-meeting *ngIf="selectedMeeting"
-                        [meeting]="selectedMeeting!">
-  </app-detailed-meeting>
-</p-dialog>

@@ -38,11 +38,11 @@ export class ProjectManagementLayout implements OnInit {
     this.loadProjects();
     this.loadMeetings();
 
-    // this.menuItems.push({
-    //   label: 'Users',
-    //   icon: 'pi pi-calendar',
-    //   routerLink: ['/admin/users'],
-    // })
+    this.menuItems.push({
+      label: 'Profile',
+      icon: 'pi pi-user',
+      routerLink: ['/project-management/profile'],
+    })
   }
 
   loadMeetings() {

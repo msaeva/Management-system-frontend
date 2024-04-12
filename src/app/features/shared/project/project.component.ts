@@ -8,7 +8,13 @@ import {TaskListComponent} from "@feature/shared/task-list/task-list.component";
 import {ActivatedRoute} from "@angular/router";
 import {ProjectService} from "@core/services/project.service";
 import {DetailedProject} from "@core/types/projects/detailed-project";
-import {DatePipe, NgForOf} from "@angular/common";
+import {DatePipe, NgForOf, NgIf} from "@angular/common";
+import {Role} from "@core/role.enum";
+import {LocalStorageService} from "@core/services/local-storage.service";
+import {PmCreateTaskComponent} from "@feature/project-manager/pm-create-task/pm-create-task.component";
+import {Task} from "@core/types/tasks/task";
+import {ProgressSpinnerModule} from "primeng/progressspinner";
+import {TaskService} from "@core/services/task.service";
 
 
 @Component({
@@ -22,24 +28,33 @@ import {DatePipe, NgForOf} from "@angular/common";
     AutoFocusModule,
     TaskListComponent,
     NgForOf,
-    DatePipe
+    DatePipe,
+    NgIf,
+    PmCreateTaskComponent,
+    ProgressSpinnerModule
   ],
   templateUrl: './project.component.html',
   styleUrl: './project.component.scss'
 })
 export class ProjectComponent implements OnInit {
-  visible: boolean = false;
+  visibleProjectDetailedTask: boolean = false;
   project: DetailedProject = {} as DetailedProject;
+  visibleCreateTaskDialog: boolean = false;
+  tasks: Task[] = [];
+
+  loadingProject: boolean = true;
 
   constructor(private projectService: ProjectService,
-              private activatedRoute: ActivatedRoute) {
+              private taskService: TaskService,
+              private activatedRoute: ActivatedRoute,
+              private localStorageService: LocalStorageService) {
   }
 
   showDialog() {
-    this.visible = true;
+    this.visibleProjectDetailedTask = true;
   }
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.activatedRoute.params.subscribe({
       next: params => {
         this.loadProject(params['id']);
@@ -47,14 +62,57 @@ export class ProjectComponent implements OnInit {
     })
   }
 
-  private loadProject(id: string) {
+  loadTasks() {
+    if (this.getAuthUserRole() === Role.USER.valueOf()) {
+      this.taskService.getTasksForUserTeamsByProjectId(this.project.id).subscribe({
+        next: (tasks: Task[]) => {
+          this.tasks = tasks;
+          // this.filterTasks();
+          // this.loading.tasks = false;
+        },
+        error: () => {
+          console.log("Error loading tasks");
+        }
+      });
+    } else if (this.getAuthUserRole() === Role.PM.valueOf()) {
+      this.taskService.getAllTasksByProject(this.project.id).subscribe({
+        next: (tasks: Task[]) => {
+          this.tasks = tasks;
+          // this.filterTasks();
+          // this.loading.tasks = false;
+        },
+        error: () => {
+          console.log("Error loading tasks");
+        }
+      });
+    }
+  }
+
+  getAuthUserRole(): string | null {
+    return this.localStorageService.getAuthUserRole()
+  }
+
+  loadProject(id: string) {
     this.projectService.getById(id).subscribe({
       next: (project: DetailedProject) => {
         this.project = project;
+        this.loadingProject = false;
+        this.loadTasks();
       },
       error: () => {
         console.log("Error loading projects");
       }
     });
+  }
+
+  protected readonly Role = Role;
+
+  showCreateNewTaskDialog() {
+    this.visibleCreateTaskDialog = true;
+  }
+
+  newTaskHandler(task: Task) {
+    this.tasks = [...this.tasks, task];
+    this.visibleCreateTaskDialog = false;
   }
 }

@@ -37,6 +37,7 @@ export class PmCreateTaskComponent implements OnInit {
 
   usersOptions: SimpleUser[] = [];
 
+
   constructor(private formBuilder: FormBuilder,
               private taskService: TaskService,
               private toastService: ToastService,
@@ -44,7 +45,7 @@ export class PmCreateTaskComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.loadUsersToAddToTask()
+    this.loadUsersToAddToTask();
   }
 
   loadUsersToAddToTask() {
@@ -61,7 +62,6 @@ export class PmCreateTaskComponent implements OnInit {
   }
 
   createTask() {
-    console.log(this.createTaskFormGroup.value)
     this.taskService.createTaskPm(this.createTaskFormGroup.value, this.projectId).subscribe({
       next: (task: Task) => {
         this.newTaskEvent.emit(task);

@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import {TaskService} from "@core/services/task.service";
 import {ActivatedRoute} from "@angular/router";
 import {Task} from "@core/types/tasks/task";
@@ -11,7 +11,6 @@ import {TaskStatus} from "@core/task-status";
 import {DetailedTaskComponent} from "@feature/shared/detailed-task/detailed-task.component";
 import {DialogModule} from "primeng/dialog";
 import {ToastService} from "@core/services/toast.service";
-import {LocalStorageService} from "@core/services/local-storage.service";
 import {Role} from "@core/role.enum";
 import {PmCreateTaskComponent} from "@feature/project-manager/pm-create-task/pm-create-task.component";
 import {DividerModule} from "primeng/divider";
@@ -37,8 +36,8 @@ import {ProgressSpinnerModule} from "primeng/progressspinner";
   templateUrl: './task-list.component.html',
   styleUrl: './task-list.component.scss'
 })
-export class TaskListComponent implements OnInit {
-  tasks: Task[] = [];
+export class TaskListComponent implements OnInit, OnChanges {
+  @Input({required: true}) tasks!: Task[];
   doneTasks: Task[] = [];
   todoTasks: Task[] = [];
   inProgressTasks: Task[] = [];
@@ -59,22 +58,26 @@ export class TaskListComponent implements OnInit {
   selectedTask: Task | null = null;
 
   loading: { tasks: boolean } = {
-    tasks: true,
+    tasks: false,
   }
 
   constructor(private taskService: TaskService,
               private activatedRoute: ActivatedRoute,
-              private toastService: ToastService,
-              private localStorageService: LocalStorageService) {
+              private toastService: ToastService){
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    this.filterTasks();
   }
 
   ngOnInit() {
     this.activatedRoute.params.subscribe({
       next: params => {
         this.projectId = params['id'];
-        this.loadTasks();
       }
     });
+
+    this.filterTasks();
   }
 
   public type = '';
@@ -178,37 +181,9 @@ export class TaskListComponent implements OnInit {
     }
   }
 
-  getAuthUserRole(): string | null {
-    return this.localStorageService.getAuthUserRole()
-  }
-
-  loadTasks() {
-    if (this.getAuthUserRole() === Role.USER.valueOf()) {
-      this.taskService.getTasksForUserTeamsByProjectId(this.projectId).subscribe({
-        next: (tasks: Task[]) => {
-          this.tasks = tasks;
-          this.filterTasks();
-          this.loading.tasks = false;
-        },
-        error: () => {
-          console.log("Error loading tasks");
-        }
-      });
-    } else if (this.getAuthUserRole() === Role.PM.valueOf()) {
-      this.taskService.getAllTasksByProject(this.projectId).subscribe({
-        next: (tasks: Task[]) => {
-          this.tasks = tasks;
-          this.filterTasks();
-          this.loading.tasks = false;
-        },
-        error: () => {
-          console.log("Error loading tasks");
-        }
-      });
-    }
-  }
 
   private filterTasks() {
+    console.log(this.tasks)
     this.doneTasks = this.tasks.filter(task => task.status === TaskStatus.DONE.valueOf());
     this.todoTasks = this.tasks.filter(task => task.status === TaskStatus.TODO.valueOf());
     this.inProgressTasks = this.tasks.filter(task => task.status === TaskStatus.IN_PROGRESS.valueOf());
@@ -230,21 +205,6 @@ export class TaskListComponent implements OnInit {
     }
   }
 
-  protected readonly TaskStatus = TaskStatus;
-  protected readonly Role = Role;
-
-
-  showCreateNewTaskDialog() {
-    this.visibleCreateTaskDialog = true;
-  }
-
-  newTaskHandler(task: Task) {
-    // this.initializeForms([...this.projects, project]);
-    this.tasks.push(task);
-    this.filterTasks();
-    this.visibleCreateTaskDialog = false;
-  }
-
   assignedUserToTaskHandler(updatedTask: Task) {
     const index = this.tasks.findIndex(task => task.id === updatedTask.id);
     if (index !== -1) {
@@ -253,4 +213,8 @@ export class TaskListComponent implements OnInit {
       this.visibleDetailedTask = false;
     }
   }
+
+  protected readonly TaskStatus = TaskStatus;
+  protected readonly Role = Role;
+
 }

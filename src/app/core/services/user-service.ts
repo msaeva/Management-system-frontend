@@ -1,5 +1,5 @@
 import {Injectable} from "@angular/core";
-import {API_URL_ADMIN} from "@core/constants";
+import {API_URL, API_URL_ADMIN} from "@core/constants";
 import {HttpClient, HttpParams} from "@angular/common/http";
 import {DetailedUser} from "@core/types/users/detailed-user";
 import {SimpleUser} from "@core/types/users/simple-user";
@@ -44,5 +44,14 @@ export class UserService {
   getByRole(roles: string[]) {
     const url = API_URL_ADMIN + "/users/roles?roles=" + roles.join(',');
     return this.http.get<SimpleUser[]>(url);
+  }
+
+  getAuthUser() {
+    const url = API_URL + "/users/profile"
+    return this.http.get<DetailedUser>(url);
+  }
+
+  changePassword() {
+
   }
 }

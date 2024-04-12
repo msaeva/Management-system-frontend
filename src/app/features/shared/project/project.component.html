@@ -1,63 +1,88 @@
-<div class="p-grid project-view-container">
-  <div class="grid p-col-12 p-md-6 pr-3 py-2 justify-content-end">
-    <button (click)="showDialog()"
-            pButton type="button"
-            icon="pi pi-external-link"
-            label="Detailed Project Information"
-            class="p-button-raised p-button-rounded p-button-success m-3">
-    </button>
-  </div>
+<p-progressSpinner *ngIf="loadingProject; else content" styleClass="w-4rem h-4rem" strokeWidth="8"
+                   fill="var(--surface-ground)" animationDuration=".5s">
+</p-progressSpinner>
 
-  <p-dialog header="Detailed Project Information"
-            [(visible)]="visible"
-            [modal]="true"
-            [style]="{ 'max-width': '50rem', 'border-radius': '8px', 'box-shadow': '0px 4px 10px rgba(0, 0, 0, 0.1)' }">
-
-    <div class="landing-page-content">
-      <div class="project-info">
-        <div class="title">
-          <h3>{{ project.title }}</h3>
-        </div>
-        <div class="description">
-          <p>{{ project.description }}</p>
-        </div>
-        <div class="status-created-date">
-          <div class="status">
-            <b>Status:</b> {{ project.status }}
-          </div>
-          <div class="created-date">
-            <b>Created Date:</b> {{ project.createdDate | date: 'medium' }}
-          </div>
-        </div>
-      </div>
-
-      <div>
-        <h4>Teams</h4>
-        <ul>
-          <li *ngFor="let team of project?.teams">
-            <span>{{ team.name }} </span>
-            <ul>
-              <li *ngFor="let user of team.users">
-                {{ user.username }} ({{ user.email }})
-              </li>
-            </ul>
-          </li>
-        </ul>
-      </div>
-
-      <div>
-        <h4>Project Managers</h4>
-        <ul>
-          <li *ngFor="let pm of project?.pms">
-            {{ pm.username }} ({{ pm.email }})
-          </li>
-        </ul>
-      </div>
+<ng-template #content>
+  <div class="p-grid project-view-container">
+    <div class="grid p-col-12 mr-0 p-md-6 pr-3 py-2 justify-content-end">
+      <button (click)="showDialog()"
+              pButton type="button"
+              icon="pi pi-external-link"
+              label="Detailed Project Information"
+              class="p-button-raised p-button-rounded p-button-success m-3">
+      </button>
+      <p-button *ngIf="getAuthUserRole() === Role.PM" icon="pi pi-plus"
+                (onClick)="showCreateNewTaskDialog()"
+                styleClass="p-button-rounded p-button-help p-button-outlined p-button-sm">
+      </p-button>
     </div>
-  </p-dialog>
+
+    <p-dialog header="Detailed Project Information"
+              [(visible)]="visibleProjectDetailedTask"
+              [modal]="true"
+              [style]="{ 'max-width': '50rem', 'border-radius': '8px', 'box-shadow': '0px 4px 10px rgba(0, 0, 0, 0.1)' }">
+
+      <div class="landing-page-content">
+        <div class="project-info">
+          <div class="title">
+            <h3>{{ project.title }}</h3>
+          </div>
+          <div class="description">
+            <p>{{ project.description }}</p>
+          </div>
+          <div class="status-created-date">
+            <div class="status">
+              <b>Status:</b> {{ project.status }}
+            </div>
+            <div class="created-date">
+              <b>Created Date:</b> {{ project.createdDate | date: 'medium' }}
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <h4>Teams</h4>
+          <ul>
+            <li *ngFor="let team of project?.teams">
+              <span>{{ team.name }} </span>
+              <ul>
+                <li *ngFor="let user of team.users">
+                  {{ user.username }} ({{ user.email }})
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+
+        <div>
+          <h4>Project Managers</h4>
+          <ul>
+            <li *ngFor="let pm of project?.pms">
+              {{ pm.username }} ({{ pm.email }})
+            </li>
+          </ul>
+        </div>
+      </div>
+    </p-dialog>
 
 
-  <div class="p-col-12 p-md-6 project-tasks">
-    <app-project-task-list></app-project-task-list>
+    <div class="p-col-12 p-md-6 project-tasks">
+      <app-project-task-list [tasks]="tasks"></app-project-task-list>
+    </div>
   </div>
-</div>
+</ng-template>
+
+<p-dialog header="Create New Task"
+          *ngIf="getAuthUserRole() === Role.PM"
+          [(visible)]="visibleCreateTaskDialog"
+          [modal]="true"
+          [style]="{ width: '40vw', height: '40vw' }"
+          [draggable]="false"
+          [resizable]="false">
+
+  <app-pm-create-task *ngIf="getAuthUserRole() === Role.PM"
+                      (newTaskEvent)="newTaskHandler($event)"
+                      [projectId]="project.id">
+  </app-pm-create-task>
+
+</p-dialog>
