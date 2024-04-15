@@ -131,11 +131,10 @@
           <p-cellEditor>
             <ng-template pTemplate="input">
               <p-dropdown [options]="taskStatus"
-                          formControlName="role"
+                          formControlName="status"
                           optionValue="value"
                           optionLabel="label"
-                          placeholder="Select a Role">
-
+                          placeholder="Select a Status">
               </p-dropdown>
             </ng-template>
             <ng-template pTemplate="output">

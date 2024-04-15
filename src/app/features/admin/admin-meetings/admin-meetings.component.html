@@ -43,13 +43,26 @@
       </p-dropdown>
     </div>
     <div class="flex align-items-center">
-      <p-checkbox
-        [(ngModel)]="filterFinished"
-        [binary]="true"
-        value="filterFinished"
-        (onChange)="applyFilter()"
-        id="finishedCheckbox"></p-checkbox>
-      <label class="p-1" for="finishedCheckbox">Finished</label>
+      <p-dropdown [options]="meetingStatus"
+                  [(ngModel)]="selectedMeetingStatus"
+                  optionLabel="label"
+                  optionValue="value"
+                  [filter]="true"
+                  filterBy="label"
+                  [showClear]="true"
+                  (onChange)="onMeetingStatusChange()"
+                  placeholder="Filter by Status">
+        <ng-template pTemplate="selectedItem" let-selectedOption>
+          <div class="flex align-items-center gap-2">
+            <div>{{ selectedOption.label }}</div>
+          </div>
+        </ng-template>
+        <ng-template let-status pTemplate="item">
+          <div class="flex align-items-center gap-2">
+            <div>{{ status.label }}</div>
+          </div>
+        </ng-template>
+      </p-dropdown>
     </div>
   </div>
   <full-calendar

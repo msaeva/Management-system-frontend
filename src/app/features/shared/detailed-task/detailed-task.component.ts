@@ -8,7 +8,7 @@ import {InputTextareaModule} from "primeng/inputtextarea";
 import {CommentService} from "@core/services/comment.service";
 import {DatePipe, NgForOf, NgIf} from "@angular/common";
 import {Comment} from "@core/types/comment";
-import {FormControl, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
+import {FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
 import {ChipsModule} from "primeng/chips";
 import {CommentCardComponent} from "@pattern/comment-card/comment-card.component";
 import {ToastService} from "@core/services/toast.service";
@@ -22,6 +22,7 @@ import {ProgressSpinnerModule} from "primeng/progressspinner";
 import {SimpleUser} from "@core/types/users/simple-user";
 import {ProjectService} from "@core/services/project.service";
 import {Role} from "@core/role.enum";
+import {ConfirmationService} from "primeng/api";
 
 @Component({
   selector: 'app-detailed-task',
@@ -51,6 +52,8 @@ export class DetailedTaskComponent implements OnInit {
   @Input({required: true}) projectId!: number;
   @Output() updatedStatusTaskEvent = new EventEmitter<Task>();
   @Output() assignedUserToTaskEvent = new EventEmitter<Task>();
+  @Output() deletedTaskEvent = new EventEmitter<number>();
+  @Output() updatedTaskEvent = new EventEmitter<Task>();
 
   task!: SingleTask;
   comments: Comment[] = [];
@@ -59,9 +62,8 @@ export class DetailedTaskComponent implements OnInit {
   assignUserOptions: SimpleUser[] = [];
   selectedUserToAssign!: SimpleUser;
 
-
   createCommentFormControl: FormControl = new FormControl();
-
+  updateTaskFormGroup!: FormGroup;
   loading: { task: boolean, comments: boolean } = {
     task: true,
     comments: true,
@@ -71,6 +73,8 @@ export class DetailedTaskComponent implements OnInit {
               private toastService: ToastService,
               private taskService: TaskService,
               private projectService: ProjectService,
+              private formBuilder: FormBuilder,
+              private confirmationService: ConfirmationService,
               private localStorageService: LocalStorageService) {
   }
 
@@ -82,6 +86,36 @@ export class DetailedTaskComponent implements OnInit {
     if (this.getAuthUserRole() === Role.PM) {
       this.loadAssignUsers();
     }
+  }
+
+  toggleEditMode() {
+    const func = this.updateTaskFormGroup.get('title')!.disabled ? 'enable' : 'disable';
+
+    this.updateTaskFormGroup.controls['title'][func]();
+    this.updateTaskFormGroup.controls['description'][func]();
+    this.updateTaskFormGroup.controls['status'][func]();
+    this.updateTaskFormGroup.controls['assignee'][func]();
+  }
+
+  loadFormGroup() {
+    this.updateTaskFormGroup = this.formBuilder.group({
+      title: [
+        {value: this.task.title, disabled: true},
+        [Validators.required, Validators.minLength(4)]
+      ],
+      assignee: [
+        {value: this.task.userFullName, disabled: true},
+        [Validators.required, Validators.minLength(3)]
+      ],
+      description: [
+        {value: this.task.description, disabled: true},
+        [Validators.required, Validators.minLength(4)]
+      ],
+      status: [
+        {value: this.task.status, disabled: true},
+        [Validators.required, Validators.minLength(6)]
+      ],
+    });
   }
 
   loadAssignUsers() {
@@ -123,12 +157,12 @@ export class DetailedTaskComponent implements OnInit {
   loadTask() {
     this.taskService.getById(this.id).subscribe({
       next: (task: SingleTask) => {
-        console.log(task)
         this.task = task;
         this.loading.task = false;
         this.progress = this.task.progress;
         this.estimationTime = this.task.estimationTime;
-        console.log(this.task)
+
+        this.loadFormGroup();
       }, error: () => {
         console.log("Error loading tasks");
       }
@@ -248,5 +282,53 @@ export class DetailedTaskComponent implements OnInit {
   }
 
   protected readonly Role = Role;
+
+  showDeleteTaskConfirmation(id: number) {
+    this.confirmationService.confirm({
+      message: 'Are you sure you want to delete this project?',
+      header: 'Confirmation',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.deleteTask(this.task.id);
+      }
+    });
+  }
+
+  cancelUpdateTask() {
+    this.loadFormGroup();
+  }
+
+  deleteTask(id: number) {
+    this.taskService.deletePM(id).subscribe({
+      next: () => {
+        this.deletedTaskEvent.emit(id);
+        // this.allTasks = this.allTasks.filter(task => task.id !== id);
+        this.toastService.showMessage({
+
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Task deleted successfully',
+          life: 3000
+        });
+      }, error: (err) => console.log(err)
+    });
+  }
+
+  updateTask(id: number) {
+    const assignee = this.updateTaskFormGroup.get('assignee')?.value;
+    console.log(assignee)
+
+    this.taskService.updatePM(id, {...this.updateTaskFormGroup.value, userId: assignee.id}).subscribe({
+      next: (response: SingleTask) => {
+        console.log(response)
+        this.task = response;
+        this.updatedTaskEvent.emit(response as Task);
+        this.toggleEditMode();
+
+      }, error: (err) => {
+        console.log(err);
+      }
+    })
+  }
 }
 

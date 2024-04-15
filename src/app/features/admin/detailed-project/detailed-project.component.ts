@@ -51,7 +51,7 @@ import {ActivatedRoute} from "@angular/router";
   templateUrl: './detailed-project.component.html',
   styleUrl: './detailed-project.component.scss'
 })
-export class DetailedProjectComponent implements OnInit {
+export class DetailedProjectComponent implements OnInit{
   @Input({required: true}) project!: DetailedProject;
 
   @Input({required: true}) allProjectManagersOptions!: SimpleUser[];

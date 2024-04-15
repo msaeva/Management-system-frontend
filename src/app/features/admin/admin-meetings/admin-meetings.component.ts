@@ -26,6 +26,9 @@ import {ProjectUser} from "@core/types/projects/project-user";
 import {ToastService} from "@core/services/toast.service";
 import {CreateMeetingComponent} from "@feature/shared/create-meeting/create-meeting.component";
 import {CheckboxModule} from "primeng/checkbox";
+import {TriStateCheckboxModule} from "primeng/tristatecheckbox";
+import {meetingStatus} from "@core/constants";
+
 
 @Component({
   selector: 'app-meetings-list',
@@ -45,7 +48,8 @@ import {CheckboxModule} from "primeng/checkbox";
     DetailedMeetingComponent,
     DetailedMeetingComponent,
     CreateMeetingComponent,
-    CheckboxModule
+    CheckboxModule,
+    TriStateCheckboxModule
   ],
   templateUrl: './admin-meetings.component.html',
   styleUrl: './admin-meetings.component.scss'
@@ -63,6 +67,10 @@ export class AdminMeetingsComponent implements OnInit {
   selectedProject!: ProjectUser;
   filteredProjects: ProjectUser[] = [];
   filterFinished: boolean = false;
+
+  protected readonly meetingStatus = meetingStatus;
+  selectedMeetingStatus: string | undefined;
+
 
   selectInfo!: DateSelectArg;
 
@@ -104,6 +112,7 @@ export class AdminMeetingsComponent implements OnInit {
     this.loadProjects();
     this.loadMeetings();
   }
+
 
   loadProjects() {
     this.projectService.getProjectsWithUsers().subscribe({
@@ -211,20 +220,9 @@ export class AdminMeetingsComponent implements OnInit {
     });
   }
 
-  onUserChange() {
-    if (this.selectedUser) {
-      this.meetingService.getMeetings(this.selectedUser.id, this.selectedProject ? this.selectedProject.id : null)
-        .subscribe((meetings: DetailedMeeting[]) => {
-          this.filteredMeetings = meetings;
-          this.mapEvents();
-        });
-    } else {
-      this.filteredMeetings = this.meetings.slice();
-      this.mapEvents();
-    }
-  }
 
   private mapEvents() {
+    console.log("in mapEvents")
     this.events = this.filteredMeetings.map(meeting => ({
       id: meeting.id.toString(),
       title: meeting.title,
@@ -232,20 +230,10 @@ export class AdminMeetingsComponent implements OnInit {
       start: meeting.start,
       end: meeting.end
     }));
+
+    console.log(this.events)
   }
 
-  onProjectChange() {
-    if (this.selectedProject) {
-      this.meetingService.getMeetings(this.selectedUser ? this.selectedUser.id : null, this.selectedProject.id)
-        .subscribe((meetings: DetailedMeeting[]) => {
-          this.filteredMeetings = meetings;
-          this.mapEvents();
-        });
-    } else {
-      this.filteredMeetings = this.meetings.slice();
-      this.mapEvents();
-    }
-  }
 
   newMeetingHandler(meeting: DetailedMeeting, selectInfo: DateSelectArg) {
     this.events.push({
@@ -278,23 +266,62 @@ export class AdminMeetingsComponent implements OnInit {
 
   }
 
-  applyFilter() {
-    console.log(this.meetings)
-    if (this.filterFinished) {
-      if (this.selectedUser || this.selectedProject) {
-        console.log("in if")
-        this.filteredMeetings = this.filteredMeetings.filter(meeting => {
-          return new Date(meeting.end) < new Date();
-        });
-      } else {
-        this.filteredMeetings = this.meetings.filter(meeting => {
-          return new Date(meeting.end) < new Date();
-        });
+
+  onUserChange() {
+    if (this.selectedUser) {
+      if (this.selectedMeetingStatus || this.selectedProject) {
+        this.fetchMeetingsAndUpdate(this.selectedUser.id, this.selectedProject ? this.selectedProject.id : null);
       }
+      this.fetchMeetingsAndUpdate(this.selectedUser.id, null);
     } else {
-      if (!this.selectedUser || this.selectedProject) {
-        this.filteredMeetings = this.meetings;
+      if (this.selectedMeetingStatus || this.selectedProject) {
+        this.filteredMeetings = this.meetings.slice();
       }
+      this.filteredMeetings = this.meetings;
+    }
+    this.mapEvents();
+  }
+
+  onProjectChange() {
+    if (this.selectedProject) {
+      if (this.selectedMeetingStatus || this.selectedUser) {
+        this.fetchMeetingsAndUpdate(this.selectedUser ? this.selectedUser.id : null, this.selectedProject.id);
+      }
+      this.fetchMeetingsAndUpdate(null, this.selectedProject.id);
+
+    } else {
+      if (this.selectedMeetingStatus || this.selectedUser) {
+        this.fetchMeetingsAndUpdate(this.selectedUser ? this.selectedUser.id : null, null)
+      }
+      this.filteredMeetings = this.meetings;
+      this.mapEvents();
+
+    }
+  }
+
+  fetchMeetingsAndUpdate(userId: number | null, projectId: number | null): void {
+    this.meetingService.getMeetings(userId, projectId).subscribe((meetings: DetailedMeeting[]) => {
+      this.filteredMeetings = meetings;
+      this.mapEvents();
+    });
+  }
+
+  onMeetingStatusChange() {
+    if (this.selectedMeetingStatus === 'FINISHED') {
+      this.filteredMeetings = this.selectedUser || this.selectedProject ?
+        this.filteredMeetings.filter(meeting => new Date(meeting.end) < new Date()) :
+        this.meetings.filter(meeting => new Date(meeting.end) < new Date());
+
+    } else if (this.selectedMeetingStatus === 'NOT_STARTED') {
+      this.filteredMeetings = this.selectedUser || this.selectedProject ?
+        this.filteredMeetings.filter(meeting => new Date(meeting.end) > new Date()) :
+        this.meetings.filter(meeting => new Date(meeting.end) > new Date());
+    } else {
+      if (this.selectedUser || this.selectedProject) {
+        this.fetchMeetingsAndUpdate(this.selectedUser ? this.selectedUser.id : null,
+          this.selectedProject ? this.selectedProject.id : null);
+      }
+      this.filteredMeetings = this.meetings;
     }
     this.mapEvents();
   }

@@ -35,13 +35,11 @@ export class ProjectManagerLayout implements OnInit {
 
   menuItems: MenuItem[] = [];
   showSidebar$ = this.layoutService.getValue();
+  loadingProject: boolean = true;
 
   ngOnInit(): void {
-    console.log(this.menuItems);
-
     this.loadProjects();
     this.loadMeetings();
-
   }
 
   loadMeetings() {
@@ -55,7 +53,7 @@ export class ProjectManagerLayout implements OnInit {
   loadProjects() {
     this.projectService.getPMProjects().subscribe({
       next: (response: Project[]) => {
-        console.log(response);
+        this.loadingProject = true;
         this.mapProjectsToMenuItems(response);
       },
       error: () => {

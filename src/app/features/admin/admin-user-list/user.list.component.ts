@@ -94,7 +94,6 @@ export class UserListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // this.loadUsers();
   }
 
   loadUsers($event: TableLazyLoadEvent) {

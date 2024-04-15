@@ -79,7 +79,7 @@ export class AdminTaskListComponent implements OnInit {
   }
 
   onRowEditSave(task: DetailedTask) {
-    this.taskService.update(task).subscribe({
+    this.taskService.update(task.id, task).subscribe({
       next: () => {
         const taskToUpdate = this.allTasks.find(u => u.id === task.id);
         taskToUpdate!.title = task.title
@@ -145,7 +145,6 @@ export class AdminTaskListComponent implements OnInit {
         });
       }, error: (err) => console.log(err)
     });
-
   }
 
   newTaskHandler(task: DetailedTask) {

@@ -163,6 +163,8 @@
           header="Task Information">
   <app-detailed-task [id]="selectedTask!.id"
                      [projectId]="projectId"
+                     (deletedTaskEvent)="deleteTaskHandler($event)"
+                     (updatedTaskEvent)="updateTaskHandler($event)"
                      (assignedUserToTaskEvent)="assignedUserToTaskHandler($event)"
                      (updatedStatusTaskEvent)="updatedStatusTaskHandler($event, TaskStatus.IN_PROGRESS.valueOf())">
 

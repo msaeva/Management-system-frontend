@@ -1,6 +1,6 @@
 import {Routes} from "@angular/router";
 import {AdminLayout} from "@layouts/admin/admin-layout.component";
-import {UserListComponent} from "@feature/admin/user-list/user.list.component";
+import {UserListComponent} from "@feature/admin/admin-user-list/user.list.component";
 import {AdminProjectListComponent} from "@feature/admin/project-list/admin-project-list.component";
 import {AdminProjectsTaskListComponent} from "@feature/admin/project-task-list/admin-projects-task-list.component";
 import {AdminTaskListComponent} from "@feature/admin/admin-task-list/admin-task-list.component";

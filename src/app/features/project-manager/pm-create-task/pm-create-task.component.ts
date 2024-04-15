@@ -32,7 +32,7 @@ export class PmCreateTaskComponent implements OnInit {
   createTaskFormGroup = this.formBuilder.group({
     title: new FormControl('', [Validators.required, Validators.minLength(3)]),
     description: new FormControl('', [Validators.required, Validators.minLength(10), Validators.maxLength(200)]),
-    assignee: new FormControl(null, Validators.required)
+    assignee: new FormControl(null)
   });
 
   usersOptions: SimpleUser[] = [];
@@ -49,6 +49,7 @@ export class PmCreateTaskComponent implements OnInit {
   }
 
   loadUsersToAddToTask() {
+    console.log(this.projectId)
     this.projectService.getAllUsersInProject(this.projectId).subscribe({
       next: (response) => {
         this.usersOptions = response;

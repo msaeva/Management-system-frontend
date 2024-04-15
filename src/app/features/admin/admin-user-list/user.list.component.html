@@ -29,12 +29,24 @@
            [tableStyle]="{'min-width': '40rem'}">>
     <ng-template pTemplate="header">
       <tr>
-        <th style="width:10%;">Id</th>
-        <th style="width:15%;">First Name</th>
-        <th style="width:15%;">Last Name</th>
-        <th style="width:15%;">Username</th>
-        <th style="width:15%;">Email</th>
-        <th style="width:10%;">Role</th>
+        <th pSortableColumn="id" style="width:10%;">Id
+          <p-sortIcon field="id"></p-sortIcon>
+        </th>
+        <th pSortableColumn="firstName" style="width:15%;">First Name
+          <p-sortIcon field="firstName"></p-sortIcon>
+        </th>
+        <th pSortableColumn="lastName" style="width:15%;">Last Name
+          <p-sortIcon field="lastName"></p-sortIcon>
+        </th>
+        <th pSortableColumn="username" style="width:15%;">Username
+          <p-sortIcon field="username"></p-sortIcon>
+        </th>
+        <th pSortableColumn="email" style="width:15%;">Email
+          <p-sortIcon field="email"></p-sortIcon>
+        </th>
+        <th pSortableColumn="role" style="width:10%;">Role
+          <p-sortIcon field="role"></p-sortIcon>
+        </th>
         <th style="width:20%; text-align: center;">Projects</th>
         <th style="width:20%; text-align: center;">Actions</th>
       </tr>
@@ -132,7 +144,7 @@
             <ng-template pTemplate="output">
               <ng-container *ngFor="let project of user.projects">
                 <a [routerLink]="['/admin/projects', project.id]"
-                [state]="{project: project}">
+                   [state]="{project: project}">
                   {{ project.title }}
                 </a>
                 <br *ngIf="last">

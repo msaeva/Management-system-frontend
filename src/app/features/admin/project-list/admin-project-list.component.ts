@@ -67,6 +67,7 @@ export class AdminProjectListComponent implements OnInit {
     this.projectService.getDetailedInfoById(id).subscribe({
       next: (project) => {
         this.selectedProject = project;
+        console.log(this.selectedProject)
         this.loadingProjectById = false;
       },
       error: (err) => {
@@ -79,7 +80,6 @@ export class AdminProjectListComponent implements OnInit {
   loadPMs() {
     this.userService.getByRole([Role.PM.valueOf()]).subscribe({
       next: (response) => {
-        console.log(response);
         this.allProjectManagers = response;
         this.allProjectManagersOptions = this.allProjectManagers;
 

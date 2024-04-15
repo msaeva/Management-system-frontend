@@ -32,3 +32,9 @@ export  const taskStatus: { value: string, label: string }[] = [
   {value: TaskStatus.DONE.valueOf(), label: 'Done'},
   {value: TaskStatus.IN_PROGRESS.valueOf(), label: 'In Progress'}
 ];
+
+export  const meetingStatus: { value: string, label: string }[] = [
+  {value: 'FINISHED', label: 'Finished'},
+  {value: 'NOT_STARTED', label: 'Not Started'},
+  {value: 'ALL', label: 'All'},
+];

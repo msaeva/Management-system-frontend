@@ -16,14 +16,18 @@ export class TaskService {
     return this.http.get<Task[]>(url);
   }
 
-  update(task: DetailedTask) {
-    const url = API_URL_ADMIN + "/tasks";
+  update(id: number, task: DetailedTask) {
+    const url = API_URL_ADMIN + "/tasks/" + id;
     return this.http.put(url, task);
+  }
+
+  updatePM(id: number, body: any) {
+    const url = API_URL_PM + "/tasks/" + id;
+    return this.http.put<SingleTask>(url, body);
   }
 
   updateStatus(taskId: number, status: string) {
     const url = API_URL + "/tasks/" + taskId;
-
     return this.http.put(url, status, {responseType: 'text'});
   }
 
@@ -69,7 +73,7 @@ export class TaskService {
       title: task.title,
       description: task.description,
       projectId: projectId,
-      userId: task.assignee.id
+      userId: task.assignee ? task.assignee.id : null
     }
     console.log(body)
 
@@ -80,5 +84,10 @@ export class TaskService {
   assignUser(taskId: number, userId: number) {
     const url = API_URL_PM + "/tasks/" + taskId + "/users/" + userId;
     return this.http.put<Task>(url, {});
+  }
+
+  deletePM(id: number) {
+    const url = API_URL_PM + "/tasks/" + id;
+    return this.http.delete(url);
   }
 }

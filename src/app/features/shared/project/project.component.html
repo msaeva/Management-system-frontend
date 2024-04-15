@@ -11,9 +11,12 @@
               label="Detailed Project Information"
               class="p-button-raised p-button-rounded p-button-success m-3">
       </button>
-      <p-button *ngIf="getAuthUserRole() === Role.PM" icon="pi pi-plus"
+
+      <p-button *ngIf="getAuthUserRole() === Role.PM"
+                icon="pi pi-plus"
+                [rounded]="true"
                 (onClick)="showCreateNewTaskDialog()"
-                styleClass="p-button-rounded p-button-help p-button-outlined p-button-sm">
+                styleClass="p-button-outlined p-button-sm m-3">
       </p-button>
     </div>
 
@@ -73,10 +76,10 @@
 </ng-template>
 
 <p-dialog header="Create New Task"
-          *ngIf="getAuthUserRole() === Role.PM"
+          *ngIf="!loadingProject && getAuthUserRole() === Role.PM"
           [(visible)]="visibleCreateTaskDialog"
           [modal]="true"
-          [style]="{ width: '40vw', height: '40vw' }"
+          [style]="{ width: '40vw', height: '35vw' }"
           [draggable]="false"
           [resizable]="false">
 
@@ -84,5 +87,5 @@
                       (newTaskEvent)="newTaskHandler($event)"
                       [projectId]="project.id">
   </app-pm-create-task>
-
 </p-dialog>
+

@@ -15,6 +15,8 @@ import {Role} from "@core/role.enum";
 import {PmCreateTaskComponent} from "@feature/project-manager/pm-create-task/pm-create-task.component";
 import {DividerModule} from "primeng/divider";
 import {ProgressSpinnerModule} from "primeng/progressspinner";
+import {RippleModule} from "primeng/ripple";
+import {TableModule} from "primeng/table";
 
 @Component({
   selector: 'app-project-task-list',
@@ -31,7 +33,9 @@ import {ProgressSpinnerModule} from "primeng/progressspinner";
     DialogModule,
     PmCreateTaskComponent,
     DividerModule,
-    ProgressSpinnerModule
+    ProgressSpinnerModule,
+    RippleModule,
+    TableModule
   ],
   templateUrl: './task-list.component.html',
   styleUrl: './task-list.component.scss'
@@ -43,6 +47,8 @@ export class TaskListComponent implements OnInit, OnChanges {
   inProgressTasks: Task[] = [];
   openTasks: Task[] = [];
   reOpenTasks: Task[] = [];
+
+  mode: 'modify' | 'display' = "display";
 
 
   allowedTransitions: { [key: string]: string[] } = {
@@ -63,7 +69,7 @@ export class TaskListComponent implements OnInit, OnChanges {
 
   constructor(private taskService: TaskService,
               private activatedRoute: ActivatedRoute,
-              private toastService: ToastService){
+              private toastService: ToastService) {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -217,4 +223,17 @@ export class TaskListComponent implements OnInit, OnChanges {
   protected readonly TaskStatus = TaskStatus;
   protected readonly Role = Role;
 
+  deleteTaskHandler(taskId: number) {
+    this.visibleDetailedTask = false;
+    this.tasks = this.tasks.filter(t => t.id !== taskId);
+    this.filterTasks();
+  }
+
+  updateTaskHandler(updatedTask: Task) {
+    const index = this.tasks.findIndex(task => task.id === updatedTask.id);
+    if (index !== -1) {
+      this.tasks[index] = updatedTask;
+      this.filterTasks();
+    }
+  }
 }
