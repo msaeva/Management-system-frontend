@@ -54,7 +54,7 @@ export class AdminLayout implements OnInit, OnDestroy {
         routerLink: ['/admin/users'],
         routerLinkActiveOptions: {
           exact:
-            true
+            false
         }
       },
       {
@@ -63,7 +63,7 @@ export class AdminLayout implements OnInit, OnDestroy {
         routerLink: ['/admin/projects'],
         routerLinkActiveOptions: {
           exact:
-            true
+            false
         }
       }, {
         label: 'Tasks',
@@ -71,7 +71,7 @@ export class AdminLayout implements OnInit, OnDestroy {
         routerLink: ['/admin/tasks'],
         routerLinkActiveOptions: {
           exact:
-            true
+            false
         },
       },
       {

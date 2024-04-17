@@ -5,6 +5,7 @@ import {DetailedUser} from "@core/types/users/detailed-user";
 import {SimpleUser} from "@core/types/users/simple-user";
 import {Pagination} from "@core/types/pagination";
 import {Pageable} from "@core/types/pageable";
+import {Observable} from "rxjs";
 
 @Injectable({providedIn: 'root'})
 export class UserService {
@@ -24,12 +25,12 @@ export class UserService {
     return this.http.get<Pageable<DetailedUser>>(url, {params: params});
   }
 
-  deleteById(id: number) {
+  deleteById(id: number): Observable<object> {
     const url = API_URL_ADMIN + "/users/" + id.toString();
     return this.http.delete(url);
   }
 
-  update(user: DetailedUser) {
+  updateAdmin(user: DetailedUser): Observable<object> {
     const url = API_URL_ADMIN + "/users/";
 
     const body = {
@@ -41,17 +42,23 @@ export class UserService {
     return this.http.put(url, body);
   }
 
-  getByRole(roles: string[]) {
+  getByRole(roles: string[]): Observable<SimpleUser[]> {
     const url = API_URL_ADMIN + "/users/roles?roles=" + roles.join(',');
     return this.http.get<SimpleUser[]>(url);
   }
 
-  getAuthUser() {
+  getAuthUser(): Observable<DetailedUser> {
     const url = API_URL + "/users/profile"
     return this.http.get<DetailedUser>(url);
   }
 
-  changePassword() {
+  changePassword(body: any): Observable<object> {
+    const url = API_URL + "/users/change-password"
+    return this.http.put(url, body);
+  }
 
+  updateProfile(body: any): Observable<DetailedUser> {
+    const url = API_URL + "/users"
+    return this.http.put<DetailedUser>(url, body);
   }
 }

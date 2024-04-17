@@ -3,7 +3,7 @@ import {PageNotFoundComponent} from "./ui/page-not-found/page-not-found.componen
 import {LoginComponent} from "@pattern/login/login.component";
 import {RegisterComponent} from "@pattern/register/register.component";
 import {privateGuard} from "@core/guards/private.guard";
-import {ProfileComponent} from "@feature/user/profile/profile.component";
+import {ProfileComponent} from "@feature/shared/profile/profile.component";
 import {adminGuard} from "@core/guards/admin.guard";
 import {userGuard} from "@core/guards/user.guard";
 import {pmGuard} from "@core/guards/pm.guard";

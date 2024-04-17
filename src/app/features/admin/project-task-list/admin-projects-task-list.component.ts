@@ -33,10 +33,9 @@ export class AdminProjectsTaskListComponent implements OnInit {
     this.loadProjectTasks();
   }
 
-  loadProjectTasks() {
+  loadProjectTasks(): void {
     this.projectService.getProjectsWithTasks().subscribe({
       next: (response) => {
-        console.log(response);
         this.allProjectTasks = response;
       },
       error: (err) => {

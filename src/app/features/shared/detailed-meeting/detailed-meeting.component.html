@@ -1,9 +1,6 @@
-
-<!--<div class="p-grid justify-content-center align-items-center p-2">-->
-
 <div class="p-col-12 p-md-4">
   <div *ngIf="(getAuthUserRole() === Role.ADMIN) || (getAuthUserRole() === Role.PM)"
-  class="flex justify-content-end pr-5">
+       class="flex justify-content-end pr-5">
     <p-button (onClick)="showDeleteMeetingConfirmation()"
               [rounded]="true"
               [text]="true"
@@ -35,36 +32,6 @@
     </p-button>
 
   </div>
-
-  <!--  <div *ngIf="(getAuthUserRole() === Role.ADMIN) || (getAuthUserRole() === Role.PM)"-->
-  <!--       class="flex justify-content-end mt-3">-->
-  <!--    <div class="">-->
-  <!--      <button type="button"-->
-  <!--              pButton icon="pi pi-pencil"-->
-  <!--              label="Edit"-->
-  <!--              class="p-button-primary"-->
-  <!--              *ngIf="updateMeetingFormGroup.get('title')!.disabled"-->
-  <!--              (click)="toggleEditMode()">-->
-  <!--      </button>-->
-  <!--      <button type="button"-->
-  <!--              pButton icon="pi pi-check"-->
-  <!--              label="Save"-->
-  <!--              [disabled]="!updateMeetingFormGroup.dirty && updateMeetingFormGroup.valid"-->
-  <!--              class="p-button-success mt-2"-->
-  <!--              *ngIf="!updateMeetingFormGroup.get('title')!.disabled"-->
-  <!--              (click)="updateMeeting()">-->
-  <!--      </button>-->
-  <!--      <button type="button"-->
-  <!--              pButton icon="pi pi-times"-->
-  <!--              label="Cancel"-->
-  <!--              class="p-button-danger mt-2"-->
-  <!--              *ngIf="!updateMeetingFormGroup.get('title')!.disabled"-->
-  <!--              (click)="cancelUpdateMeeting()">-->
-  <!--      </button>-->
-  <!--    </div>-->
-  <!--  </div>-->
-
-
   <form [formGroup]="updateMeetingFormGroup">
     <div class="grid p-2">
       <div class="flex flex-column mt-3 pt-3 w-full">
@@ -97,11 +64,19 @@
         <div class="flex  flex-wrap gap-5">
           <div class="flex flex-column gap-2">
             <label class="font-bold">Start Date</label>
-            <p-calendar formControlName="start" [showIcon]="true" [showTime]="true"></p-calendar>
+            <p-calendar [showIcon]="true"
+                        [showTime]="true"
+                        appendTo="body"
+                        formControlName="start">
+            </p-calendar>
           </div>
           <div class="flex flex-column gap-2">
             <label class="font-bold">End Date</label>
-            <p-calendar formControlName="end" [showIcon]="true" [showTime]="true"></p-calendar>
+            <p-calendar [showIcon]="true"
+                        [showTime]="true"
+                        appendTo="body"
+                        formControlName="end">
+            </p-calendar>
           </div>
         </div>
       </div>
@@ -113,7 +88,6 @@
     </div>
   </form>
 </div>
-<!--</div>-->
 
 
 

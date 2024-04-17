@@ -48,24 +48,24 @@ export class TaskListComponent implements OnInit, OnChanges {
   openTasks: Task[] = [];
   reOpenTasks: Task[] = [];
 
-  mode: 'modify' | 'display' = "display";
-
 
   allowedTransitions: { [key: string]: string[] } = {
     [TaskStatus.OPEN.valueOf()]: [TaskStatus.TODO.valueOf()],
     [TaskStatus.TODO.valueOf()]: [TaskStatus.IN_PROGRESS.valueOf()],
     [TaskStatus.IN_PROGRESS.valueOf()]: [TaskStatus.DONE.valueOf()],
-    [TaskStatus.DONE.valueOf()]: []
+    [TaskStatus.DONE.valueOf()]: [TaskStatus.OPEN.valueOf()]
   };
 
   projectId!: number;
   visibleDetailedTask: boolean = false;
-  visibleCreateTaskDialog: boolean = false;
   selectedTask: Task | null = null;
 
   loading: { tasks: boolean } = {
     tasks: false,
   }
+
+  protected readonly TaskStatus = TaskStatus;
+  protected readonly Role = Role;
 
   constructor(private taskService: TaskService,
               private activatedRoute: ActivatedRoute,
@@ -76,7 +76,7 @@ export class TaskListComponent implements OnInit, OnChanges {
     this.filterTasks();
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.activatedRoute.params.subscribe({
       next: params => {
         this.projectId = params['id'];
@@ -90,11 +90,11 @@ export class TaskListComponent implements OnInit, OnChanges {
   public draggedTask: any;
   isDropDisabled: boolean = false;
 
-  dragStart(task: Task) {
+  dragStart(task: Task): void {
     this.draggedTask = task;
   }
 
-  drop(type: string) {
+  drop(type: string): void {
     const sourceColumn = this.draggedTask.status as string;
     const targetColumn = type;
 
@@ -133,7 +133,7 @@ export class TaskListComponent implements OnInit, OnChanges {
     }
   }
 
-  dragEnd(task: any) {
+  dragEnd(task: any): void {
 
     const taskStatus = task.status;
     const taskId = task.id;
@@ -154,7 +154,6 @@ export class TaskListComponent implements OnInit, OnChanges {
 
       this.taskService.updateStatus(taskId, task.status).subscribe({
         next: (response) => {
-          console.log(response);
 
           this.toastService.showMessage({
             severity: 'success',
@@ -188,21 +187,21 @@ export class TaskListComponent implements OnInit, OnChanges {
   }
 
 
-  private filterTasks() {
+  private filterTasks(): void {
     console.log(this.tasks)
     this.doneTasks = this.tasks.filter(task => task.status === TaskStatus.DONE.valueOf());
     this.todoTasks = this.tasks.filter(task => task.status === TaskStatus.TODO.valueOf());
     this.inProgressTasks = this.tasks.filter(task => task.status === TaskStatus.IN_PROGRESS.valueOf());
-    this.openTasks = this.tasks.filter(task => task.status === TaskStatus.OPEN.valueOf());
+    this.openTasks = this.tasks.filter(task => task.status === TaskStatus.OPEN.valueOf() || task.status === TaskStatus.RE_OPEN.valueOf());
     // this.reOpenTasks = this.tasks.filter(task => task.status === "RE-OPEN");
   }
 
-  openDetailedTaskDialog(task: Task) {
+  openDetailedTaskDialog(task: Task): void {
     this.selectedTask = task;
     this.visibleDetailedTask = true
   }
 
-  updatedStatusTaskHandler(updatedTask: Task, newStatus: string) {
+  updatedStatusTaskHandler(updatedTask: Task, newStatus: string): void {
     const foundTask: Task = this.tasks.find(task => task.id === updatedTask.id) as Task;
 
     if (foundTask !== undefined) {
@@ -211,7 +210,7 @@ export class TaskListComponent implements OnInit, OnChanges {
     }
   }
 
-  assignedUserToTaskHandler(updatedTask: Task) {
+  assignedUserToTaskHandler(updatedTask: Task): void {
     const index = this.tasks.findIndex(task => task.id === updatedTask.id);
     if (index !== -1) {
       this.tasks[index] = updatedTask;
@@ -220,16 +219,13 @@ export class TaskListComponent implements OnInit, OnChanges {
     }
   }
 
-  protected readonly TaskStatus = TaskStatus;
-  protected readonly Role = Role;
-
-  deleteTaskHandler(taskId: number) {
+  deleteTaskHandler(taskId: number): void {
     this.visibleDetailedTask = false;
     this.tasks = this.tasks.filter(t => t.id !== taskId);
     this.filterTasks();
   }
 
-  updateTaskHandler(updatedTask: Task) {
+  updateTaskHandler(updatedTask: Task): void {
     const index = this.tasks.findIndex(task => task.id === updatedTask.id);
     if (index !== -1) {
       this.tasks[index] = updatedTask;

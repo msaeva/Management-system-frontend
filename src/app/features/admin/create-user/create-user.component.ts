@@ -42,7 +42,7 @@ export class CreateUserComponent {
               private formBuilder: FormBuilder) {
   }
 
-  createAccount() {
+  createAccount(): void {
     this.authService.createAccount(this.createUserFormGroup.value).subscribe({
       next: (user: DetailedUser) => {
 
@@ -62,9 +62,8 @@ export class CreateUserComponent {
         this.createUserFormGroup.reset();
       },
       error: (err) => {
-        this.createUserFormGroup.setErrors({ taken: true });
+        this.createUserFormGroup.setErrors({taken: true});
 
-        console.log(err);
         this.toastService.showMessage({
           severity: 'error',
           summary: 'Error',

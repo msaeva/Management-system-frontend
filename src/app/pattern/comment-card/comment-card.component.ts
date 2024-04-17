@@ -113,7 +113,14 @@ export class CommentCardComponent implements OnInit {
     this.mode = 'display';
   }
 
-  isAuthUserOwner() {
 
+  getFirstLetter(fullName: string): string {
+    return fullName ? fullName.charAt(0).toUpperCase() : '';
+  }
+
+  getAvatarColor() {
+    const colors = ['#fbe7c6', '#e1d093', '#b4f8c8', '#b9f5af', '#00ffff', '#ffaebc'];
+    const index = Math.floor(Math.random() * colors.length);
+    return {'background-color': colors[index]};
   }
 }

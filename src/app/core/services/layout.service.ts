@@ -1,14 +1,15 @@
 import {Injectable} from "@angular/core";
-import {BehaviorSubject} from "rxjs";
+import {BehaviorSubject, Observable} from "rxjs";
 
 @Injectable({providedIn: 'root'})
 export class LayoutService {
-  showSidebarSubject= new BehaviorSubject<boolean>(true);
+  showSidebarSubject = new BehaviorSubject<boolean>(true);
 
-  toggleSidebar() {
+  toggleSidebar(): void {
     this.showSidebarSubject.next(!this.showSidebarSubject.value);
   }
-  getValue() {
+
+  getValue(): Observable<boolean> {
     return this.showSidebarSubject.asObservable();
   }
 }

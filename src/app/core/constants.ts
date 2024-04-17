@@ -35,6 +35,5 @@ export  const taskStatus: { value: string, label: string }[] = [
 
 export  const meetingStatus: { value: string, label: string }[] = [
   {value: 'FINISHED', label: 'Finished'},
-  {value: 'NOT_STARTED', label: 'Not Started'},
-  {value: 'ALL', label: 'All'},
+  {value: 'NOT_STARTED', label: 'Not Started'}
 ];

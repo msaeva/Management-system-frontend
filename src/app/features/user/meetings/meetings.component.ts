@@ -1,5 +1,5 @@
 import {ChangeDetectorRef, Component, OnInit, signal} from '@angular/core';
-import {CalendarOptions, DateSelectArg, EventApi, EventClickArg, EventInput} from "@fullcalendar/core";
+import {CalendarOptions, EventApi, EventClickArg, EventInput} from "@fullcalendar/core";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import {FullCalendarModule} from "@fullcalendar/angular";
 import interactionPlugin from '@fullcalendar/interaction';
@@ -26,6 +26,10 @@ import {DetailedMeetingComponent} from "@feature/shared/detailed-meeting/detaile
 export class MeetingsComponent implements OnInit {
   currentEvents = signal<EventApi[]>([]);
   meetings: Meeting[] = [];
+  visibleMeetingInformationDialog: boolean = false;
+  selectedMeeting: Meeting | undefined;
+
+  events: EventInput[] = [];
 
   calendarOptions: CalendarOptions = {
     initialView: 'timeGridWeek',
@@ -42,14 +46,9 @@ export class MeetingsComponent implements OnInit {
     editable: true,
     selectable: true,
     selectMirror: true,
-    select: this.handleDateSelect.bind(this),
     eventClick: this.handleEventClick.bind(this),
     eventsSet: this.handleEvents.bind(this)
   };
-
-  events: EventInput[] = [];
-
-  selectedMeeting: Meeting | undefined;
 
   constructor(private changeDetector: ChangeDetectorRef,
               private meetingService: MeetingService) {
@@ -59,7 +58,7 @@ export class MeetingsComponent implements OnInit {
     this.loadMeetings();
   }
 
-  loadMeetings() {
+  loadMeetings(): void {
     this.meetingService.getUserMeetings().subscribe({
       next: (response: Meeting[]) => {
         this.meetings = response;
@@ -78,53 +77,15 @@ export class MeetingsComponent implements OnInit {
     })
   }
 
-  handleDateSelect(selectInfo: DateSelectArg) {
-    const title = prompt('Please enter a new title for your event');
-    const calendarApi = selectInfo.view.calendar;
 
-    calendarApi.unselect(); // clear date selection
-
-    if (title) {
-      calendarApi.addEvent({
-        id: "1",
-        title,
-        start: selectInfo.startStr,
-        end: selectInfo.endStr,
-        allDay: selectInfo.allDay
-      });
-    }
-  }
-
-
-  visibleMeetingInformationDialog: boolean = false;
-
-  handleEventClick(clickInfo: EventClickArg) {
+  handleEventClick(clickInfo: EventClickArg): void {
     const clickedEventId = clickInfo.event.id;
-    console.log(clickedEventId);
     this.selectedMeeting = this.meetings.find(meeting => meeting.id.toString() === clickedEventId) as Meeting;
-
-    console.log(this.selectedMeeting);
     this.visibleMeetingInformationDialog = true;
   }
 
-  handleEvents(events: EventApi[]) {
+  handleEvents(events: EventApi[]): void {
     this.currentEvents.set(events);
     this.changeDetector.detectChanges();
-  }
-
-  updateMeetingHandler(updatedMeeting: Meeting) {
-    const updatedEventIndex = this.events.findIndex(event => event.id === updatedMeeting.id.toString());
-    console.log(updatedEventIndex);
-
-    if (updatedEventIndex !== -1) {
-      const updatedEvents = [...this.events];
-      updatedEvents[updatedEventIndex] = {
-        id: updatedMeeting.id.toString(),
-        title: updatedMeeting.title,
-        start: updatedMeeting.start,
-        end: updatedMeeting.end
-      };
-      this.events = updatedEvents;
-    }
   }
 }

@@ -2,8 +2,7 @@
 <div class="layout">
   <ng-container class="content-container">
     <div class="layout-sidebar mx-3" *ngIf="showSidebar$ | async">
-      <app-sidebar [menuItems]="menuItems" >
-      </app-sidebar>
+      <app-sidebar [menuItems]="menuItems"></app-sidebar>
     </div>
     <div class="router-outlet-container">
       <router-outlet class="hidden"></router-outlet>

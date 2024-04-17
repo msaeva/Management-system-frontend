@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {ButtonModule} from "primeng/button";
 import {CalendarModule} from "primeng/calendar";
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
@@ -24,7 +24,7 @@ import {LocalStorageService} from "@core/services/local-storage.service";
   templateUrl: './detailed-meeting.component.html',
   styleUrl: './detailed-meeting.component.scss'
 })
-export class DetailedMeetingComponent implements OnInit {
+export class DetailedMeetingComponent {
   @Input() set meeting(value: Meeting) {
     if (value) {
       this.setUpUpdateMeetingFormGroup(value);
@@ -46,11 +46,7 @@ export class DetailedMeetingComponent implements OnInit {
               private confirmationService: ConfirmationService) {
   }
 
-  ngOnInit(): void {
-    // this.calculateStatus();
-  }
-
-  private setUpUpdateMeetingFormGroup(meeting: Meeting) {
+  private setUpUpdateMeetingFormGroup(meeting: Meeting): void {
     this.updateMeetingFormGroup = this.formBuilder.group({
       id: [
         {value: meeting.id, disabled: true},
@@ -73,7 +69,7 @@ export class DetailedMeetingComponent implements OnInit {
     });
   }
 
-  updateMeeting() {
+  updateMeeting(): void {
     const updatedMeetingFormValue = {
       ...this.updateMeetingFormGroup.value,
       start: this.updateMeetingFormGroup.value.start.getTime(),
@@ -103,7 +99,7 @@ export class DetailedMeetingComponent implements OnInit {
     }
   }
 
-  toggleEditMode() {
+  toggleEditMode(): void {
     const func = this.updateMeetingFormGroup.get('title')!.disabled ? 'enable' : 'disable';
 
     this.updateMeetingFormGroup.controls['title'][func]();
@@ -111,11 +107,11 @@ export class DetailedMeetingComponent implements OnInit {
     this.updateMeetingFormGroup.controls['end'][func]();
   }
 
-  cancelUpdateMeeting() {
+  cancelUpdateMeeting(): void {
     this.setUpUpdateMeetingFormGroup(this._meeting);
   }
 
-  showDeleteMeetingConfirmation() {
+  showDeleteMeetingConfirmation(): void {
     this.confirmationService.confirm({
       message: 'Are you sure you want to delete this meeting ?',
       header: 'Confirmation',
@@ -126,7 +122,7 @@ export class DetailedMeetingComponent implements OnInit {
     });
   }
 
-  private deleteMeeting(id: number) {
+  private deleteMeeting(id: number): void {
     if (this.getAuthUserRole() === Role.ADMIN.valueOf()) {
       this.meetingService.deleteMeeting(id).subscribe({
         next: (response) => {

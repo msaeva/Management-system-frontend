@@ -48,21 +48,18 @@ export class PmCreateTaskComponent implements OnInit {
     this.loadUsersToAddToTask();
   }
 
-  loadUsersToAddToTask() {
-    console.log(this.projectId)
+  loadUsersToAddToTask(): void {
     this.projectService.getAllUsersInProject(this.projectId).subscribe({
       next: (response) => {
         this.usersOptions = response;
-        console.log(this.usersOptions)
       },
       error: (err) => {
         console.log(err);
       }
-
     })
   }
 
-  createTask() {
+  createTask(): void {
     this.taskService.createTaskPm(this.createTaskFormGroup.value, this.projectId).subscribe({
       next: (task: Task) => {
         this.newTaskEvent.emit(task);

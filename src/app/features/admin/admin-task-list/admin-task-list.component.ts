@@ -19,6 +19,7 @@ import {DialogModule} from "primeng/dialog";
 import {Pagination} from "@core/types/pagination";
 import {Pageable} from "@core/types/pageable";
 import {AdminCreateTaskComponent} from "@feature/admin/admin-create-task/admin-create-task.component";
+import {DetailedProject} from "@core/types/projects/detailed-project";
 
 @Component({
   selector: 'app-admin-task-list',
@@ -42,6 +43,7 @@ import {AdminCreateTaskComponent} from "@feature/admin/admin-create-task/admin-c
 })
 export class AdminTaskListComponent implements OnInit {
   projectId!: number;
+  project!: DetailedProject;
   allTasks: DetailedTask[] = [];
   forms: FormGroup[] = [];
 
@@ -68,17 +70,31 @@ export class AdminTaskListComponent implements OnInit {
 
   ngOnInit(): void {
     this.projectId = Number(this.route.snapshot.paramMap.get('id'));
+    this.loadProject();
   }
 
-  showCreateNewTaskDialog() {
+  loadProject(): void {
+    if (this.projectId) {
+      this.projectService.getDetailedInfoById(this.projectId).subscribe({
+        next: (response) => {
+          this.project = response;
+        },
+        error: (err) => {
+          console.log(err)
+        }
+      });
+    }
+  }
+
+  showCreateNewTaskDialog(): void {
     this.visibleCreateTaskDialog = true;
   }
 
-  onRowEditInit(task: DetailedTask) {
+  onRowEditInit(task: DetailedTask): void {
     this.clonedTasks.set(task.id, {...task});
   }
 
-  onRowEditSave(task: DetailedTask) {
+  onRowEditSave(task: DetailedTask): void {
     this.taskService.update(task.id, task).subscribe({
       next: () => {
         const taskToUpdate = this.allTasks.find(u => u.id === task.id);
@@ -94,8 +110,7 @@ export class AdminTaskListComponent implements OnInit {
     })
   }
 
-  private initializeForms(tasks: DetailedTask[]) {
-    console.log(tasks)
+  private initializeForms(tasks: DetailedTask[]): void {
     this.forms = tasks.map(task => {
       return this.formBuilder.group({
         id: [task.id, [Validators.required]],
@@ -108,7 +123,7 @@ export class AdminTaskListComponent implements OnInit {
     });
   }
 
-  onRowEditCancel(task: DetailedTask, index: number) {
+  onRowEditCancel(task: DetailedTask, index: number): void {
     this.allTasks[index] = <DetailedTask>this.clonedTasks.get(task.id);
     this.clonedTasks.delete(task.id);
   }
@@ -120,7 +135,7 @@ export class AdminTaskListComponent implements OnInit {
     return this.datePipe.transform(new Date(dateTime), 'short') || '';
   }
 
-  showConfirmation(taskId: number) {
+  showConfirmation(taskId: number): void {
     this.confirmationService.confirm({
       message: 'Are you sure you want to delete this task?',
       header: 'Confirmation',
@@ -129,10 +144,9 @@ export class AdminTaskListComponent implements OnInit {
         this.deleteTask(taskId);
       }
     });
-
   }
 
-  deleteTask(id: number) {
+  deleteTask(id: number): void {
     this.taskService.delete(id).subscribe({
       next: () => {
         this.allTasks = this.allTasks.filter(task => task.id !== id);
@@ -147,15 +161,15 @@ export class AdminTaskListComponent implements OnInit {
     });
   }
 
-  newTaskHandler(task: DetailedTask) {
-    // this.initializeForms([...this.projects, project]);
+  newTaskHandler(task: DetailedTask): void {
     this.allTasks.push(task);
     this.visibleCreateTaskDialog = false;
+    this.initializeForms(this.allTasks)
   }
 
   readonly taskStatus = taskStatus;
 
-  loadTasks($event: TableLazyLoadEvent) {
+  loadTasks($event: TableLazyLoadEvent): void {
     const rowsPerPage = $event.rows != null ? $event.rows as number : this.pagination.page;
 
     const pageNumber = Math.ceil(($event.first as number) / rowsPerPage);

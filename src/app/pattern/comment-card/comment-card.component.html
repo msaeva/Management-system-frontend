@@ -2,18 +2,35 @@
   <ng-template pTemplate="header">
     <div class="flex justify-content-between flex-wrap p-2">
       <div class="flex align-items-center gap-2">
-        <p-avatar image="https://primefaces.org/cdn/primeng/images/avatar/amyelsner.png"
+        <p-avatar [label]="getFirstLetter(comment.fullName)"
+                  [style]="getAvatarColor()"
+                  styleClass="mr-2"
                   shape="circle">
         </p-avatar>
         <span class="font-bold white-space-nowrap">{{ comment.fullName }}</span>
       </div>
       <div *ngIf="getAuthUserId() === comment.authorId">
         <p-button (onClick)="mode = 'modify'"
+                  *ngIf="mode==='display'"
                   icon="pi pi-pencil"
                   [rounded]="true"
                   [text]="true">
         </p-button>
 
+        <p-button *ngIf="mode==='modify'"
+                  [disabled]="updateCommentFormControl.invalid" (onClick)="updateComment(comment.id)"
+                  icon="pi pi-check"
+                  severity="success"
+                  [rounded]="true"
+                  [text]="true">
+        </p-button>
+        <p-button *ngIf="mode==='modify'"
+                  (onClick)="cancelUpdateComment()"
+                  icon="pi pi-times"
+                  severity="danger"
+                  [rounded]="true"
+                  [text]="true">
+        </p-button>
         <p-button (onClick)="showDeleteCommentConfirmation(comment.id)"
                   icon="pi pi-trash" [rounded]="true"
                   [text]="true"
@@ -23,7 +40,7 @@
     </div>
   </ng-template>
   <div *ngIf="mode == 'display'">
-    <p>{{comment.comment}}</p>
+    <p>{{ comment.comment }}</p>
   </div>
 
   <div *ngIf="mode == 'modify'">
@@ -33,14 +50,14 @@
               pInputTextarea>
     </textarea>
   </span>
-    <p-button [disabled]="updateCommentFormControl.invalid" (onClick)="updateComment(comment.id)"
-              label="Update" icon="pi pi-pencil"
-              class="p-button-outlined p-button-sm p-button-text">
-    </p-button>
-    <p-button (onClick)="cancelUpdateComment()"
-              label="Cancel" icon="pi pi-pencil"
-              severity="danger"
-              class="p-button-outlined p-button-sm p-button-text">
-    </p-button>
+    <!--    <p-button [disabled]="updateCommentFormControl.invalid" (onClick)="updateComment(comment.id)"-->
+    <!--              label="Update" icon="pi pi-pencil"-->
+    <!--              class="p-button-outlined p-button-sm p-button-text">-->
+    <!--    </p-button>-->
+    <!--    <p-button (onClick)="cancelUpdateComment()"-->
+    <!--              label="Cancel" icon="pi pi-pencil"-->
+    <!--              severity="danger"-->
+    <!--              class="p-button-outlined p-button-sm p-button-text">-->
+    <!--    </p-button>-->
   </div>
 </p-card>

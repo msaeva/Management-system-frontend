@@ -8,6 +8,7 @@ import {AsyncPipe, NgIf, NgStyle} from "@angular/common";
 import {LayoutService} from "@core/services/layout.service";
 import {ButtonModule} from "primeng/button";
 import {ConfirmDialogModule} from "primeng/confirmdialog";
+import {Project} from "@core/types/projects/project";
 
 @Component({
   selector: 'app-project-management',
@@ -55,7 +56,7 @@ export class ProjectManagementLayout implements OnInit {
 
   loadProjects() {
     this.projectService.getUserProjects().subscribe({
-      next: (response: any) => {
+      next: (response: Project[]) => {
         console.log(response);
         this.mapProjectsToMenuItems(response);
       },
@@ -65,7 +66,7 @@ export class ProjectManagementLayout implements OnInit {
     })
   }
 
-  mapProjectsToMenuItems(projects: any[]) {
+  mapProjectsToMenuItems(projects: Project[]) {
     const records = projects.map(project => ({
       label: project.title,
       icon: 'pi pi-folder-open',

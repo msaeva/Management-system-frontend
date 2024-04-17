@@ -5,6 +5,7 @@ import {LocalStorageService} from "@core/services/local-storage.service";
 import {DetailedUser} from "@core/types/users/detailed-user";
 import {API_URL, API_URL_ADMIN} from "@core/constants";
 import {User} from "@core/types/users/user";
+import {Observable} from "rxjs";
 
 @Injectable({providedIn: 'root'})
 export class AuthService {
@@ -13,7 +14,7 @@ export class AuthService {
               private router: Router) {
   }
 
-  login(username: string, password: string) {
+  login(username: string, password: string): Observable<string> {
     const url = API_URL + '/authenticate';
 
     const body = {username, password};
@@ -25,12 +26,12 @@ export class AuthService {
     this.router.navigate(['/login']);
   }
 
-  createAccount(user: any) {
+  createAccount(user: any): Observable<DetailedUser> {
     const url = API_URL_ADMIN + "/users";
     return this.http.post<DetailedUser>(url, user);
   }
 
-  register(user: any) {
+  register(user: any): Observable<User> {
     const url = API_URL + '/register';
     return this.http.post<User>(url, user);
   }

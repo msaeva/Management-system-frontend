@@ -28,6 +28,7 @@ import {CreateMeetingComponent} from "@feature/shared/create-meeting/create-meet
 import {CheckboxModule} from "primeng/checkbox";
 import {TriStateCheckboxModule} from "primeng/tristatecheckbox";
 import {meetingStatus} from "@core/constants";
+import {MeetingStatus} from "@core/meeting-status.enum";
 
 
 @Component({
@@ -66,12 +67,8 @@ export class AdminMeetingsComponent implements OnInit {
   projects: ProjectUser[] = [];
   selectedProject!: ProjectUser;
   filteredProjects: ProjectUser[] = [];
-  filterFinished: boolean = false;
 
-  protected readonly meetingStatus = meetingStatus;
   selectedMeetingStatus: string | undefined;
-
-
   selectInfo!: DateSelectArg;
 
   calendarOptions: CalendarOptions = {
@@ -99,6 +96,7 @@ export class AdminMeetingsComponent implements OnInit {
 
   visibleMeetingInformationDialog: boolean = false;
   visibleCreateMeetingDialog: boolean = false;
+  protected readonly meetingStatus = meetingStatus;
 
   constructor(private changeDetector: ChangeDetectorRef,
               private meetingService: MeetingService,
@@ -114,7 +112,7 @@ export class AdminMeetingsComponent implements OnInit {
   }
 
 
-  loadProjects() {
+  loadProjects(): void {
     this.projectService.getProjectsWithUsers().subscribe({
       next: (response) => {
         this.projects = response;
@@ -126,7 +124,7 @@ export class AdminMeetingsComponent implements OnInit {
     })
   }
 
-  private loadUsers() {
+  private loadUsers(): void {
     this.userService.getByRole([Role.USER.valueOf(), Role.PM.valueOf()]).subscribe({
       next: (response) => {
         this.users = response;
@@ -137,7 +135,7 @@ export class AdminMeetingsComponent implements OnInit {
     })
   }
 
-  loadMeetings() {
+  loadMeetings(): void {
     this.meetingService.getMeetings(null, null).subscribe({
       next: (response: DetailedMeeting[]) => {
         this.meetings = response;
@@ -156,7 +154,7 @@ export class AdminMeetingsComponent implements OnInit {
     })
   }
 
-  handleDateSelect(selectInfo: DateSelectArg) {
+  handleDateSelect(selectInfo: DateSelectArg): void {
     this.selectInfo = selectInfo;
 
     const today = new Date();
@@ -174,19 +172,19 @@ export class AdminMeetingsComponent implements OnInit {
   }
 
 
-  handleEventClick(clickInfo: EventClickArg) {
+  handleEventClick(clickInfo: EventClickArg): void {
     const clickedEventId = clickInfo.event.id;
     this.selectedMeeting = this.meetings.find(meeting => meeting.id.toString() === clickedEventId) as Meeting;
 
     this.visibleMeetingInformationDialog = true;
   }
 
-  handleEvents(events: EventApi[]) {
+  handleEvents(events: EventApi[]): void {
     this.currentEvents.set(events);
     this.changeDetector.detectChanges();
   }
 
-  updateMeetingHandler(updatedMeeting: Meeting) {
+  updateMeetingHandler(updatedMeeting: Meeting): void {
     const updatedEventIndex = this.events.findIndex(event => event.id === updatedMeeting.id.toString());
 
     if (updatedEventIndex !== -1) {
@@ -208,7 +206,7 @@ export class AdminMeetingsComponent implements OnInit {
     }
   }
 
-  deleteMeetingHandler(id: number) {
+  deleteMeetingHandler(id: number): void {
     this.events = this.events.filter(event => event.id !== id.toString());
     this.visibleMeetingInformationDialog = false;
 
@@ -221,8 +219,7 @@ export class AdminMeetingsComponent implements OnInit {
   }
 
 
-  private mapEvents() {
-    console.log("in mapEvents")
+  private mapEvents(): void {
     this.events = this.filteredMeetings.map(meeting => ({
       id: meeting.id.toString(),
       title: meeting.title,
@@ -231,11 +228,10 @@ export class AdminMeetingsComponent implements OnInit {
       end: meeting.end
     }));
 
-    console.log(this.events)
   }
 
 
-  newMeetingHandler(meeting: DetailedMeeting, selectInfo: DateSelectArg) {
+  newMeetingHandler(meeting: DetailedMeeting, selectInfo: DateSelectArg): void {
     this.events.push({
       id: meeting.id.toString(),
       title: meeting.title,
@@ -263,11 +259,10 @@ export class AdminMeetingsComponent implements OnInit {
       detail: 'Meeting created successfully',
       life: 3000
     });
-
   }
 
 
-  onUserChange() {
+  onUserChange(): void {
     if (this.selectedUser) {
       if (this.selectedMeetingStatus || this.selectedProject) {
         this.fetchMeetingsAndUpdate(this.selectedUser.id, this.selectedProject ? this.selectedProject.id : null);
@@ -282,7 +277,7 @@ export class AdminMeetingsComponent implements OnInit {
     this.mapEvents();
   }
 
-  onProjectChange() {
+  onProjectChange(): void {
     if (this.selectedProject) {
       if (this.selectedMeetingStatus || this.selectedUser) {
         this.fetchMeetingsAndUpdate(this.selectedUser ? this.selectedUser.id : null, this.selectedProject.id);
@@ -306,13 +301,13 @@ export class AdminMeetingsComponent implements OnInit {
     });
   }
 
-  onMeetingStatusChange() {
-    if (this.selectedMeetingStatus === 'FINISHED') {
+  onMeetingStatusChange(): void {
+    if (this.selectedMeetingStatus === MeetingStatus.FINISHED.valueOf()) {
       this.filteredMeetings = this.selectedUser || this.selectedProject ?
         this.filteredMeetings.filter(meeting => new Date(meeting.end) < new Date()) :
         this.meetings.filter(meeting => new Date(meeting.end) < new Date());
 
-    } else if (this.selectedMeetingStatus === 'NOT_STARTED') {
+    } else if (this.selectedMeetingStatus === MeetingStatus.NOT_STARTED.valueOf()) {
       this.filteredMeetings = this.selectedUser || this.selectedProject ?
         this.filteredMeetings.filter(meeting => new Date(meeting.end) > new Date()) :
         this.meetings.filter(meeting => new Date(meeting.end) > new Date());

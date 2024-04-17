@@ -57,7 +57,7 @@ export class DetailedTaskComponent implements OnInit {
 
   task!: SingleTask;
   comments: Comment[] = [];
-  estimationTime!: number;
+  estimationTime: number = 0;
   progress: number = 0;
   assignUserOptions: SimpleUser[] = [];
   selectedUserToAssign!: SimpleUser;
@@ -160,7 +160,14 @@ export class DetailedTaskComponent implements OnInit {
         this.task = task;
         this.loading.task = false;
         this.progress = this.task.progress;
-        this.estimationTime = this.task.estimationTime;
+
+
+        if (this.task.estimationTime) {
+          this.estimationTime = this.task.estimationTime;
+        } else {
+          this.estimationTime = 0;
+        }
+
 
         this.loadFormGroup();
       }, error: () => {
@@ -173,7 +180,7 @@ export class DetailedTaskComponent implements OnInit {
     return this.localStorageService.getAuthUserId() as number;
   }
 
-  postComment() {
+  postComment(): void {
     const body = {
       comment: this.createCommentFormControl.value,
       taskID: this.task?.id
@@ -198,7 +205,7 @@ export class DetailedTaskComponent implements OnInit {
 
   }
 
-  deleteCommentHandler(id: number) {
+  deleteCommentHandler(id: number): void {
     this.comments = this.comments.filter(c => c.id !== id);
 
     this.toastService.showMessage({
@@ -209,10 +216,9 @@ export class DetailedTaskComponent implements OnInit {
     });
   }
 
-  startTask() {
+  startTask(): void {
     this.taskService.updateStatus(this.task.id, TaskStatus.IN_PROGRESS.valueOf()).subscribe({
       next: (newStatus) => {
-        console.log(newStatus);
         this.task.status = newStatus;
         this.updatedStatusTaskEvent.emit(this.task as Task);
 
@@ -230,11 +236,10 @@ export class DetailedTaskComponent implements OnInit {
   protected readonly TaskStatus = TaskStatus;
 
 
-  submitEstimationTime() {
+  submitEstimationTime(): void {
+    console.log(this.estimationTime)
     this.taskService.setEstimationTime(this.task.id, this.estimationTime).subscribe({
       next: (response) => {
-        console.log(response);
-
         this.task.estimationTime = this.estimationTime;
 
         this.toastService.showMessage({
@@ -251,10 +256,15 @@ export class DetailedTaskComponent implements OnInit {
 
   }
 
-  onProgressChange(progress: number) {
+  onProgressChange(progress: number): void {
     this.taskService.changeProgress(this.task.id, progress).subscribe({
       next: (response) => {
-        console.log(response);
+        this.toastService.showMessage({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Progress added successfully',
+          life: 3000
+        });
       },
       error: (err) => {
         console.log(err);
@@ -263,7 +273,7 @@ export class DetailedTaskComponent implements OnInit {
 
   }
 
-  assignUser() {
+  assignUser(): void {
     this.taskService.assignUser(this.task.id, this.selectedUserToAssign.id).subscribe({
       next: (response: Task) => {
         this.assignedUserToTaskEvent.emit(response);
@@ -283,7 +293,7 @@ export class DetailedTaskComponent implements OnInit {
 
   protected readonly Role = Role;
 
-  showDeleteTaskConfirmation(id: number) {
+  showDeleteTaskConfirmation(): void {
     this.confirmationService.confirm({
       message: 'Are you sure you want to delete this project?',
       header: 'Confirmation',
@@ -294,15 +304,14 @@ export class DetailedTaskComponent implements OnInit {
     });
   }
 
-  cancelUpdateTask() {
+  cancelUpdateTask(): void {
     this.loadFormGroup();
   }
 
-  deleteTask(id: number) {
+  deleteTask(id: number): void {
     this.taskService.deletePM(id).subscribe({
       next: () => {
         this.deletedTaskEvent.emit(id);
-        // this.allTasks = this.allTasks.filter(task => task.id !== id);
         this.toastService.showMessage({
 
           severity: 'success',
@@ -314,13 +323,11 @@ export class DetailedTaskComponent implements OnInit {
     });
   }
 
-  updateTask(id: number) {
+  updateTask(id: number): void {
     const assignee = this.updateTaskFormGroup.get('assignee')?.value;
-    console.log(assignee)
 
     this.taskService.updatePM(id, {...this.updateTaskFormGroup.value, userId: assignee.id}).subscribe({
       next: (response: SingleTask) => {
-        console.log(response)
         this.task = response;
         this.updatedTaskEvent.emit(response as Task);
         this.toggleEditMode();

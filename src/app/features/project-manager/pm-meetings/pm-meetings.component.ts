@@ -42,14 +42,8 @@ export class PmMeetingsComponent implements OnInit {
   currentEvents = signal<EventApi[]>([]);
   forms: FormGroup[] = [];
   meetings: DetailedMeeting[] = [];
-  filteredMeetings: DetailedMeeting[] = [];
-
   users: SimpleUser[] = [];
-  selectedUser!: SimpleUser;
-
   projects: ProjectUser[] = [];
-  selectedProject!: ProjectUser;
-
   selectInfo!: DateSelectArg;
 
   loading: { meeting: boolean } = {
@@ -92,7 +86,7 @@ export class PmMeetingsComponent implements OnInit {
     this.loadMeetings();
   }
 
-  loadMeetings() {
+  loadMeetings(): void {
     this.meetingService.getPMMeetings().subscribe({
       next: (response: DetailedMeeting[]) => {
         this.meetings = response;
@@ -112,7 +106,7 @@ export class PmMeetingsComponent implements OnInit {
     })
   }
 
-  handleDateSelect(selectInfo: DateSelectArg) {
+  handleDateSelect(selectInfo: DateSelectArg): void {
     this.selectInfo = selectInfo;
 
     const today = new Date();
@@ -130,14 +124,14 @@ export class PmMeetingsComponent implements OnInit {
   }
 
 
-  handleEventClick(clickInfo: EventClickArg) {
+  handleEventClick(clickInfo: EventClickArg): void {
     const clickedEventId = clickInfo.event.id;
     this.selectedMeeting = this.meetings.find(meeting => meeting.id.toString() === clickedEventId) as Meeting;
 
     this.visibleMeetingInformationDialog = true;
   }
 
-  handleEvents(events: EventApi[]) {
+  handleEvents(events: EventApi[]): void {
     this.currentEvents.set(events);
     this.changeDetector.detectChanges();
   }
@@ -164,7 +158,7 @@ export class PmMeetingsComponent implements OnInit {
     }
   }
 
-  deleteMeetingHandler(id: number) {
+  deleteMeetingHandler(id: number): void {
     this.events = this.events.filter(event => event.id !== id.toString());
     this.visibleMeetingInformationDialog = false;
 
@@ -176,43 +170,7 @@ export class PmMeetingsComponent implements OnInit {
     });
   }
 
-  // onUserChange() {
-  //   if (this.selectedUser) {
-  //     this.meetingService.getMeetings(this.selectedUser.id, this.selectedProject ? this.selectedProject.id : null)
-  //       .subscribe((meetings: DetailedMeeting[]) => {
-  //         this.filteredMeetings = meetings;
-  //         this.mapEvents();
-  //       });
-  //   } else {
-  //     this.filteredMeetings = this.meetings.slice();
-  //     this.mapEvents();
-  //   }
-  // }
-
-  private mapEvents() {
-    this.events = this.filteredMeetings.map(meeting => ({
-      id: meeting.id.toString(),
-      title: meeting.title,
-      date: new Date(meeting.start).toISOString().slice(0, 10),
-      start: meeting.start,
-      end: meeting.end
-    }));
-  }
-
-  onProjectChange() {
-    if (this.selectedProject) {
-      this.meetingService.getMeetings(this.selectedUser ? this.selectedUser.id : null, this.selectedProject.id)
-        .subscribe((meetings: DetailedMeeting[]) => {
-          this.filteredMeetings = meetings;
-          this.mapEvents();
-        });
-    } else {
-      this.filteredMeetings = this.meetings.slice();
-      this.mapEvents();
-    }
-  }
-
-  newMeetingHandler(meeting: DetailedMeeting, selectInfo: DateSelectArg) {
+  newMeetingHandler(meeting: DetailedMeeting, selectInfo: DateSelectArg): void {
     this.events.push({
       id: meeting.id.toString(),
       title: meeting.title,
@@ -220,7 +178,6 @@ export class PmMeetingsComponent implements OnInit {
       start: meeting.start,
       end: meeting.end
     })
-
 
     const calendarApi = selectInfo.view.calendar;
 
@@ -242,6 +199,5 @@ export class PmMeetingsComponent implements OnInit {
       detail: 'Meeting created successfully',
       life: 3000
     });
-
   }
 }

@@ -44,11 +44,12 @@
 
     <div class="flex flex-column mt-3 pt-3 w-full">
       <p-dropdown [options]="usersOptions"
+                  [filter]="true"
+                  [showClear]="true"
                   formControlName="assignee"
                   optionLabel="fullName"
-                  [filter]="true"
+                  appendTo="body"
                   filterBy="fullName"
-                  [showClear]="true"
                   placeholder="Assign User">
         <ng-template let-user pTemplate="selectedItem">
           <div class="flex align-items-center gap-2">

@@ -42,15 +42,21 @@ export class ProjectManagerLayout implements OnInit {
     this.loadMeetings();
   }
 
-  loadMeetings() {
+  loadMeetings(): void {
     this.menuItems.push({
-      label: 'Meetings',
-      icon: 'pi pi-calendar',
-      routerLink: ['/project-manager', 'meetings']
-    });
+        label: 'Meetings',
+        icon: 'pi pi-calendar',
+        routerLink: ['/project-manager', 'meetings']
+      },
+      {
+        label: 'Profile',
+        icon: 'pi pi-user',
+        routerLink: ['/project-manager', 'profile']
+      }
+    );
   }
 
-  loadProjects() {
+  loadProjects(): void {
     this.projectService.getPMProjects().subscribe({
       next: (response: Project[]) => {
         this.loadingProject = true;
@@ -62,7 +68,7 @@ export class ProjectManagerLayout implements OnInit {
     })
   }
 
-  mapProjectsToMenuItems(projects: any[]) {
+  mapProjectsToMenuItems(projects: Project[]): void {
     const records = projects.map(project => ({
       label: project.title,
       icon: 'pi pi-folder-open',

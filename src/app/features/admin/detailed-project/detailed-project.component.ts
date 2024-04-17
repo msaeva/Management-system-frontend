@@ -51,7 +51,7 @@ import {ActivatedRoute} from "@angular/router";
   templateUrl: './detailed-project.component.html',
   styleUrl: './detailed-project.component.scss'
 })
-export class DetailedProjectComponent implements OnInit{
+export class DetailedProjectComponent implements OnInit {
   @Input({required: true}) project!: DetailedProject;
 
   @Input({required: true}) allProjectManagersOptions!: SimpleUser[];
@@ -84,7 +84,7 @@ export class DetailedProjectComponent implements OnInit{
     this.loadUsersToAddToTeam();
   }
 
-  loadFormGroup() {
+  loadFormGroup(): void {
     this.updateProjectFormGroup = this.formBuilder.group({
       id: [
         {value: this.project.id, disabled: true},
@@ -112,7 +112,7 @@ export class DetailedProjectComponent implements OnInit{
     });
   }
 
-  showDeleteProjectConfirmation(projectId: number | undefined) {
+  showDeleteProjectConfirmation(projectId: number | undefined): void {
     this.confirmationService.confirm({
       message: 'Are you sure you want to delete this project?',
       header: 'Confirmation',
@@ -123,7 +123,7 @@ export class DetailedProjectComponent implements OnInit{
     });
   }
 
-  loadUsersToAddToTeam() {
+  loadUsersToAddToTeam(): void {
     this.userService.getByRole([Role.USER.valueOf()]).subscribe({
       next: (users) => {
         this.usersToAddToTeam = users;
@@ -132,7 +132,7 @@ export class DetailedProjectComponent implements OnInit{
     })
   }
 
-  toggleEditMode() {
+  toggleEditMode(): void {
     const func = this.updateProjectFormGroup.get('title')!.disabled ? 'enable' : 'disable';
 
     this.updateProjectFormGroup.controls['title'][func]();
@@ -141,7 +141,7 @@ export class DetailedProjectComponent implements OnInit{
     this.updateProjectFormGroup.controls['status'][func]();
   }
 
-  updateProject(id: number) {
+  updateProject(id: number): void {
     this.projectService.update(id, this.updateProjectFormGroup.value).subscribe({
       next: (response) => {
         this.project = response;
@@ -155,7 +155,7 @@ export class DetailedProjectComponent implements OnInit{
   }
 
 
-  deleteProject(id: number | undefined) {
+  deleteProject(id: number | undefined): void {
     this.projectService.deleteById(id).subscribe({
       next: (response) => {
         console.log(response);
@@ -167,7 +167,7 @@ export class DetailedProjectComponent implements OnInit{
     })
   }
 
-  createTeam() {
+  createTeam(): void {
     this.teamService.createTeam(this.project?.id).subscribe({
       next: (response) => {
         this.project?.teams.push(response);

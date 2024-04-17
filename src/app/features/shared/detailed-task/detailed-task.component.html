@@ -31,7 +31,7 @@
               icon="pi pi-check">
     </p-button>
 
-    <p-button (onClick)="showDeleteTaskConfirmation(task.id)"
+    <p-button (onClick)="showDeleteTaskConfirmation()"
               [rounded]="true"
               [text]="true"
               icon="pi pi-trash"
@@ -62,9 +62,6 @@
             <div class="p-col-2">
               <div class="flex flex-column gap-2">
                 <label class="font-bold">Assignee</label>
-                <!--                <input [disabled]="true"-->
-                <!--                       formControlName="assignee"-->
-                <!--                       pInputText id="author"/>-->
                 <p-dropdown [options]="assignUserOptions"
                             optionLabel="fullName"
                             formControlName="assignee"
@@ -73,11 +70,12 @@
                             [showClear]="true"
                             [placeholder]="updateTaskFormGroup.get('assignee')!.value ? updateTaskFormGroup.get('assignee')!.value : 'Assign User'">
                 </p-dropdown>
-
               </div>
             </div>
           </ng-container>
-          <div *ngIf="!task.userFullName &&  getAuthUserRole() === Role.PM" class="block gap-2 mt-1 mb-1">
+
+          <div *ngIf="!task.userFullName &&  getAuthUserRole() === Role.PM"
+               class="p-col-2">
             <p-dropdown [options]="assignUserOptions"
                         [(ngModel)]="selectedUserToAssign"
                         optionLabel="fullName"
@@ -110,6 +108,7 @@
             <div class="block font-bold mb-2">
               <label for="estimation" class="block">Enter Estimation Time: </label>
               <p-inputNumber [(ngModel)]="estimationTime"
+                             [ngModelOptions]="{standalone: true}"
                              id="estimation"
                              suffix=" (hours)"
                              [showButtons]="true"

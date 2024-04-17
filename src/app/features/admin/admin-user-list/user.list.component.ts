@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component} from '@angular/core';
 import {NgForOf, NgIf, NgStyle} from "@angular/common";
 import {ToastModule} from "primeng/toast";
 import {TableLazyLoadEvent, TableModule} from "primeng/table";
@@ -46,7 +46,7 @@ import {RouterLink} from "@angular/router";
   templateUrl: './user.list.component.html',
   styleUrl: './user.list.component.scss'
 })
-export class UserListComponent implements OnInit {
+export class UserListComponent {
 
   users: DetailedUser[] = [];
   clonedUsers: Map<number, DetailedUser> = new Map<number, DetailedUser>();
@@ -72,17 +72,17 @@ export class UserListComponent implements OnInit {
               private formBuilder: FormBuilder) {
   }
 
-  showCreateNewUserDialog() {
+  showCreateNewUserDialog(): void {
     this.visible = true;
   }
 
-  newUserHandler(user: DetailedUser) {
+  newUserHandler(user: DetailedUser): void {
     this.initializeForms([...this.users, user]);
     this.users.push(user);
     this.visible = false;
   }
 
-  showConfirmation(userId: number) {
+  showConfirmation(userId: number): void {
     this.confirmationService.confirm({
       message: 'Are you sure you want to delete this user?',
       header: 'Confirmation',
@@ -93,10 +93,7 @@ export class UserListComponent implements OnInit {
     });
   }
 
-  ngOnInit(): void {
-  }
-
-  loadUsers($event: TableLazyLoadEvent) {
+  loadUsers($event: TableLazyLoadEvent): void {
     const rowsPerPage = $event.rows != null ? $event.rows as number : this.pagination.page;
     const pageNumber = Math.ceil(($event.first as number) / rowsPerPage);
 
@@ -111,16 +108,32 @@ export class UserListComponent implements OnInit {
           this.initializeForms(response.data);
           this.users = response.data;
           this.loading.users = false;
-
-          console.log(this.users)
         },
         error: () => {
           console.log("Error loading users");
         }
       })
+    // } else {
+    //   // this.pagination.sort = $event.sortField as string;
+    //   // this.pagination.order = $event.sortOrder === 1 ? 'asc' : 'desc' as string;
+    //
+    //   this.users = this.users.sort((a, b) => {
+    //     const titleA = a.projects?.[0]?.title || '';
+    //     const titleB = b.projects?.[0]?.title || '';
+    //
+    //     if (titleA === '' && titleB === '') return 0;
+    //     if (titleA === '') return -1;
+    //     if (titleB === '') return 1;
+    //
+    //     return titleA.localeCompare(titleB);
+    //   });
+    //
+    //   console.log(this.users);
+    //   this.initializeForms(this.users);
+    // }
   }
 
-  private initializeForms(users: DetailedUser[]) {
+  private initializeForms(users: DetailedUser[]): void {
     this.forms = users.map(user => {
       return this.formBuilder.group({
         id: [user.id, [Validators.required]],
@@ -131,13 +144,13 @@ export class UserListComponent implements OnInit {
     });
   }
 
-  onRowEditInit(user: DetailedUser) {
+  onRowEditInit(user: DetailedUser): void {
     this.clonedUsers.set(user.id, {...user});
   }
 
-  onRowEditSave(user: DetailedUser) {
+  onRowEditSave(user: DetailedUser): void {
 
-    this.userService.update(user).subscribe({
+    this.userService.updateAdmin(user).subscribe({
       next: () => {
         const userToUpdate = this.users.find(u => u.id === user.id);
         userToUpdate!.role = user.role;
@@ -151,12 +164,12 @@ export class UserListComponent implements OnInit {
     })
   }
 
-  onRowEditCancel(user: DetailedUser, index: number) {
+  onRowEditCancel(user: DetailedUser, index: number): void {
     this.users[index] = <DetailedUser>this.clonedUsers.get(user.id);
     this.clonedUsers.delete(user.id);
   }
 
-  deleteUser(id: number) {
+  deleteUser(id: number): void {
     this.userService.deleteById(id).subscribe({
       next: () => {
         this.users = this.users.filter(user => user.id !== id);

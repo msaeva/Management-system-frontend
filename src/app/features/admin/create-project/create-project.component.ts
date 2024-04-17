@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {ButtonModule} from "primeng/button";
 import {DropdownModule} from "primeng/dropdown";
 import {InputTextModule} from "primeng/inputtext";
@@ -6,7 +6,6 @@ import {NgIf} from "@angular/common";
 import {PasswordModule} from "primeng/password";
 import {FormBuilder, FormControl, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
 import {InputTextareaModule} from "primeng/inputtextarea";
-import {UserService} from "@core/services/user-service";
 import {SimpleUser} from "@core/types/users/simple-user";
 import {MultiSelectModule} from "primeng/multiselect";
 import {ProjectService} from "@core/services/project.service";
@@ -34,12 +33,11 @@ export class CreateProjectComponent {
   @Output() newProjectEvent = new EventEmitter<DetailedProject>();
   @Input() allProjectManagers!: SimpleUser[];
 
-
   createProjectFormGroup = this.formBuilder.group({
     title: new FormControl('', [Validators.required, Validators.minLength(3)]),
     description: new FormControl('', [Validators.required, Validators.minLength(10), Validators.maxLength(1000)]),
     abbreviation: new FormControl('', [Validators.required, Validators.minLength(3)]),
-    pmIds: new FormControl([], [Validators.required]),
+    pmIds: new FormControl([]),
   })
 
 
@@ -49,11 +47,10 @@ export class CreateProjectComponent {
   }
 
 
-  createProject() {
+  createProject(): void {
     this.projectService.create(this.createProjectFormGroup.value).subscribe({
       next: (project) => {
         this.newProjectEvent.emit(project);
-        console.log(project);
 
         this.toastService.showMessage({
           severity: 'success',

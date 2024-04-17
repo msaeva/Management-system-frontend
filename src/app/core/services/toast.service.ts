@@ -8,7 +8,7 @@ export class ToastService {
   constructor(private messageService: MessageService) {
   }
 
-  showMessage(message: { severity: string, summary: string, detail: string, life?: number }) {
+  showMessage(message: { severity: string, summary: string, detail: string, life?: number }): void {
     this.messageService.add({
       severity: message.severity,
       summary: message.summary,

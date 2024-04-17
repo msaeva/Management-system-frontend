@@ -81,7 +81,7 @@ export class CreateMeetingComponent implements OnInit {
     }
   }
 
-  onSelect(event: any) {
+  onSelect(event: any): void {
     const selectedNode = event.node;
 
     if (selectedNode.children && selectedNode.children.length > 0) {
@@ -89,7 +89,7 @@ export class CreateMeetingComponent implements OnInit {
     }
   }
 
-  createMeeting() {
+  createMeeting(): void {
     const body = {
       title: this.title,
       projectId: this.selectedData[0].key as number,
@@ -97,6 +97,7 @@ export class CreateMeetingComponent implements OnInit {
       start: this.selectInfo.start.getTime(),
       end: this.selectInfo.end.getTime(),
     }
+
     if (this.localStorageService.getAuthUserRole() === Role.PM.valueOf()) {
       this.meetingService.createPm(body).subscribe({
         next: (response: DetailedMeeting) => {

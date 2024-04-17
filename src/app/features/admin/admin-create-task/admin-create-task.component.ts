@@ -28,8 +28,8 @@ export class AdminCreateTaskComponent {
   @Input({required: true}) projectId!: number;
 
   createTaskFormGroup = this.formBuilder.group({
-    title: new FormControl('', [Validators.required, Validators.minLength(3)]),
-    description: new FormControl('', [Validators.required, Validators.minLength(10), Validators.maxLength(200)]),
+    title: new FormControl('', [Validators.required, Validators.minLength(4)]),
+    description: new FormControl('', [Validators.required, Validators.minLength(10), Validators.maxLength(1000)]),
   });
 
   constructor(private formBuilder: FormBuilder,
@@ -37,10 +37,9 @@ export class AdminCreateTaskComponent {
               private toastService: ToastService) {
   }
 
-  createTask() {
-    console.log(this.createTaskFormGroup.value)
+  createTask(): void {
     this.taskService.createTaskAdmin(this.createTaskFormGroup.value, this.projectId).subscribe({
-      next: (task) => {
+      next: (task: DetailedTask) => {
         this.newTaskEvent.emit(task);
 
         this.toastService.showMessage({

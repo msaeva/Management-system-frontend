@@ -58,12 +58,12 @@ export class AdminProjectListComponent implements OnInit {
     this.loadProjects();
   }
 
-  showDialog(id: number) {
+  showDialog(id: number): void {
     this.getById(id);
     this.visibleDetailedProjectDialog = true;
   }
 
-  getById(id: number) {
+  getById(id: number): void {
     this.projectService.getDetailedInfoById(id).subscribe({
       next: (project) => {
         this.selectedProject = project;
@@ -77,7 +77,7 @@ export class AdminProjectListComponent implements OnInit {
   }
 
 
-  loadPMs() {
+  loadPMs(): void {
     this.userService.getByRole([Role.PM.valueOf()]).subscribe({
       next: (response) => {
         this.allProjectManagers = response;

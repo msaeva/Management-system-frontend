@@ -1,7 +1,9 @@
 <form [formGroup]="createUserFormGroup">
   <div class="flex flex-column mt-3 pt-3 w-full">
     <div class="p-float-label mt-5 w-full">
-      <input pInputText id="username" class="input-field w-full" formControlName="username"/>
+      <input pInputText id="username"
+             class="input-field w-full"
+             formControlName="username"/>
       <label for="username">Username</label>
       <div
         *ngIf="createUserFormGroup.get('username')?.invalid && (createUserFormGroup.get('username')?.dirty || createUserFormGroup.get('username')?.touched)"
@@ -15,7 +17,7 @@
       </div>
     </div>
 
-    <div class="flex flex-column mt-3 pt-3 w-full">
+    <div class="p-float-label mt-5 w-full">
       <input pInputText id="email"
              type="email"
              class="input-field w-full"
@@ -33,7 +35,7 @@
       </div>
     </div>
 
-    <div class="flex flex-column mt-3 pt-3 w-full">
+    <div class="p-float-label mt-5 w-full">
       <input pInputText id="first-name"
              class="input-field w-full"
              formControlName="firstName"/>
@@ -50,7 +52,7 @@
       </div>
     </div>
 
-    <div class="flex flex-column mt-3 pt-3 w-full">
+    <div class="p-float-label mt-5 w-full">
       <input pInputText id="last-name"
              class="input-field w-full"
              formControlName="lastName"/>
@@ -67,7 +69,7 @@
       </div>
     </div>
 
-    <div class="flex flex-column mt-3 pt-3 w-full">
+    <div class="p-float-label mt-5 w-full">
       <input pPassword id="password"
              type="password"
              class="input-field w-full" formControlName="password"/>
@@ -84,11 +86,12 @@
       </div>
     </div>
 
-    <div class="p-float-label mt-5">
+    <div class="p-float-label mt-5 w-full">
       <p-dropdown [options]="roleOptions"
                   formControlName="role"
                   optionValue="value"
                   optionLabel="value"
+                  appendTo="body"
                   [showClear]="true"
                   placeholder="Select a Role">
       </p-dropdown>

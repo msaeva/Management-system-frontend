@@ -50,11 +50,7 @@ export class ProjectComponent implements OnInit {
               private localStorageService: LocalStorageService) {
   }
 
-  showDialog() {
-    this.visibleProjectDetailedTask = true;
-  }
-
-  ngOnInit() {
+  ngOnInit(): void {
     this.activatedRoute.params.subscribe({
       next: params => {
         this.loadProject(params['id']);
@@ -62,13 +58,15 @@ export class ProjectComponent implements OnInit {
     })
   }
 
-  loadTasks() {
+  showDialog(): void {
+    this.visibleProjectDetailedTask = true;
+  }
+
+  loadTasks(): void {
     if (this.getAuthUserRole() === Role.USER.valueOf()) {
       this.taskService.getTasksForUserTeamsByProjectId(this.project.id).subscribe({
         next: (tasks: Task[]) => {
           this.tasks = tasks;
-          // this.filterTasks();
-          // this.loading.tasks = false;
         },
         error: () => {
           console.log("Error loading tasks");
@@ -78,8 +76,6 @@ export class ProjectComponent implements OnInit {
       this.taskService.getAllTasksByProject(this.project.id).subscribe({
         next: (tasks: Task[]) => {
           this.tasks = tasks;
-          // this.filterTasks();
-          // this.loading.tasks = false;
         },
         error: () => {
           console.log("Error loading tasks");
@@ -92,7 +88,7 @@ export class ProjectComponent implements OnInit {
     return this.localStorageService.getAuthUserRole()
   }
 
-  loadProject(id: string) {
+  loadProject(id: string): void {
     this.projectService.getById(id).subscribe({
       next: (project: DetailedProject) => {
         this.project = project;
@@ -107,11 +103,11 @@ export class ProjectComponent implements OnInit {
 
   protected readonly Role = Role;
 
-  showCreateNewTaskDialog() {
+  showCreateNewTaskDialog(): void {
     this.visibleCreateTaskDialog = true;
   }
 
-  newTaskHandler(task: Task) {
+  newTaskHandler(task: Task): void {
     this.tasks = [...this.tasks, task];
     this.visibleCreateTaskDialog = false;
   }
