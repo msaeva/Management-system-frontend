@@ -5,6 +5,8 @@ import {Observable} from "rxjs";
 import {Task} from "@core/types/tasks/task";
 import {DetailedTask} from "@core/types/tasks/detailed-task";
 import {SingleTask} from "@core/types/tasks/single-task";
+import {CreateTaskData} from "@core/types/tasks/create-task-data";
+import {UpdateTaskData} from "@core/types/tasks/update-task-data";
 
 @Injectable({providedIn: 'root'})
 export class TaskService {
@@ -16,35 +18,29 @@ export class TaskService {
     return this.http.get<Task[]>(url);
   }
 
-  update(id: number, task: DetailedTask): Observable<object> {
+  update(id: number, task: DetailedTask): Observable<void> {
     const url = API_URL_ADMIN + "/tasks/" + id;
-    return this.http.put(url, task);
+    return this.http.put<void>(url, task);
   }
 
-  updatePM(id: number, body: any): Observable<SingleTask> {
+  updatePM(id: number, data: UpdateTaskData): Observable<SingleTask> {
     const url = API_URL_PM + "/tasks/" + id;
-    return this.http.put<SingleTask>(url, body);
+    return this.http.put<SingleTask>(url, data);
   }
 
-  updateStatus(taskId: number, status: string): Observable<string> {
+  updateStatus(taskId: number, status: string): Observable<Task> {
     const url = API_URL + "/tasks/" + taskId;
-    return this.http.put(url, status, {responseType: 'text'});
+    return this.http.put<Task>(url, status);
   }
 
-  delete(taskId: number): Observable<object> {
+  delete(taskId: number): Observable<void> {
     const url = API_URL_ADMIN + "/tasks/" + taskId;
-    return this.http.delete(url);
+    return this.http.delete<void>(url);
   }
 
-  createTaskAdmin(task: any, projectId: number): Observable<DetailedTask> {
-    const body = {
-      title: task.title,
-      description: task.description,
-      projectId: projectId,
-    }
-
+  createTaskAdmin(data: CreateTaskData): Observable<DetailedTask> {
     const url = API_URL_ADMIN + "/tasks";
-    return this.http.post<DetailedTask>(url, body);
+    return this.http.post<DetailedTask>(url, data);
   }
 
   setEstimationTime(id: number, estimationTime: number): Observable<Task> {
@@ -63,22 +59,14 @@ export class TaskService {
     return this.http.get<Task[]>(url);
   }
 
-  getById(id: number | undefined) {
+  getById(id: number): Observable<SingleTask> {
     const url = API_URL + "/tasks/" + id;
     return this.http.get<SingleTask>(url);
   }
 
-  createTaskPm(task: any, projectId: number): Observable<Task> {
-    const body = {
-      title: task.title,
-      description: task.description,
-      projectId: projectId,
-      userId: task.assignee ? task.assignee.id : null
-    }
-    console.log(body)
-
+  createTaskPm(data: CreateTaskData): Observable<Task> {
     const url = API_URL_PM + "/tasks";
-    return this.http.post<Task>(url, body);
+    return this.http.post<Task>(url, data);
   }
 
   assignUser(taskId: number, userId: number): Observable<Task> {
@@ -86,8 +74,8 @@ export class TaskService {
     return this.http.put<Task>(url, {});
   }
 
-  deletePM(id: number): Observable<object> {
+  deletePM(id: number): Observable<void> {
     const url = API_URL_PM + "/tasks/" + id;
-    return this.http.delete(url);
+    return this.http.delete<void>(url);
   }
 }

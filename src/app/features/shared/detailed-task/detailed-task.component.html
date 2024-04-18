@@ -7,7 +7,8 @@
        class="flex justify-content-end flex-wrap">
     <p-button (onClick)="startTask()" [text]="true" label="Start Task" severity="info"></p-button>
   </div>
-  <div *ngIf="getAuthUserRole() === Role.PM" class="flex justify-content-end">
+  <div *ngIf="getAuthUserRole() === Role.PM && (task.status === TaskStatus.OPEN || task.status === TaskStatus.RE_OPEN || task.status === TaskStatus.TODO)"
+       class="flex justify-content-end">
     <p-button *ngIf="updateTaskFormGroup.get('title')!.disabled"
               (onClick)="toggleEditMode()"
               [rounded]="true"
@@ -96,10 +97,15 @@
               </ng-template>
             </p-dropdown>
 
+<!--            <p-button *ngIf="selectedUserToAssign"-->
+<!--                      (onClick)="assignUser()"-->
+<!--                      label="Submit"-->
+<!--                      [text]="true" severity="success">-->
+<!--            </p-button>-->
             <p-button *ngIf="selectedUserToAssign"
                       (onClick)="assignUser()"
-                      label="Submit"
-                      [text]="true" severity="info">
+                      icon="pi pi-check" [rounded]="true"
+                      severity="success" [text]="true">
             </p-button>
           </div>
 

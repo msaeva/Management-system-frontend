@@ -15,7 +15,7 @@ import interactionPlugin from "@fullcalendar/interaction";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import listPlugin from "@fullcalendar/list";
-import {Meeting} from "@core/types/meeting";
+import {Meeting} from "@core/types/meetings/meeting";
 import {MeetingService} from "@core/services/meeting.service";
 import {ProjectService} from "@core/services/project.service";
 import {ToastService} from "@core/services/toast.service";

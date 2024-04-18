@@ -1,9 +1,11 @@
 import {Injectable} from "@angular/core";
 import {HttpClient} from "@angular/common/http";
 import {API_URL, API_URL_ADMIN, API_URL_PM} from "@core/constants";
-import {Meeting} from "@core/types/meeting";
+import {Meeting} from "@core/types/meetings/meeting";
 import {DetailedMeeting} from "@core/types/detailed-meeting";
 import {Observable} from "rxjs";
+import {CreateMeetingData} from "@core/types/meetings/create-meeting-data";
+import {UpdateMeetingData} from "@core/types/meetings/update-meeting-data";
 
 @Injectable({providedIn: 'root'})
 export class MeetingService {
@@ -15,7 +17,7 @@ export class MeetingService {
     return this.http.get<Meeting[]>(url);
   }
 
-  updateMeeting(id: number, body: any): Observable<Meeting> {
+  updateMeeting(id: number, body: UpdateMeetingData): Observable<Meeting> {
     const url = API_URL_ADMIN + "/meetings/" + id;
     return this.http.put<Meeting>(url, body);
   }
@@ -36,18 +38,12 @@ export class MeetingService {
     return this.http.get<DetailedMeeting[]>(url);
   }
 
-  deleteMeeting(id: number): Observable<object> {
+  deleteMeeting(id: number): Observable<void> {
     const url = API_URL_ADMIN + "/meetings/" + id;
-    return this.http.delete(url);
+    return this.http.delete<void>(url);
   }
 
-  createAdmin(body: {
-    start: number;
-    end: number;
-    title: string;
-    projectId: number;
-    teamIds: any
-  }): Observable<DetailedMeeting> {
+  createAdmin(body: CreateMeetingData): Observable<DetailedMeeting> {
     const url = API_URL_ADMIN + "/meetings";
     return this.http.post<DetailedMeeting>(url, body);
   }
@@ -57,24 +53,18 @@ export class MeetingService {
     return this.http.get<DetailedMeeting[]>(url);
   }
 
-  createPm(body: {
-    start: number;
-    end: number;
-    title: string;
-    projectId: number;
-    teamIds: number[]
-  }): Observable<DetailedMeeting> {
+  createPm(body: CreateMeetingData): Observable<DetailedMeeting> {
     const url = API_URL_PM + "/meetings";
     return this.http.post<DetailedMeeting>(url, body);
   }
 
-  updateMeetingPM(id: number, body: any): Observable<Meeting> {
+  updateMeetingPM(id: number, body: UpdateMeetingData): Observable<Meeting> {
     const url = API_URL_PM + "/meetings/" + id;
     return this.http.put<Meeting>(url, body);
   }
 
-  deleteMeetingPM(id: number): Observable<object> {
+  deleteMeetingPM(id: number): Observable<void> {
     const url = API_URL_PM + "/meetings/" + id;
-    return this.http.delete(url);
+    return this.http.delete<void>(url);
   }
 }

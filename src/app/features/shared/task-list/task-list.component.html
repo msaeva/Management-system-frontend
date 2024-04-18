@@ -2,18 +2,16 @@
                    fill="var(--surface-ground)" animationDuration=".5s">
 </p-progressSpinner>
 
-<!--class="grid gap-3 mx-3 xl:mx-4 py-4"-->
 <ng-template #content>
   <div class="kanban-wrapper">
-    <!--  <div class="col">-->
 
     <p-card [pDroppableDisabled]="isDropDisabled"
             (onDrop)="drop('OPEN')"
             pDroppable styleClass="OPEN">
       <h2>
         <span>OPEN
-          <p-chip
-            [label]="(this.openTasks.length ? this.openTasks.length : 0).toString()">
+          <p-chip styleClass="border-circle"
+                  [label]="(this.openTasks.length ? this.openTasks.length : 0).toString()">
           </p-chip>
         </span>
       </h2>
@@ -41,9 +39,7 @@
         </ng-container>
       </div>
     </p-card>
-    <!--  </div>-->
 
-    <!--  <div class="col">-->
     <p-card [pDroppableDisabled]="isDropDisabled"
             (onDrop)="drop('TODO')"
             pDroppable styleClass="TODO">
@@ -76,9 +72,7 @@
         </ng-container>
       </div>
     </p-card>
-    <!--  </div>-->
 
-    <!--  <div class="col">-->
     <p-card [pDroppableDisabled]="isDropDisabled"
             (onDrop)="drop('IN_PROGRESS')"
             pDroppable>
@@ -109,9 +103,7 @@
         </ng-container>
       </div>
     </p-card>
-    <!--  </div>-->
 
-    <!--  <div class="col">-->
     <p-card [pDroppableDisabled]="isDropDisabled"
             (onDrop)="drop('DONE')"
             pDroppable styleClass="DONE">
@@ -152,7 +144,6 @@
     </p-card>
   </div>
 </ng-template>
-<!--</div>-->
 
 
 <p-dialog *ngIf="visibleDetailedTask && selectedTask"

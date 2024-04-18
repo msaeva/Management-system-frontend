@@ -8,6 +8,7 @@ import {Router, RouterLink} from "@angular/router";
 import {AuthService} from "@core/services/auth.service";
 import {NgIf} from "@angular/common";
 import {ToastService} from "@core/services/toast.service";
+import {RegisterUserData} from "@core/types/users/register-user-data";
 
 @Component({
   selector: 'app-register',
@@ -41,7 +42,16 @@ export class RegisterComponent {
   });
 
   register() {
-    this.authService.register(this.registerForm.value).subscribe({
+    const data: RegisterUserData = {
+      username: this.registerForm.value.username ?? '',
+      email: this.registerForm.value.email ?? '',
+      firstName: this.registerForm.value.firstName ?? '',
+      lastName: this.registerForm.value.lastName ?? '',
+      password: this.registerForm.value.password ?? '',
+      role: null
+    }
+
+    this.authService.register(data).subscribe({
       next: (response) => {
         this.router.navigate(['/login']);
 
@@ -53,7 +63,7 @@ export class RegisterComponent {
         });
       },
       error: (err) => {
-        this.registerForm.setErrors({ taken: true });
+        this.registerForm.setErrors({taken: true});
 
         this.toastService.showMessage({
           severity: 'error',

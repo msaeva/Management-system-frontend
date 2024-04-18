@@ -4,11 +4,12 @@ import {CalendarModule} from "primeng/calendar";
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
 import {InputTextModule} from "primeng/inputtext";
 import {NgIf} from "@angular/common";
-import {Meeting} from "@core/types/meeting";
+import {Meeting} from "@core/types/meetings/meeting";
 import {MeetingService} from "@core/services/meeting.service";
 import {ConfirmationService} from "primeng/api";
 import {Role} from "@core/role.enum";
 import {LocalStorageService} from "@core/services/local-storage.service";
+import {UpdateMeetingData} from "@core/types/meetings/update-meeting-data";
 
 @Component({
   selector: 'app-detailed-meeting',
@@ -70,7 +71,7 @@ export class DetailedMeetingComponent {
   }
 
   updateMeeting(): void {
-    const updatedMeetingFormValue = {
+    const updatedMeetingFormValue: UpdateMeetingData = {
       ...this.updateMeetingFormGroup.value,
       start: this.updateMeetingFormGroup.value.start.getTime(),
       end: this.updateMeetingFormGroup.value.end.getTime()

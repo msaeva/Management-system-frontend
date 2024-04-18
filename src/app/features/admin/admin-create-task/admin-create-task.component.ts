@@ -8,6 +8,7 @@ import {FormBuilder, FormControl, ReactiveFormsModule, Validators} from "@angula
 import {DetailedTask} from "@core/types/tasks/detailed-task";
 import {TaskService} from "@core/services/task.service";
 import {ToastService} from "@core/services/toast.service";
+import {CreateTaskData} from "@core/types/tasks/create-task-data";
 
 @Component({
   selector: 'app-admin-create-task',
@@ -38,7 +39,14 @@ export class AdminCreateTaskComponent {
   }
 
   createTask(): void {
-    this.taskService.createTaskAdmin(this.createTaskFormGroup.value, this.projectId).subscribe({
+    const body: CreateTaskData = {
+      title: this.createTaskFormGroup.value?.title ?? '',
+      description: this.createTaskFormGroup.value?.description ?? '',
+      projectId: this.projectId,
+      userId: null
+    }
+
+    this.taskService.createTaskAdmin(body).subscribe({
       next: (task: DetailedTask) => {
         this.newTaskEvent.emit(task);
 

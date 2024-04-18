@@ -6,6 +6,7 @@ import {DetailedUser} from "@core/types/users/detailed-user";
 import {API_URL, API_URL_ADMIN} from "@core/constants";
 import {User} from "@core/types/users/user";
 import {Observable} from "rxjs";
+import {RegisterUserData} from "@core/types/users/register-user-data";
 
 @Injectable({providedIn: 'root'})
 export class AuthService {
@@ -26,12 +27,12 @@ export class AuthService {
     this.router.navigate(['/login']);
   }
 
-  createAccount(user: any): Observable<DetailedUser> {
+  createAccount(user: RegisterUserData): Observable<DetailedUser> {
     const url = API_URL_ADMIN + "/users";
     return this.http.post<DetailedUser>(url, user);
   }
 
-  register(user: any): Observable<User> {
+  register(user: RegisterUserData): Observable<User> {
     const url = API_URL + '/register';
     return this.http.post<User>(url, user);
   }

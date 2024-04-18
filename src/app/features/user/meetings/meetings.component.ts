@@ -6,7 +6,7 @@ import interactionPlugin from '@fullcalendar/interaction';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import listPlugin from '@fullcalendar/list';
 import {MeetingService} from "@core/services/meeting.service";
-import {Meeting} from "@core/types/meeting";
+import {Meeting} from "@core/types/meetings/meeting";
 import {DialogModule} from "primeng/dialog";
 import {NgIf} from "@angular/common";
 import {DetailedMeetingComponent} from "@feature/shared/detailed-meeting/detailed-meeting.component";

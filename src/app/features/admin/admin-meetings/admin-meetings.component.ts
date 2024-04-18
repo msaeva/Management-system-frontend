@@ -15,7 +15,7 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from "@fullcalendar/interaction";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import listPlugin from "@fullcalendar/list";
-import {Meeting} from "@core/types/meeting";
+import {Meeting} from "@core/types/meetings/meeting";
 import {MeetingService} from "@core/services/meeting.service";
 import {DetailedMeetingComponent} from "@feature/shared/detailed-meeting/detailed-meeting.component";
 import {SimpleUser} from "@core/types/users/simple-user";

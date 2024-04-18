@@ -94,6 +94,7 @@ export class ProjectComponent implements OnInit {
         this.project = project;
         this.loadingProject = false;
         this.loadTasks();
+        console.log(this.project)
       },
       error: () => {
         console.log("Error loading projects");

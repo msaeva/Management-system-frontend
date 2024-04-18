@@ -15,6 +15,7 @@ import {DetailedMeeting} from "@core/types/detailed-meeting";
 import {LocalStorageService} from "@core/services/local-storage.service";
 import {Role} from "@core/role.enum";
 import {CalendarModule} from "primeng/calendar";
+import {CreateMeetingData} from "@core/types/meetings/create-meeting-data";
 
 @Component({
   selector: 'app-create-meeting',
@@ -90,7 +91,7 @@ export class CreateMeetingComponent implements OnInit {
   }
 
   createMeeting(): void {
-    const body = {
+    const body: CreateMeetingData = {
       title: this.title,
       projectId: this.selectedData[0].key as number,
       teamIds: this.selectedData[0].children.map((child: any) => parseInt(child.key)),

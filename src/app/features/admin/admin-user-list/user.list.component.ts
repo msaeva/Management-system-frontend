@@ -20,6 +20,7 @@ import {Pagination} from "@core/types/pagination";
 import {ProgressSpinnerModule} from "primeng/progressspinner";
 import {last} from "rxjs";
 import {RouterLink} from "@angular/router";
+import {UpdateUserData} from "@core/types/users/update-user-data";
 
 @Component({
   selector: 'app-user-list',
@@ -113,24 +114,6 @@ export class UserListComponent {
           console.log("Error loading users");
         }
       })
-    // } else {
-    //   // this.pagination.sort = $event.sortField as string;
-    //   // this.pagination.order = $event.sortOrder === 1 ? 'asc' : 'desc' as string;
-    //
-    //   this.users = this.users.sort((a, b) => {
-    //     const titleA = a.projects?.[0]?.title || '';
-    //     const titleB = b.projects?.[0]?.title || '';
-    //
-    //     if (titleA === '' && titleB === '') return 0;
-    //     if (titleA === '') return -1;
-    //     if (titleB === '') return 1;
-    //
-    //     return titleA.localeCompare(titleB);
-    //   });
-    //
-    //   console.log(this.users);
-    //   this.initializeForms(this.users);
-    // }
   }
 
   private initializeForms(users: DetailedUser[]): void {
@@ -149,14 +132,20 @@ export class UserListComponent {
   }
 
   onRowEditSave(user: DetailedUser): void {
+    const body: UpdateUserData = {
+      id: user.id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      role: user.role,
+    }
 
-    this.userService.updateAdmin(user).subscribe({
-      next: () => {
-        const userToUpdate = this.users.find(u => u.id === user.id);
-        userToUpdate!.role = user.role;
-        userToUpdate!.firstName = user.firstName;
-        userToUpdate!.lastName = user.lastName;
+    this.userService.updateAdmin(body).subscribe({
+      next: (updated: DetailedUser) => {
+        const index = this.users.findIndex(u => u.id === updated.id);
 
+        if (index !== -1) {
+          this.users[index] = updated;
+        }
         this.clonedUsers.delete(user.id);
       }, error: (err) => {
         console.log(err)

@@ -9,6 +9,7 @@ import {DetailedUser} from "@core/types/users/detailed-user";
 import {AuthService} from "@core/services/auth.service";
 import {ToastService} from "@core/services/toast.service";
 import {roleOptions} from "@core/constants";
+import {RegisterUserData} from "@core/types/users/register-user-data";
 
 @Component({
   selector: 'app-create-user',
@@ -43,7 +44,16 @@ export class CreateUserComponent {
   }
 
   createAccount(): void {
-    this.authService.createAccount(this.createUserFormGroup.value).subscribe({
+    const data: RegisterUserData = {
+      username: this.createUserFormGroup.value.username ?? '',
+      email: this.createUserFormGroup.value.email ?? '',
+      firstName: this.createUserFormGroup.value.firstName ?? '',
+      lastName: this.createUserFormGroup.value.lastName ?? '',
+      password: this.createUserFormGroup.value.password ?? '',
+      role: this.createUserFormGroup.value.role ?? ''
+    }
+
+    this.authService.createAccount(data).subscribe({
       next: (user: DetailedUser) => {
 
         const userToAdd: DetailedUser = {

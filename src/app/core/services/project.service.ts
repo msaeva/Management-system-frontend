@@ -12,6 +12,8 @@ import {ProjectTeam} from "@core/types/projects/project-team";
 import {Project} from "@core/types/projects/project";
 import {SimpleUser} from "@core/types/users/simple-user";
 import {Observable} from "rxjs";
+import {CreateProjectData} from "@core/types/projects/create-project-data";
+import {UpdateProjectData} from "@core/types/projects/update-project-data";
 
 @Injectable({providedIn: 'root'})
 export class ProjectService {
@@ -24,7 +26,7 @@ export class ProjectService {
     return this.http.get<Project[]>(url);
   }
 
-  getById(id: string | null): Observable<DetailedProject> {
+  getById(id: string): Observable<DetailedProject> {
     const url = API_URL + "/projects/" + id;
     return this.http.get<DetailedProject>(url);
   }
@@ -39,24 +41,24 @@ export class ProjectService {
     return this.http.get<DetailedProject>(url);
   }
 
-  update(id: number, body: any): Observable<DetailedProject> {
+  update(id: number, data: UpdateProjectData): Observable<DetailedProject> {
     const url = API_URL_ADMIN + "/projects/" + id;
-    return this.http.put<DetailedProject>(url, body);
+    return this.http.put<DetailedProject>(url, data);
   }
 
-  deleteById(id: number | undefined): Observable<object> {
+  deleteById(id: number): Observable<void> {
     const url = API_URL_ADMIN + "/projects/" + id;
-    return this.http.delete(url);
+    return this.http.delete<void>(url);
   }
 
-  create(project: any): Observable<DetailedProject> {
+  create(project: CreateProjectData): Observable<DetailedProject> {
     const url = API_URL_ADMIN + "/projects";
     return this.http.post<DetailedProject>(url, project);
   }
 
-  deleteTeamFromProject(teamId: number, projectId: number): Observable<object> {
+  deleteTeamFromProject(teamId: number, projectId: number): Observable<void> {
     const url = API_URL_ADMIN + "/projects/" + projectId + "/teams/" + teamId;
-    return this.http.delete(url);
+    return this.http.delete<void>(url);
   }
 
   addProjectManagers(projectId: number, pmIds: number[]): Observable<User[]> {

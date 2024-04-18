@@ -7,7 +7,7 @@ import {AvatarModule} from "primeng/avatar";
 import {InputTextareaModule} from "primeng/inputtextarea";
 import {CommentService} from "@core/services/comment.service";
 import {DatePipe, NgForOf, NgIf} from "@angular/common";
-import {Comment} from "@core/types/comment";
+import {Comment} from "@core/types/comments/comment";
 import {FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
 import {ChipsModule} from "primeng/chips";
 import {CommentCardComponent} from "@pattern/comment-card/comment-card.component";
@@ -23,6 +23,8 @@ import {SimpleUser} from "@core/types/users/simple-user";
 import {ProjectService} from "@core/services/project.service";
 import {Role} from "@core/role.enum";
 import {ConfirmationService} from "primeng/api";
+import {CreateCommentData} from "@core/types/comments/create-comment-data";
+import {UpdateTaskData} from "@core/types/tasks/update-task-data";
 
 @Component({
   selector: 'app-detailed-task',
@@ -154,7 +156,7 @@ export class DetailedTaskComponent implements OnInit {
     })
   }
 
-  loadTask() {
+  loadTask(): void {
     this.taskService.getById(this.id).subscribe({
       next: (task: SingleTask) => {
         this.task = task;
@@ -181,12 +183,13 @@ export class DetailedTaskComponent implements OnInit {
   }
 
   postComment(): void {
-    const body = {
+    const body: CreateCommentData = {
       comment: this.createCommentFormControl.value,
       taskID: this.task?.id
     };
+
     this.commentService.createComment(body).subscribe({
-      next: (response) => {
+      next: (response: Comment) => {
         this.comments.push(response);
 
         this.toastService.showMessage({
@@ -218,8 +221,8 @@ export class DetailedTaskComponent implements OnInit {
 
   startTask(): void {
     this.taskService.updateStatus(this.task.id, TaskStatus.IN_PROGRESS.valueOf()).subscribe({
-      next: (newStatus) => {
-        this.task.status = newStatus;
+      next: (updateTask: Task) => {
+        this.task.status = updateTask.status;
         this.updatedStatusTaskEvent.emit(this.task as Task);
 
         this.toastService.showMessage({
@@ -237,7 +240,6 @@ export class DetailedTaskComponent implements OnInit {
 
 
   submitEstimationTime(): void {
-    console.log(this.estimationTime)
     this.taskService.setEstimationTime(this.task.id, this.estimationTime).subscribe({
       next: (response) => {
         this.task.estimationTime = this.estimationTime;
@@ -288,7 +290,6 @@ export class DetailedTaskComponent implements OnInit {
         console.log(err)
       }
     })
-    console.log(this.selectedUserToAssign)
   }
 
   protected readonly Role = Role;
@@ -326,7 +327,15 @@ export class DetailedTaskComponent implements OnInit {
   updateTask(id: number): void {
     const assignee = this.updateTaskFormGroup.get('assignee')?.value;
 
-    this.taskService.updatePM(id, {...this.updateTaskFormGroup.value, userId: assignee.id}).subscribe({
+    const data: UpdateTaskData = {
+      id: this.updateTaskFormGroup.value.id,
+      title: this.updateTaskFormGroup.value.title,
+      description: this.updateTaskFormGroup.value.description,
+      userId: assignee.id,
+      projectId: this.projectId
+    }
+
+    this.taskService.updatePM(id, data).subscribe({
       next: (response: SingleTask) => {
         this.task = response;
         this.updatedTaskEvent.emit(response as Task);

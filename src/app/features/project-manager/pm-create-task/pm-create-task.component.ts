@@ -10,6 +10,7 @@ import {ToastService} from "@core/services/toast.service";
 import {DropdownModule} from "primeng/dropdown";
 import {ProjectService} from "@core/services/project.service";
 import {SimpleUser} from "@core/types/users/simple-user";
+import {CreateTaskData} from "@core/types/tasks/create-task-data";
 
 @Component({
   selector: 'app-pm-create-task',
@@ -32,7 +33,7 @@ export class PmCreateTaskComponent implements OnInit {
   createTaskFormGroup = this.formBuilder.group({
     title: new FormControl('', [Validators.required, Validators.minLength(3)]),
     description: new FormControl('', [Validators.required, Validators.minLength(10), Validators.maxLength(200)]),
-    assignee: new FormControl(null)
+    assignee: new FormControl<SimpleUser | null>(null)
   });
 
   usersOptions: SimpleUser[] = [];
@@ -60,7 +61,15 @@ export class PmCreateTaskComponent implements OnInit {
   }
 
   createTask(): void {
-    this.taskService.createTaskPm(this.createTaskFormGroup.value, this.projectId).subscribe({
+    const assigneeId = this.createTaskFormGroup.value?.assignee?.id;
+    const body: CreateTaskData = {
+      title: this.createTaskFormGroup.value?.title ?? '',
+      description: this.createTaskFormGroup.value?.description ?? '',
+      projectId: this.projectId,
+      userId: assigneeId || null
+    }
+
+    this.taskService.createTaskPm(body).subscribe({
       next: (task: Task) => {
         this.newTaskEvent.emit(task);
 

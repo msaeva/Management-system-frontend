@@ -50,7 +50,8 @@ export class TaskListComponent implements OnInit, OnChanges {
 
 
   allowedTransitions: { [key: string]: string[] } = {
-    [TaskStatus.OPEN.valueOf()]: [TaskStatus.TODO.valueOf()],
+    [TaskStatus.OPEN.valueOf()]: [],
+    [TaskStatus.RE_OPEN.valueOf()]: [],
     [TaskStatus.TODO.valueOf()]: [TaskStatus.IN_PROGRESS.valueOf()],
     [TaskStatus.IN_PROGRESS.valueOf()]: [TaskStatus.DONE.valueOf()],
     [TaskStatus.DONE.valueOf()]: [TaskStatus.OPEN.valueOf()]
@@ -153,7 +154,12 @@ export class TaskListComponent implements OnInit, OnChanges {
       }
 
       this.taskService.updateStatus(taskId, task.status).subscribe({
-        next: (response) => {
+        next: (updatedTask: Task) => {
+          const index = this.tasks.findIndex(t => t.id === updatedTask.id);
+          if (index !== -1) {
+            this.tasks[index] = updatedTask;
+            this.filterTasks();
+          }
 
           this.toastService.showMessage({
             severity: 'success',
@@ -188,7 +194,6 @@ export class TaskListComponent implements OnInit, OnChanges {
 
 
   private filterTasks(): void {
-    console.log(this.tasks)
     this.doneTasks = this.tasks.filter(task => task.status === TaskStatus.DONE.valueOf());
     this.todoTasks = this.tasks.filter(task => task.status === TaskStatus.TODO.valueOf());
     this.inProgressTasks = this.tasks.filter(task => task.status === TaskStatus.IN_PROGRESS.valueOf());

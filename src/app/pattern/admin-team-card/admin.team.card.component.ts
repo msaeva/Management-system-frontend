@@ -50,7 +50,6 @@ export class AdminTeamCardComponent implements OnInit {
 
     this.dropdownOptions = this.usersToAddToTeam
       .filter(user => !teamUserIds.has(user.id));
-    console.log(this.dropdownOptions)
   }
 
   showRemoveUserFromTeamConfirmation(userId: number, teamId: number) {

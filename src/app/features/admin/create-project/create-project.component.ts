@@ -11,6 +11,7 @@ import {MultiSelectModule} from "primeng/multiselect";
 import {ProjectService} from "@core/services/project.service";
 import {DetailedProject} from "@core/types/projects/detailed-project";
 import {ToastService} from "@core/services/toast.service";
+import {CreateProjectData} from "@core/types/projects/create-project-data";
 
 @Component({
   selector: 'app-create-project',
@@ -48,8 +49,15 @@ export class CreateProjectComponent {
 
 
   createProject(): void {
-    this.projectService.create(this.createProjectFormGroup.value).subscribe({
-      next: (project) => {
+    const body: CreateProjectData = {
+      title: this.createProjectFormGroup.value?.title ?? '',
+      description: this.createProjectFormGroup.value?.description ?? '',
+      abbreviation: this.createProjectFormGroup.value?.abbreviation ?? '',
+      pmIds: this.createProjectFormGroup.value?.pmIds ?? [],
+    }
+
+    this.projectService.create(body).subscribe({
+      next: (project: DetailedProject) => {
         this.newProjectEvent.emit(project);
 
         this.toastService.showMessage({

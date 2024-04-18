@@ -4,7 +4,7 @@ import {ButtonModule} from "primeng/button";
 import {AvatarModule} from "primeng/avatar";
 import {CommentService} from "@core/services/comment.service";
 import {DatePipe, NgIf} from "@angular/common";
-import {Comment} from "@core/types/comment";
+import {Comment} from "@core/types/comments/comment";
 import {FormControl, ReactiveFormsModule, Validators} from "@angular/forms";
 import {InputTextareaModule} from "primeng/inputtextarea";
 import {ConfirmationService} from "primeng/api";
@@ -98,7 +98,7 @@ export class CommentCardComponent implements OnInit {
         this.toastService.showMessage({
           severity: 'success',
           summary: 'Success',
-          detail: 'Task updated successfully',
+          detail: 'Comment updated successfully',
           life: 3000
         });
       },

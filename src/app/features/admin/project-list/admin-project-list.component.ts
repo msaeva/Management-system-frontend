@@ -16,6 +16,7 @@ import {Role} from "@core/role.enum";
 import {UserService} from "@core/services/user-service";
 import {SimpleUser} from "@core/types/users/simple-user";
 import {TextTransformPipe} from "@core/pipes/text-transform.pipe";
+import {ToastService} from "@core/services/toast.service";
 
 
 @Component({
@@ -50,7 +51,9 @@ export class AdminProjectListComponent implements OnInit {
   loadingProjectManagers: boolean = true;
   loadingProjectById: boolean = true;
 
-  constructor(private projectService: ProjectService, private userService: UserService) {
+  constructor(private projectService: ProjectService,
+              private userService: UserService,
+              private toastService: ToastService) {
   }
 
   ngOnInit(): void {
@@ -64,10 +67,10 @@ export class AdminProjectListComponent implements OnInit {
   }
 
   getById(id: number): void {
+    this.loadingProjectById = true;
     this.projectService.getDetailedInfoById(id).subscribe({
       next: (project) => {
         this.selectedProject = project;
-        console.log(this.selectedProject)
         this.loadingProjectById = false;
       },
       error: (err) => {
@@ -75,7 +78,6 @@ export class AdminProjectListComponent implements OnInit {
       }
     })
   }
-
 
   loadPMs(): void {
     this.userService.getByRole([Role.PM.valueOf()]).subscribe({
@@ -88,11 +90,10 @@ export class AdminProjectListComponent implements OnInit {
     })
   }
 
-  loadProjects() {
+  loadProjects(): void {
     this.projectService.getAll().subscribe({
       next: (projects: DetailedProject[]) => {
         this.projects = projects;
-        console.log(projects);
       },
       error: (err) => {
         console.log(err);
@@ -106,7 +107,7 @@ export class AdminProjectListComponent implements OnInit {
     this.visibleCreateProjectDialog = false;
   }
 
-  removeDeletedProjectHandler(deletedProjectId: number) {
+  removeDeletedProjectHandler(deletedProjectId: number): void {
     this.visibleDetailedProjectDialog = false;
     this.projects = this.projects.filter(p => p.id != deletedProjectId);
   }
@@ -116,12 +117,18 @@ export class AdminProjectListComponent implements OnInit {
   }
 
   updateProjectHandler(updatedProject: DetailedProject) {
-    this.visibleDetailedProjectDialog = false;
+    // this.visibleDetailedProjectDialog = false;
 
     const index = this.projects.findIndex(p => p.id === updatedProject.id);
     if (index !== -1) {
       this.projects[index] = updatedProject;
-      this.visibleDetailedProjectDialog = false;
+      this.toastService.showMessage({
+        severity: 'success',
+        summary: 'Success',
+        detail: 'Successfully updated project!',
+        life: 3000
+      });
+      // this.visibleDetailedProjectDialog = false;
     }
   }
 }

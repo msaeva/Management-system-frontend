@@ -8,6 +8,8 @@ import {ButtonModule} from "primeng/button";
 import {AuthService} from "@core/services/auth.service";
 import {ToastService} from "@core/services/toast.service";
 import {PasswordModule} from "primeng/password";
+import {ChangePasswordData} from "@core/types/users/change-password-data";
+import {UpdateUserProfile} from "@core/types/users/update-user-profile";
 
 @Component({
   selector: 'app-profile',
@@ -79,7 +81,13 @@ export class ProfileComponent implements OnInit {
 
   changePassword(): void {
     if (this.changePasswordForm.valid && this.changePasswordForm.value.newPassword === this.changePasswordForm.value.repeatedPassword) {
-      this.userService.changePassword(this.changePasswordForm.value).subscribe({
+
+      const body: ChangePasswordData = {
+        oldPassword: this.changePasswordForm.value?.oldPassword ?? '',
+        newPassword: this.changePasswordForm.value?.newPassword ?? '',
+      }
+
+      this.userService.changePassword(body).subscribe({
         next: (response) => {
           this.authService.logout();
         },
@@ -101,7 +109,13 @@ export class ProfileComponent implements OnInit {
   }
 
   updateProfile(): void {
-    this.userService.updateProfile(this.updateProfileForm.value).subscribe({
+    const data: UpdateUserProfile = {
+      id: this.updateProfileForm.value.id,
+      firstName: this.updateProfileForm.value.firstName,
+      lastName: this.updateProfileForm.value.lastName,
+    }
+
+    this.userService.updateProfile(data).subscribe({
       next: (response) => {
         this.user = response;
         this.toggleEditMode();

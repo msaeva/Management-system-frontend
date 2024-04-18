@@ -1,7 +1,7 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {InplaceModule} from "primeng/inplace";
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
-import {NgForOf, NgIf, NgStyle} from "@angular/common";
+import {DatePipe, NgForOf, NgIf, NgStyle} from "@angular/common";
 import {DetailedProject} from "@core/types/projects/detailed-project";
 import {ProjectService} from "@core/services/project.service";
 import {ChipsModule} from "primeng/chips";
@@ -25,6 +25,7 @@ import {CalendarModule} from "primeng/calendar";
 import {InputTextareaModule} from "primeng/inputtextarea";
 import {projectStatus} from "@core/constants";
 import {ActivatedRoute} from "@angular/router";
+import {UpdateProjectData} from "@core/types/projects/update-project-data";
 
 @Component({
   selector: 'app-detailed-project',
@@ -53,8 +54,8 @@ import {ActivatedRoute} from "@angular/router";
 })
 export class DetailedProjectComponent implements OnInit {
   @Input({required: true}) project!: DetailedProject;
-
   @Input({required: true}) allProjectManagersOptions!: SimpleUser[];
+
   @Output() projectDeleted = new EventEmitter<number>();
   @Output() projectUpdated = new EventEmitter<DetailedProject>();
   @Output() teamDeleted = new EventEmitter<number>();
@@ -70,6 +71,7 @@ export class DetailedProjectComponent implements OnInit {
               private toastService: ToastService,
               private userService: UserService,
               private formBuilder: FormBuilder,
+              private datePipe: DatePipe,
               private route: ActivatedRoute) {
   }
 
@@ -99,7 +101,7 @@ export class DetailedProjectComponent implements OnInit {
         [Validators.required, Validators.minLength(3)]
       ],
       createdDate: [
-        {value: this.project.createdDate, disabled: true},
+        {value: this.formatDateTime(this.project.createdDate), disabled: true},
         Validators.required],
       description: [
         {value: this.project.description, disabled: true},
@@ -112,7 +114,7 @@ export class DetailedProjectComponent implements OnInit {
     });
   }
 
-  showDeleteProjectConfirmation(projectId: number | undefined): void {
+  showDeleteProjectConfirmation(projectId: number): void {
     this.confirmationService.confirm({
       message: 'Are you sure you want to delete this project?',
       header: 'Confirmation',
@@ -142,8 +144,15 @@ export class DetailedProjectComponent implements OnInit {
   }
 
   updateProject(id: number): void {
-    this.projectService.update(id, this.updateProjectFormGroup.value).subscribe({
-      next: (response) => {
+    const body: UpdateProjectData = {
+      title: this.updateProjectFormGroup.value.title,
+      description: this.updateProjectFormGroup.value.description,
+      abbreviation: this.updateProjectFormGroup.value.abbreviation,
+      status: this.updateProjectFormGroup.value.status,
+    }
+
+    this.projectService.update(id, body).subscribe({
+      next: (response: DetailedProject) => {
         this.project = response;
         this.projectUpdated.emit(response);
         this.toggleEditMode();
@@ -155,10 +164,9 @@ export class DetailedProjectComponent implements OnInit {
   }
 
 
-  deleteProject(id: number | undefined): void {
+  deleteProject(id: number): void {
     this.projectService.deleteById(id).subscribe({
       next: (response) => {
-        console.log(response);
         this.projectDeleted.emit(id);
       },
       error: (err) => {
@@ -168,9 +176,9 @@ export class DetailedProjectComponent implements OnInit {
   }
 
   createTeam(): void {
-    this.teamService.createTeam(this.project?.id).subscribe({
+    this.teamService.createTeam(this.project.id).subscribe({
       next: (response) => {
-        this.project?.teams.push(response);
+        this.project.teams.push(response);
 
         this.toastService.showMessage({
           severity: 'success',
@@ -178,12 +186,17 @@ export class DetailedProjectComponent implements OnInit {
           detail: 'Successfully created new team!',
           life: 3000
         });
-        console.log(response);
       }, error: (err) => {
         console.log(err);
       }
     })
+  }
 
+  formatDateTime(dateTime: string | null): string {
+    if (!dateTime) {
+      return '';
+    }
+    return this.datePipe.transform(new Date(dateTime), 'medium') || '';
   }
 
   removeDeletedProjectHandler(teamId: number) {

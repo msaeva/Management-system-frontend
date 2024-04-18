@@ -27,7 +27,6 @@ export class NavigationComponent implements OnInit{
 
   ngOnInit(): void {
     this.role = this.localStorageService.getAuthUserRole();
-    console.log(this.role)
   }
 
   toggleSidebar() {

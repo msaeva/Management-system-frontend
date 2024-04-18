@@ -15,12 +15,12 @@ export class TeamService {
     return this.http.put<User[]>(url, userIds);
   }
 
-  removeUserFromTeam(userId: number, teamId: number): Observable<object> {
+  removeUserFromTeam(userId: number, teamId: number): Observable<void> {
     const url = API_URL_ADMIN + "/teams/" + teamId + "/users/" + userId;
-    return this.http.delete(url);
+    return this.http.delete<void>(url);
   }
 
-  createTeam(projectId: number | undefined): Observable<Team> {
+  createTeam(projectId: number): Observable<Team> {
     const url = API_URL_ADMIN + "/teams";
     return this.http.post<Team>(url, {projectId});
   }

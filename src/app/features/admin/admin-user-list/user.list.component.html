@@ -1,8 +1,3 @@
-<!--<p-progressSpinner *ngIf="loading.users; else content" styleClass="w-4rem h-4rem" strokeWidth="8"-->
-<!--                   fill="var(&#45;&#45;surface-ground)" animationDuration=".5s">-->
-<!--</p-progressSpinner>-->
-
-<!--<ng-template #content>-->
 <div class="card">
   <div class="flex justify-content-end mb-3">
 
@@ -72,10 +67,11 @@
               <div
                 *ngIf="forms[index % pagination.size]?.get('firstName')?.['invalid'] && (forms[index % pagination.size]?.get('firstName')?.dirty ||forms[index % pagination.size]?.get('firstName')?.touched)"
                 class="text-danger">
-                <small *ngIf="forms[index % pagination.size]?.get('firstName')?.errors?.['required']">Last Name is
-                  required.</small>
-                <small *ngIf="forms[index % pagination.size]?.get('firstName')?.errors?.['minlength']">
-                  Last Name must be at least 3 characters long.
+                <small *ngIf="forms[index % pagination.size]?.get('firstName')?.errors?.['required']" class="p-error">
+                  First Name is required.
+                </small>
+                <small *ngIf="forms[index % pagination.size]?.get('firstName')?.errors?.['minlength']" class="p-error">
+                  First Name must be at least 3 characters long.
                 </small>
               </div>
             </ng-template>
@@ -91,9 +87,9 @@
               <div
                 *ngIf="forms[index % pagination.size]?.get('lastName')?.['invalid'] && (forms[index % pagination.size]?.get('lastName')?.dirty ||forms[index % pagination.size]?.get('lastName')?.touched)"
                 class="text-danger">
-                <small *ngIf="forms[index % pagination.size]?.get('lastName')?.errors?.['required']">Last Name is
-                  required.</small>
-                <small *ngIf="forms[index % pagination.size]?.get('lastName')?.errors?.['minlength']">
+                <small *ngIf="forms[index % pagination.size]?.get('lastName')?.errors?.['required']" class="p-error">
+                  Last Name is required.</small>
+                <small *ngIf="forms[index % pagination.size]?.get('lastName')?.errors?.['minlength']" class="p-error">
                   Last Name must be at least 3 characters long.
                 </small>
               </div>
@@ -173,7 +169,7 @@
     </ng-template>
   </p-table>
 </div>
-<!--</ng-template>-->
+
 <p-dialog header="Create New User"
           [(visible)]="visible"
           [modal]="true"

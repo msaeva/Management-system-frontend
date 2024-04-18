@@ -1,8 +1,9 @@
 import {Injectable} from "@angular/core";
 import {API_URL} from "@core/constants";
 import {HttpClient} from "@angular/common/http";
-import {Comment} from "@core/types/comment";
+import {Comment} from "@core/types/comments/comment";
 import {Observable} from "rxjs";
+import {CreateCommentData} from "@core/types/comments/create-comment-data";
 
 
 @Injectable({providedIn: 'root'})
@@ -15,18 +16,18 @@ export class CommentService {
     return this.http.get<Comment[]>(url);
   }
 
-  createComment(body: { comment: string; taskID: number | undefined }): Observable<Comment> {
+  createComment(data: CreateCommentData): Observable<Comment> {
     const url = API_URL + "/comments";
-    return this.http.post<Comment>(url, body);
+    return this.http.post<Comment>(url, data);
   }
 
-  deleteComment(id: number): Observable<Object> {
+  deleteComment(id: number): Observable<void> {
     const url = API_URL + "/comments/" + id;
-    return this.http.delete(url);
+    return this.http.delete<void>(url);
   }
 
-  updateComment(id: number, value: string): Observable<Comment> {
+  updateComment(id: number, comment: string): Observable<Comment> {
     const url = API_URL + "/comments/" + id;
-    return this.http.put<Comment>(url, value);
+    return this.http.put<Comment>(url, comment);
   }
 }
