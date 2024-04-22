@@ -54,8 +54,6 @@ import {UpdateProjectData} from "@core/types/projects/update-project-data";
 })
 export class DetailedProjectComponent implements OnInit {
   @Input({required: true}) project!: DetailedProject;
-  @Input({required: true}) allProjectManagersOptions!: SimpleUser[];
-
   @Output() projectDeleted = new EventEmitter<number>();
   @Output() projectUpdated = new EventEmitter<DetailedProject>();
   @Output() teamDeleted = new EventEmitter<number>();

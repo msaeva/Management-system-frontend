@@ -11,6 +11,9 @@ import {ProjectService} from "@core/services/project.service";
 import {ToastService} from "@core/services/toast.service";
 import {User} from "@core/types/users/user";
 import {NgIf} from "@angular/common";
+import {Role} from "@core/role.enum";
+import {UserService} from "@core/services/user-service";
+import {lastValueFrom} from "rxjs";
 
 @Component({
   selector: 'app-admin-project-manager-table',
@@ -29,20 +32,31 @@ import {NgIf} from "@angular/common";
 })
 export class AdminProjectManagerTableComponent implements OnInit {
   @Input({required: true}) project!: DetailedProject;
-  @Input({required: true}) allProjectManagersOptions!: SimpleUser[];
 
   dropdownOptions: SimpleUser[] = [];
   selectedPMToAddToProject: SimpleUser[] = [];
 
+  loading: { pms: boolean } = {
+    pms: true
+  }
+  allProjectManagers: SimpleUser[] = []
+
   constructor(private toastService: ToastService,
               private projectService: ProjectService,
+              private userService: UserService,
               private confirmationService: ConfirmationService) {
   }
 
-  ngOnInit(): void {
+  async ngOnInit() {
+    await this.loadPMs();
+
     const teamPmsIds = new Set(this.project?.pms.map(user => user.id));
-    this.dropdownOptions = this.allProjectManagersOptions
+    this.dropdownOptions = this.allProjectManagers
       .filter(user => !teamPmsIds.has(user.id));
+  }
+
+  async loadPMs() {
+    this.allProjectManagers = await lastValueFrom(this.userService.getByRole([Role.PM.valueOf()]));
   }
 
   addProjectManager(projectId: number) {
@@ -73,7 +87,7 @@ export class AdminProjectManagerTableComponent implements OnInit {
     this.projectService.removeProjectManager(this.project?.id!, pmId).subscribe({
       next: (response) => {
         console.log(response);
-        let removed = this.allProjectManagersOptions?.find(user => user.id === pmId) as SimpleUser;
+        let removed = this.allProjectManagers?.find(user => user.id === pmId) as SimpleUser;
         this.dropdownOptions.push(removed);
 
         if (this.project) {
@@ -91,7 +105,7 @@ export class AdminProjectManagerTableComponent implements OnInit {
     })
   }
 
-  showDeleteProjectConfirmation(pmId: number ) {
+  showDeleteProjectConfirmation(pmId: number) {
     this.confirmationService.confirm({
       message: 'Are you sure you want to remove this Project Manager?',
       header: 'Confirmation',

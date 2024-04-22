@@ -3,13 +3,18 @@ import {ButtonModule} from "primeng/button";
 import {CalendarModule} from "primeng/calendar";
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
 import {InputTextModule} from "primeng/inputtext";
-import {NgIf} from "@angular/common";
+import {NgForOf, NgIf} from "@angular/common";
 import {Meeting} from "@core/types/meetings/meeting";
 import {MeetingService} from "@core/services/meeting.service";
 import {ConfirmationService} from "primeng/api";
 import {Role} from "@core/role.enum";
 import {LocalStorageService} from "@core/services/local-storage.service";
 import {UpdateMeetingData} from "@core/types/meetings/update-meeting-data";
+import {DetailedMeeting} from "@core/types/meetings/detailed-meeting";
+import {ListboxModule} from "primeng/listbox";
+import {DividerModule} from "primeng/divider";
+import {ToastService} from "@core/services/toast.service";
+import {MeetingStatus} from "@core/meeting-status.enum";
 
 @Component({
   selector: 'app-detailed-meeting',
@@ -20,13 +25,16 @@ import {UpdateMeetingData} from "@core/types/meetings/update-meeting-data";
     FormsModule,
     InputTextModule,
     NgIf,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    NgForOf,
+    ListboxModule,
+    DividerModule
   ],
   templateUrl: './detailed-meeting.component.html',
   styleUrl: './detailed-meeting.component.scss'
 })
 export class DetailedMeetingComponent {
-  @Input() set meeting(value: Meeting) {
+  @Input() set meeting(value: DetailedMeeting) {
     if (value) {
       this.setUpUpdateMeetingFormGroup(value);
       this._meeting = value;
@@ -39,15 +47,16 @@ export class DetailedMeetingComponent {
 
   updateMeetingFormGroup!: FormGroup;
   currentStatus: string = ''
-  private _meeting!: Meeting;
+  _meeting!: DetailedMeeting;
 
   constructor(private formBuilder: FormBuilder,
               private meetingService: MeetingService,
               private localStorageService: LocalStorageService,
+              private toastService: ToastService,
               private confirmationService: ConfirmationService) {
   }
 
-  private setUpUpdateMeetingFormGroup(meeting: Meeting): void {
+  private setUpUpdateMeetingFormGroup(meeting: DetailedMeeting): void {
     this.updateMeetingFormGroup = this.formBuilder.group({
       id: [
         {value: meeting.id, disabled: true},
@@ -156,13 +165,43 @@ export class DetailedMeetingComponent {
     const end = new Date(this.updateMeetingFormGroup.get('end')!.value);
 
     if (now < start) {
-      this.currentStatus = 'NOT_STARTED';
+      this.currentStatus = MeetingStatus.NOT_STARTED.valueOf();
     } else if (now > end) {
-      this.currentStatus = 'FINISHED';
+      this.currentStatus = MeetingStatus.FINISHED;
     } else {
-      this.currentStatus = 'IN_PROGRESS';
+      this.currentStatus = MeetingStatus.IN_PROGRESS;
     }
   }
 
   protected readonly Role = Role;
+
+
+  removeTeamFromMeeting(teamId: number, meetingId: number): void {
+    this.meetingService.removeTeamFromMeeting(meetingId, teamId).subscribe({
+      next: (updated: DetailedMeeting) => {
+        this._meeting = updated;
+
+        this.toastService.showMessage({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Team removed successfully',
+          life: 3000
+        });
+      },
+      error: (err) => {
+        console.log(err);
+      }
+    })
+  }
+
+  showRemoveTeamFromMeeting(teamId: number) {
+    this.confirmationService.confirm({
+      message: 'Are you sure you want to remove this team from the meeting ?',
+      header: 'Confirmation',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.removeTeamFromMeeting(teamId, this._meeting.id);
+      }
+    });
+  }
 }

@@ -8,7 +8,7 @@ import {NgIf} from "@angular/common";
 import {SharedModule} from "primeng/api";
 import {CalendarOptions, DateSelectArg, EventApi, EventClickArg, EventInput} from "@fullcalendar/core";
 import {FormGroup, FormsModule} from "@angular/forms";
-import {DetailedMeeting} from "@core/types/detailed-meeting";
+import {DetailedMeeting} from "@core/types/meetings/detailed-meeting";
 import {SimpleUser} from "@core/types/users/simple-user";
 import {ProjectUser} from "@core/types/projects/project-user";
 import interactionPlugin from "@fullcalendar/interaction";
@@ -71,7 +71,7 @@ export class PmMeetingsComponent implements OnInit {
   };
 
   events: EventInput[] = [];
-  selectedMeeting: Meeting | undefined;
+  selectedMeeting: DetailedMeeting | undefined;
 
   visibleMeetingInformationDialog: boolean = false;
   visibleCreateMeetingDialog: boolean = false;
@@ -126,8 +126,9 @@ export class PmMeetingsComponent implements OnInit {
 
   handleEventClick(clickInfo: EventClickArg): void {
     const clickedEventId = clickInfo.event.id;
-    this.selectedMeeting = this.meetings.find(meeting => meeting.id.toString() === clickedEventId) as Meeting;
+    this.selectedMeeting = this.meetings.find(meeting => meeting.id.toString() === clickedEventId) as DetailedMeeting;
 
+    console.log(this.selectedMeeting)
     this.visibleMeetingInformationDialog = true;
   }
 

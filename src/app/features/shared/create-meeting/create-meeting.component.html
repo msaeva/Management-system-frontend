@@ -3,9 +3,11 @@
   <div class="flex flex-column mt-3 pt-3 w-full">
     <label class="font-bold">Select Project</label>
     <p-treeSelect class="w-full" containerStyleClass="w-full"
-                  [(ngModel)]="selectedData" [options]="options"
+                  [(ngModel)]="selectedData"
+                  [options]="options"
                   (onNodeSelect)="onSelect($event)"
-                  display="chip" [metaKeySelection]="false"
+                  display="chip"
+                  [metaKeySelection]="false"
                   selectionMode="checkbox"
                   placeholder="Select Project">
     </p-treeSelect>

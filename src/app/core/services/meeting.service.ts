@@ -2,14 +2,17 @@ import {Injectable} from "@angular/core";
 import {HttpClient} from "@angular/common/http";
 import {API_URL, API_URL_ADMIN, API_URL_PM} from "@core/constants";
 import {Meeting} from "@core/types/meetings/meeting";
-import {DetailedMeeting} from "@core/types/detailed-meeting";
+import {DetailedMeeting} from "@core/types/meetings/detailed-meeting";
 import {Observable} from "rxjs";
 import {CreateMeetingData} from "@core/types/meetings/create-meeting-data";
 import {UpdateMeetingData} from "@core/types/meetings/update-meeting-data";
+import {LocalStorageService} from "@core/services/local-storage.service";
+import {Role} from "@core/role.enum";
 
 @Injectable({providedIn: 'root'})
 export class MeetingService {
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient,
+              private localStorageService: LocalStorageService) {
   }
 
   getUserMeetings(): Observable<Meeting[]> {
@@ -66,5 +69,18 @@ export class MeetingService {
   deleteMeetingPM(id: number): Observable<void> {
     const url = API_URL_PM + "/meetings/" + id;
     return this.http.delete<void>(url);
+  }
+
+  removeTeamFromMeeting(meetingId: number, teamId: number) {
+    const role = this.localStorageService.getAuthUserRole();
+    let url: string;
+
+    if (role === Role.PM) {
+      url = `${API_URL_PM}/meetings/${meetingId}/teams/${teamId}`;
+    } else {
+      url = `${API_URL_ADMIN}/meetings/${meetingId}/teams/${teamId}`;
+    }
+
+    return this.http.delete<DetailedMeeting>(url);
   }
 }

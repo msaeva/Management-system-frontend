@@ -8,7 +8,7 @@ import {NgIf} from "@angular/common";
 import {RippleModule} from "primeng/ripple";
 import {SharedModule} from "primeng/api";
 import {TableModule} from "primeng/table";
-import {DetailedMeeting} from "@core/types/detailed-meeting";
+import {DetailedMeeting} from "@core/types/meetings/detailed-meeting";
 import {FullCalendarModule} from "@fullcalendar/angular";
 import {CalendarOptions, DateSelectArg, EventApi, EventClickArg, EventInput} from "@fullcalendar/core";
 import dayGridPlugin from '@fullcalendar/daygrid';
@@ -92,7 +92,7 @@ export class AdminMeetingsComponent implements OnInit {
   };
 
   events: EventInput[] = [];
-  selectedMeeting: Meeting | undefined;
+  selectedMeeting: DetailedMeeting | undefined;
 
   visibleMeetingInformationDialog: boolean = false;
   visibleCreateMeetingDialog: boolean = false;
@@ -174,7 +174,7 @@ export class AdminMeetingsComponent implements OnInit {
 
   handleEventClick(clickInfo: EventClickArg): void {
     const clickedEventId = clickInfo.event.id;
-    this.selectedMeeting = this.meetings.find(meeting => meeting.id.toString() === clickedEventId) as Meeting;
+    this.selectedMeeting = this.meetings.find(meeting => meeting.id.toString() === clickedEventId) as DetailedMeeting;
 
     this.visibleMeetingInformationDialog = true;
   }

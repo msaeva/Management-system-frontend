@@ -1,4 +1,4 @@
-import {SimpleUser} from "@core/types/users/simple-user";
+import {Team} from "@core/types/team";
 
 export interface DetailedMeeting {
   id: number;
@@ -6,5 +6,5 @@ export interface DetailedMeeting {
   status: string;
   start: number;
   end: number;
-  users: SimpleUser[];
+  teams: Team[];
 }

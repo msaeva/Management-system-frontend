@@ -30,7 +30,6 @@
               severity="danger"
               icon="pi pi-times-circle">
     </p-button>
-
   </div>
   <form [formGroup]="updateMeetingFormGroup">
     <div class="grid p-2">
@@ -84,6 +83,24 @@
       <div class="flex flex-column mt-3 pt-3">
         <label class="font-bold" for="status">Status</label>
         <input disabled pInputText id="status" [value]="currentStatus" readonly/>
+      </div>
+    </div>
+    <div class="mt-3 pt-3">
+      <h3 class="font-bold">Participants</h3>
+      <div class="flex flex-wrap gap-4">
+        <div class="flex flex-column mt-3 gap-3" *ngFor="let team of _meeting.teams; let i = index">
+          <div class="flex justify-content-between align-items-center">
+            <p class="font-bold">{{ team.name }}</p>
+            <p-button *ngIf="getAuthUserRole() === Role.PM || getAuthUserRole() === Role.ADMIN"
+                      (onClick)="showRemoveTeamFromMeeting(team.id)"
+                      [rounded]="true"
+                      [text]="true"
+                      severity="danger"
+                      icon="pi pi-trash">
+            </p-button>
+          </div>
+          <p-listbox [options]="team.users" [disabled]="true" optionLabel="email"></p-listbox>
+        </div>
       </div>
     </div>
   </form>

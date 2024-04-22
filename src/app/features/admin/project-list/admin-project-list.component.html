@@ -38,7 +38,6 @@
 
   <ng-container *ngIf="!loadingProjectManagers && !loadingProjectById">
     <app-detailed-project [project]="selectedProject"
-                          [allProjectManagersOptions]="allProjectManagersOptions"
                           (projectDeleted)="removeDeletedProjectHandler($event)"
                           (projectUpdated)="updateProjectHandler($event)">
     </app-detailed-project>

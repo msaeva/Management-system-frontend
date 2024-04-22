@@ -10,6 +10,7 @@ import {Meeting} from "@core/types/meetings/meeting";
 import {DialogModule} from "primeng/dialog";
 import {NgIf} from "@angular/common";
 import {DetailedMeetingComponent} from "@feature/shared/detailed-meeting/detailed-meeting.component";
+import {DetailedMeeting} from "@core/types/meetings/detailed-meeting";
 
 @Component({
   selector: 'app-meetings',
@@ -27,7 +28,7 @@ export class MeetingsComponent implements OnInit {
   currentEvents = signal<EventApi[]>([]);
   meetings: Meeting[] = [];
   visibleMeetingInformationDialog: boolean = false;
-  selectedMeeting: Meeting | undefined;
+  selectedMeeting: DetailedMeeting | undefined;
 
   events: EventInput[] = [];
 
@@ -80,7 +81,7 @@ export class MeetingsComponent implements OnInit {
 
   handleEventClick(clickInfo: EventClickArg): void {
     const clickedEventId = clickInfo.event.id;
-    this.selectedMeeting = this.meetings.find(meeting => meeting.id.toString() === clickedEventId) as Meeting;
+    this.selectedMeeting = this.meetings.find(meeting => meeting.id.toString() === clickedEventId) as DetailedMeeting;
     this.visibleMeetingInformationDialog = true;
   }
 

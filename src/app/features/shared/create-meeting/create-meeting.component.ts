@@ -11,7 +11,7 @@ import {ButtonModule} from "primeng/button";
 import {DateSelectArg} from '@fullcalendar/core';
 import {DatePipe} from "@angular/common";
 import {MeetingService} from "@core/services/meeting.service";
-import {DetailedMeeting} from "@core/types/detailed-meeting";
+import {DetailedMeeting} from "@core/types/meetings/detailed-meeting";
 import {LocalStorageService} from "@core/services/local-storage.service";
 import {Role} from "@core/role.enum";
 import {CalendarModule} from "primeng/calendar";
