@@ -78,4 +78,9 @@ export class TaskService {
     const url = API_URL_PM + "/tasks/" + id;
     return this.http.delete<void>(url);
   }
+
+  setCompletionTime(id: number, completionTime: number) {
+    const url = API_URL + "/tasks/" + id + "/completion-time";
+    return this.http.put<Task>(url, completionTime);
+  }
 }

@@ -50,7 +50,7 @@ export class AdminLayout implements OnInit, OnDestroy {
   loadMenuItems() {
     this.menuItems.push({
         label: 'Users',
-        icon: 'pi pi-calendar',
+        icon: 'pi pi-users',
         routerLink: ['/admin/users'],
         routerLinkActiveOptions: {
           exact:
@@ -59,7 +59,7 @@ export class AdminLayout implements OnInit, OnDestroy {
       },
       {
         label: 'Projects',
-        icon: 'pi pi-calendar',
+        icon: 'pi pi-folder-open',
         routerLink: ['/admin/projects'],
         routerLinkActiveOptions: {
           exact:
@@ -67,7 +67,7 @@ export class AdminLayout implements OnInit, OnDestroy {
         }
       }, {
         label: 'Tasks',
-        icon: 'pi pi-calendar',
+        icon: 'pi pi-file-edit',
         routerLink: ['/admin/tasks'],
         routerLinkActiveOptions: {
           exact:

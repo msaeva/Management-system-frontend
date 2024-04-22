@@ -7,8 +7,9 @@
        class="flex justify-content-end flex-wrap">
     <p-button (onClick)="startTask()" [text]="true" label="Start Task" severity="info"></p-button>
   </div>
-  <div *ngIf="getAuthUserRole() === Role.PM && (task.status === TaskStatus.OPEN || task.status === TaskStatus.RE_OPEN || task.status === TaskStatus.TODO)"
-       class="flex justify-content-end">
+  <div *ngIf="getAuthUserRole() === Role.PM &&
+  (task.status === TaskStatus.OPEN || task.status === TaskStatus.RE_OPEN || task.status === TaskStatus.TODO)"
+    class="flex justify-content-end">
     <p-button *ngIf="updateTaskFormGroup.get('title')!.disabled"
               (onClick)="toggleEditMode()"
               [rounded]="true"
@@ -54,9 +55,13 @@
           <div class="p-col-2">
             <div class="flex flex-column gap-2">
               <label class="font-bold">Status</label>
-              <input [disabled]="true"
-                     formControlName="status"
-                     pInputText id="end"/>
+              <p-dropdown [options]="taskStatus"
+                          formControlName="status"
+                          optionValue="value"
+                          optionLabel="label"
+                          appendTo="body"
+                          placeholder="Select a Status">
+              </p-dropdown>
             </div>
           </div>
           <ng-container *ngIf="task.userFullName">
@@ -74,9 +79,32 @@
               </div>
             </div>
           </ng-container>
+          <div
+            *ngIf="getAuthUserRole() === Role.PM && (task.status === TaskStatus.TODO || task.status === TaskStatus.IN_PROGRESS)"
+            class="p-col-2">
+            <div class="flex flex-column gap-2">
+              <label for="estimation-time" class="font-bold">Estimation Time</label>
+              <input [disabled]="true"
+                     [ngModel]="estimationTime + ' hours'"
+                     [ngModelOptions]="{standalone: true}"
+                     pInputText id="estimation-time"/>
+            </div>
+          </div>
+
+          <div
+            *ngIf="getAuthUserRole() === Role.PM && (task.status === TaskStatus.TODO || task.status === TaskStatus.IN_PROGRESS)"
+            class="p-col-2">
+            <div class="flex flex-column gap-2">
+              <label for="completion-time" class="font-bold">Completion Time</label>
+              <input [disabled]="true"
+                     [ngModel]="completionTime + ' hours'"
+                     [ngModelOptions]="{standalone: true}"
+                     pInputText id="completion-time"/>
+            </div>
+          </div>
 
           <div *ngIf="!task.userFullName &&  getAuthUserRole() === Role.PM"
-               class="p-col-2">
+               class="flex flex-row gap-2 pt-4">
             <p-dropdown [options]="assignUserOptions"
                         [(ngModel)]="selectedUserToAssign"
                         optionLabel="fullName"
@@ -85,6 +113,7 @@
                         [showClear]="true"
                         [ngModelOptions]="{standalone: true}"
                         placeholder="Assign User">
+              placeholder="Assign User">
               <ng-template let-user pTemplate="selectedItem">
                 <div class="flex align-items-center gap-2">
                   <div>{{ user.fullName }}</div>
@@ -96,12 +125,6 @@
                 </div>
               </ng-template>
             </p-dropdown>
-
-<!--            <p-button *ngIf="selectedUserToAssign"-->
-<!--                      (onClick)="assignUser()"-->
-<!--                      label="Submit"-->
-<!--                      [text]="true" severity="success">-->
-<!--            </p-button>-->
             <p-button *ngIf="selectedUserToAssign"
                       (onClick)="assignUser()"
                       icon="pi pi-check" [rounded]="true"
@@ -125,6 +148,55 @@
               <p-button (onClick)="submitEstimationTime()" label="Submit" [text]="true" severity="info"></p-button>
             </div>
           </div>
+
+          <div *ngIf="getAuthUserId() === task.userId && task.status === TaskStatus.IN_PROGRESS.valueOf()"
+               class="flex flex-column gap-2">
+            <div class="block font-bold mb-2">
+              <label for="completion" class="block">Enter Completion Time: </label>
+              <p-inputNumber [(ngModel)]="completionTime"
+                             [ngModelOptions]="{standalone: true}"
+                             id="completion"
+                             suffix=" (hours)"
+                             [showButtons]="true"
+                             [min]="1" [max]="50"
+                             mode="decimal">
+              </p-inputNumber>
+
+              <p-button *ngIf="completionTime > 0" (onClick)="submitCompletionTime()" label="Submit" [text]="true"
+                        severity="info"></p-button>
+            </div>
+          </div>
+          <div
+            *ngIf="task.status === TaskStatus.DONE"
+            class="p-col-2">
+            <div class="flex flex-column gap-2">
+              <label for="estimation-time" class="font-bold">Estimated Time:</label>
+              <input [disabled]="true"
+                     [ngModel]="task.estimationTime + ' hours'"
+                     [ngModelOptions]="{standalone: true}"
+                     pInputText id="estimated-time"/>
+            </div>
+          </div>
+          <div
+            *ngIf="task.status === TaskStatus.DONE"
+            class="p-col-2">
+            <div class="flex flex-column gap-2">
+              <label for="completed-time" class="font-bold">Completed Time</label>
+              <input [disabled]="true"
+                     [ngModel]="task.completionTime + ' hours'"
+                     [ngModelOptions]="{standalone: true}"
+                     pInputText id="completed-time"
+                     [class.completed-faster]="task.completionTime < task.estimationTime"
+                     [class.completed-slower]="task.completionTime > task.estimationTime"/>
+
+              <small *ngIf="task.completionTime !== task.estimationTime && task.completionTime < task.estimationTime"
+                     class="success-message pl-1">Completed faster than estimated.</small>
+              <small *ngIf="task.completionTime !== task.estimationTime && task.completionTime > task.estimationTime"
+                     class="error-message pl-1">Completed slower than estimated.</small>
+              <small *ngIf="task.completionTime === task.estimationTime"
+                     class="info-message pl-1">Completed exactly as estimated.</small>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -132,7 +204,8 @@
         <label class="font-bold" for="description">Description</label>
         <textarea pInputTextarea id="description"
                   aria-describedby="username-help"
-                  rows="3" cols="25"
+                  rows="3"
+                  cols="20"
                   [disabled]="true"
                   formControlName="description">
         </textarea>

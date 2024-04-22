@@ -57,6 +57,10 @@ export class AdminTaskListComponent implements OnInit {
     totalRecords: -1
   }
 
+  loading: { tasks: boolean } = {
+    tasks: true,
+  }
+
   constructor(private route: ActivatedRoute,
               private formBuilder: FormBuilder,
               private confirmationService: ConfirmationService,
@@ -177,12 +181,13 @@ export class AdminTaskListComponent implements OnInit {
     this.pagination.sort = $event.sortField as string;
     this.pagination.order = $event.sortOrder === 1 ? 'asc' : 'desc' as string;
 
-
+    this.loading.tasks = true;
     this.projectService.getAllProjectTasks(this.projectId, {...this.pagination, page: pageNumber + 1}).subscribe({
       next: (response: Pageable<DetailedTask>) => {
         this.pagination.totalRecords = response.totalRecords;
         this.allTasks = response.data;
         this.initializeForms(this.allTasks);
+        this.loading.tasks = false;
       }, error: (err) => {
         console.log(err);
       }

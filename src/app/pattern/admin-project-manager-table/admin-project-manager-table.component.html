@@ -13,8 +13,10 @@
               severity="success">
     </p-button>
   </div>
-  <div>
-    <p-table [value]="project?.pms!" dataKey="id" [style]="{width: '90%'}">
+  <div class="mt-2">
+    <p-table *ngIf="project?.pms && project.pms.length > 0; else noProjectManagers"
+             [value]="project?.pms!" dataKey="id"
+             [style]="{width: '90%'}">
       <ng-template pTemplate="header">
         <tr>
           <th>Username</th>
@@ -40,4 +42,9 @@
       </ng-template>
     </p-table>
   </div>
+  <ng-template #noProjectManagers>
+    <p class="text-red-700 mt-3">
+      No project managers assigned to this project.
+    </p>
+  </ng-template>
 </p-card>

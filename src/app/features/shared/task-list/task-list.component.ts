@@ -2,7 +2,7 @@ import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core'
 import {TaskService} from "@core/services/task.service";
 import {ActivatedRoute} from "@angular/router";
 import {Task} from "@core/types/tasks/task";
-import {NgForOf, NgIf, TitleCasePipe} from "@angular/common";
+import {NgForOf, NgIf, NgStyle, TitleCasePipe} from "@angular/common";
 import {DragDropModule} from "primeng/dragdrop";
 import {ButtonModule} from "primeng/button";
 import {CardModule} from "primeng/card";
@@ -35,7 +35,8 @@ import {TableModule} from "primeng/table";
     DividerModule,
     ProgressSpinnerModule,
     RippleModule,
-    TableModule
+    TableModule,
+    NgStyle
   ],
   templateUrl: './task-list.component.html',
   styleUrl: './task-list.component.scss'
@@ -46,8 +47,6 @@ export class TaskListComponent implements OnInit, OnChanges {
   todoTasks: Task[] = [];
   inProgressTasks: Task[] = [];
   openTasks: Task[] = [];
-  reOpenTasks: Task[] = [];
-
 
   allowedTransitions: { [key: string]: string[] } = {
     [TaskStatus.OPEN.valueOf()]: [],
@@ -93,9 +92,23 @@ export class TaskListComponent implements OnInit, OnChanges {
 
   dragStart(task: Task): void {
     this.draggedTask = task;
+    console.log("in dragStart");
   }
 
   drop(type: string): void {
+    console.log("in drop");
+    console.log(this.draggedTask.completionTime)
+    if (type === 'DONE' && !this.draggedTask.completionTime) {
+      console.log("in if")
+
+      this.toastService.showMessage({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Enter completion time first!',
+        life: 3000
+      });
+      return;
+    }
     const sourceColumn = this.draggedTask.status as string;
     const targetColumn = type;
 
@@ -135,6 +148,9 @@ export class TaskListComponent implements OnInit, OnChanges {
   }
 
   dragEnd(task: any): void {
+    console.log("in drag end");
+
+    if (!this.draggedTask.completionTime) return;
 
     const taskStatus = task.status;
     const taskId = task.id;
@@ -231,6 +247,21 @@ export class TaskListComponent implements OnInit, OnChanges {
   }
 
   updateTaskHandler(updatedTask: Task): void {
+    const index = this.tasks.findIndex(task => task.id === updatedTask.id);
+    if (index !== -1) {
+      this.tasks[index] = updatedTask;
+      this.filterTasks();
+
+      this.toastService.showMessage({
+        severity: 'success',
+        summary: 'Success',
+        detail: 'Task updated successfully!',
+        life: 3000
+      });
+    }
+  }
+
+  setCompletionTimeHandler(updatedTask: Task) {
     const index = this.tasks.findIndex(task => task.id === updatedTask.id);
     if (index !== -1) {
       this.tasks[index] = updatedTask;

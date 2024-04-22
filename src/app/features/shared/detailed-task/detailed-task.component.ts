@@ -25,6 +25,7 @@ import {Role} from "@core/role.enum";
 import {ConfirmationService} from "primeng/api";
 import {CreateCommentData} from "@core/types/comments/create-comment-data";
 import {UpdateTaskData} from "@core/types/tasks/update-task-data";
+import {taskStatus} from "@core/constants";
 
 @Component({
   selector: 'app-detailed-task',
@@ -52,14 +53,17 @@ import {UpdateTaskData} from "@core/types/tasks/update-task-data";
 export class DetailedTaskComponent implements OnInit {
   @Input({required: true}) id!: number;
   @Input({required: true}) projectId!: number;
-  @Output() updatedStatusTaskEvent = new EventEmitter<Task>();
-  @Output() assignedUserToTaskEvent = new EventEmitter<Task>();
-  @Output() deletedTaskEvent = new EventEmitter<number>();
-  @Output() updatedTaskEvent = new EventEmitter<Task>();
+  @Output() updatedStatusTaskEvent: EventEmitter<Task> = new EventEmitter<Task>();
+  @Output() assignedUserToTaskEvent: EventEmitter<Task> = new EventEmitter<Task>();
+  @Output() deletedTaskEvent: EventEmitter<number> = new EventEmitter<number>();
+  @Output() updatedTaskEvent: EventEmitter<Task> = new EventEmitter<Task>();
+  @Output() setCompletionTimeEvent: EventEmitter<Task> = new EventEmitter<Task>();
+
 
   task!: SingleTask;
   comments: Comment[] = [];
-  estimationTime: number = 0;
+  estimationTime: number = 2;
+  completionTime: number = 0;
   progress: number = 0;
   assignUserOptions: SimpleUser[] = [];
   selectedUserToAssign!: SimpleUser;
@@ -163,13 +167,12 @@ export class DetailedTaskComponent implements OnInit {
         this.loading.task = false;
         this.progress = this.task.progress;
 
-
         if (this.task.estimationTime) {
           this.estimationTime = this.task.estimationTime;
-        } else {
-          this.estimationTime = 0;
         }
-
+        if (this.task.completionTime) {
+          this.completionTime = this.task.completionTime;
+        }
 
         this.loadFormGroup();
       }, error: () => {
@@ -258,6 +261,26 @@ export class DetailedTaskComponent implements OnInit {
 
   }
 
+  submitCompletionTime() {
+    this.taskService.setCompletionTime(this.task.id, this.completionTime).subscribe({
+      next: (response) => {
+        this.task.completionTime = this.completionTime;
+
+        this.setCompletionTimeEvent.emit(response);
+        this.toastService.showMessage({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Completion time submitted successfully',
+          life: 3000
+        });
+      },
+      error: (err) => {
+        console.log(err);
+      }
+    })
+
+  }
+
   onProgressChange(progress: number): void {
     this.taskService.changeProgress(this.task.id, progress).subscribe({
       next: (response) => {
@@ -282,7 +305,7 @@ export class DetailedTaskComponent implements OnInit {
         this.toastService.showMessage({
           severity: 'success',
           summary: 'Success',
-          detail: 'Estimation time added successfully',
+          detail: 'User assigned to the task successfully!',
           life: 3000
         });
       },
@@ -330,6 +353,7 @@ export class DetailedTaskComponent implements OnInit {
     const data: UpdateTaskData = {
       id: this.updateTaskFormGroup.value.id,
       title: this.updateTaskFormGroup.value.title,
+      status: this.updateTaskFormGroup.value.status,
       description: this.updateTaskFormGroup.value.description,
       userId: assignee.id,
       projectId: this.projectId
@@ -346,5 +370,8 @@ export class DetailedTaskComponent implements OnInit {
       }
     })
   }
+
+  protected readonly taskStatus = taskStatus;
+
 }
 

@@ -10,6 +10,7 @@ import {SimpleUser} from "@core/types/users/simple-user";
 import {ProjectService} from "@core/services/project.service";
 import {ToastService} from "@core/services/toast.service";
 import {User} from "@core/types/users/user";
+import {NgIf} from "@angular/common";
 
 @Component({
   selector: 'app-admin-project-manager-table',
@@ -20,7 +21,8 @@ import {User} from "@core/types/users/user";
     MultiSelectModule,
     SharedModule,
     TableModule,
-    FormsModule
+    FormsModule,
+    NgIf
   ],
   templateUrl: './admin-project-manager-table.component.html',
   styleUrl: './admin-project-manager-table.component.scss'

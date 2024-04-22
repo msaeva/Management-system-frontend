@@ -10,7 +10,7 @@
             pDroppable styleClass="OPEN">
       <h2>
         <span>OPEN
-          <p-chip styleClass="border-circle"
+          <p-chip [ngStyle]="{'aspect-ration': '1/1', 'overflow': 'hidden'}"
                   [label]="(this.openTasks.length ? this.openTasks.length : 0).toString()">
           </p-chip>
         </span>
@@ -31,7 +31,9 @@
             <p>{{ task.description }}</p>
             <div class="task-footer flex justify-content-between">
               <span>
-                <i class="pi pi-user mr-2"></i>{{ task.userFullName ? task.userFullName : 'No assigned user' }}</span>
+                <i class="pi pi-user mr-2"></i>
+                {{ task.userFullName ? task.userFullName : 'No assigned user' }}
+              </span>
               <p-chip styleClass="flex-auto bg-red-300 text-0" [label]="task.status | titlecase"></p-chip>
             </div>
           </div>
@@ -45,7 +47,8 @@
             pDroppable styleClass="TODO">
       <h2>
         <span>TODO
-          <p-chip [label]="(this.todoTasks.length ? this.todoTasks.length : 0).toString()">
+          <p-chip [ngStyle]="{'aspect-ration': '1/1', 'overflow': 'hidden'}"
+                  [label]="(this.todoTasks.length ? this.todoTasks.length : 0).toString()">
           </p-chip>
         </span>
       </h2>
@@ -77,8 +80,12 @@
             (onDrop)="drop('IN_PROGRESS')"
             pDroppable>
       <h2>
-        <span>IN PROGRESS <p-chip
-          [label]="(this.inProgressTasks.length ? this.inProgressTasks.length : 0).toString()"></p-chip></span>
+        <span>
+          IN PROGRESS
+          <p-chip [ngStyle]="{'aspect-ration': '1/1', 'overflow': 'hidden'}"
+                  [label]="(this.inProgressTasks.length ? this.inProgressTasks.length : 0).toString()">
+          </p-chip>
+        </span>
       </h2>
       <hr *ngIf="inProgressTasks.length > 0" class="divider-header">
 
@@ -106,12 +113,12 @@
 
     <p-card [pDroppableDisabled]="isDropDisabled"
             (onDrop)="drop('DONE')"
-            pDroppable styleClass="DONE">
-      <ng-template pTemplate="header">
-      </ng-template>
+            pDroppable>
       <h2>
-        <span>DONE
-          <p-chip [label]="(this.doneTasks.length ? this.doneTasks.length : 0).toString()">
+        <span>
+          IN PROGRESS
+          <p-chip [ngStyle]="{'aspect-ration': '1/1', 'overflow': 'hidden'}"
+                  [label]="(this.doneTasks.length ? this.doneTasks.length : 0).toString()">
           </p-chip>
         </span>
       </h2>
@@ -129,13 +136,9 @@
               <p>{{ task.abbreviation }}</p>
             </div>
             <p>{{ task.description }}</p>
-            <div class="flex justify-content-between" style="font-size: smaller; padding-top: 0.25rem;">
-              <span>
-                <i class="pi pi-user mr-2"></i>
-                {{ task.userFullName }}
-              </span>
-              <p-chip styleClass="flex-auto bg-teal-400 text-0" [label]="task.status | titlecase">
-              </p-chip>
+            <div class="task-footer flex justify-content-between">
+              <span><i class="pi pi-user mr-2"></i>{{ task.userFullName }}</span>
+              <p-chip styleClass="flex-auto bg-teal-400 text-0" [label]="task.status | titlecase"></p-chip>
             </div>
           </div>
           <div *ngIf="i !== this.doneTasks.length - 1" class="divider"></div>
@@ -156,6 +159,7 @@
                      [projectId]="projectId"
                      (deletedTaskEvent)="deleteTaskHandler($event)"
                      (updatedTaskEvent)="updateTaskHandler($event)"
+                     (setCompletionTimeEvent)="setCompletionTimeHandler($event)"
                      (assignedUserToTaskEvent)="assignedUserToTaskHandler($event)"
                      (updatedStatusTaskEvent)="updatedStatusTaskHandler($event, TaskStatus.IN_PROGRESS.valueOf())">
 

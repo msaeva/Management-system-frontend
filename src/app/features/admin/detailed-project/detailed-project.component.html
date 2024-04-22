@@ -154,8 +154,9 @@
         </p-button>
       </div>
     </div>
-    <div class="p-col-12">
-      <div *ngFor="let team of project?.teams" class="p-col-12 p-md-6 p-lg-4 p-xl-3 mb-3">
+    <div class="p-col-12" *ngIf="project.teams && project.teams.length > 0; else noTeams">
+      <div *ngFor="let team of project?.teams"
+           class="p-col-12 p-md-6 p-lg-4 p-xl-3 mb-3">
         <ng-container *ngIf="!loadingUsersToAddToTeam">
           <app-admin-team-card [team]="team"
                                [usersToAddToTeam]="usersToAddToTeam"
@@ -166,6 +167,11 @@
 
       </div>
     </div>
+    <ng-template #noTeams>
+      <p class="text-red-700 mt-3">
+        No teams added to this project.
+      </p>
+    </ng-template>
   </div>
 
   <div class="col m-2 p-2">

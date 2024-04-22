@@ -8,4 +8,5 @@ export interface SingleTask {
   userFullName: string;
   progress: number;
   estimationTime: number;
+  completionTime: number;
 }

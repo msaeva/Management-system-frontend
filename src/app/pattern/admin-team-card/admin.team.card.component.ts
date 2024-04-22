@@ -10,7 +10,7 @@ import {TeamService} from "@core/services/team.service";
 import {SimpleUser} from "@core/types/users/simple-user";
 import {ToastService} from "@core/services/toast.service";
 import {ConfirmDialogModule} from "primeng/confirmdialog";
-import {NgStyle} from "@angular/common";
+import {NgIf, NgStyle} from "@angular/common";
 import {ProjectService} from "@core/services/project.service";
 
 
@@ -25,7 +25,8 @@ import {ProjectService} from "@core/services/project.service";
     TableModule,
     FormsModule,
     ConfirmDialogModule,
-    NgStyle
+    NgStyle,
+    NgIf
   ],
   templateUrl: './admin.team.card.component.html',
   styleUrl: './admin.team.card.component.scss'

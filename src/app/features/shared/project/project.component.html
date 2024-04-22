@@ -67,21 +67,27 @@
     <div>
       <h4>Teams</h4>
       <ng-container *ngIf="project?.teams && project.teams.length > 0; else noTeams">
-      <ul>
-        <li *ngFor="let team of project?.teams">
-          <span>{{ team.name }} </span>
-          <ul>
-            <li *ngFor="let user of team.users">
-              {{ user.username }} ({{ user.email }})
-            </li>
-          </ul>
-        </li>
-      </ul>
+        <ul>
+          <li *ngFor="let team of project?.teams">
+            <span>{{ team.name }} </span>
+            <ul>
+              <ng-container *ngIf="team.users && team.users.length > 0; else noUsers">
+                <li *ngFor="let user of team.users">
+                  {{ user.username }} ({{ user.email }})
+                </li>
+              </ng-container>
+              <ng-template #noUsers>
+                <p class="text-red-700">No users assigned to this team.</p>
+              </ng-template>
+            </ul>
+          </li>
+        </ul>
       </ng-container>
       <ng-template #noTeams>
-        <p>No project managers assigned to this project.</p>
+        <p class="text-red-700">No teams assigned to this project.</p>
       </ng-template>
     </div>
+
 
     <div>
       <h4>Project Managers</h4>
@@ -93,7 +99,7 @@
         </ul>
       </ng-container>
       <ng-template #noProjectManagers>
-        <p>No project managers assigned to this project.</p>
+        <p class="text-red-700">No project managers assigned to this project.</p>
       </ng-template>
     </div>
   </div>
