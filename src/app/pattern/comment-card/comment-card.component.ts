@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, DestroyRef, EventEmitter, inject, Input, OnInit, Output} from '@angular/core';
 import {CardModule} from "primeng/card";
 import {ButtonModule} from "primeng/button";
 import {AvatarModule} from "primeng/avatar";
@@ -10,6 +10,7 @@ import {InputTextareaModule} from "primeng/inputtextarea";
 import {ConfirmationService} from "primeng/api";
 import {ToastService} from "@core/services/toast.service";
 import {LocalStorageService} from "@core/services/local-storage.service";
+import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
 
 @Component({
   selector: 'app-comment-card',
@@ -26,6 +27,8 @@ import {LocalStorageService} from "@core/services/local-storage.service";
   styleUrl: './comment-card.component.scss'
 })
 export class CommentCardComponent implements OnInit {
+  destroyRef = inject(DestroyRef);
+
   @Input({required: true}) comment!: Comment;
   @Output() deleteCommentEvent: EventEmitter<number> = new EventEmitter<number>();
 
@@ -77,35 +80,40 @@ export class CommentCardComponent implements OnInit {
   }
 
   deleteComment(id: number) {
-    this.commentService.deleteComment(id).subscribe({
-      next: (response) => {
-        this.deleteCommentEvent.emit(id);
-      },
-      error: (err) => {
-        console.log(err);
-      }
-    })
+    this.commentService.deleteComment(id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.deleteCommentEvent.emit(id);
+        },
+        error: (err) => {
+          console.log(err);
+        }
+      })
   }
 
   updateComment(id: number) {
     this.mode = 'modify';
 
-    this.commentService.updateComment(id, this.updateCommentFormControl.value).subscribe({
-      next: (response) => {
-        this.comment = response;
-        this.mode = 'display';
+    this.commentService
+      .updateComment(id, this.updateCommentFormControl.value)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (response) => {
+          this.comment = response;
+          this.mode = 'display';
 
-        this.toastService.showMessage({
-          severity: 'success',
-          summary: 'Success',
-          detail: 'Comment updated successfully',
-          life: 3000
-        });
-      },
-      error: (err) => {
-        console.log(err);
-      }
-    })
+          this.toastService.showMessage({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Comment updated successfully',
+            life: 3000
+          });
+        },
+        error: (err) => {
+          console.log(err);
+        }
+      })
   }
 
   cancelUpdateComment() {

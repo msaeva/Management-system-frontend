@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, Output} from '@angular/core';
+import {Component, DestroyRef, EventEmitter, inject, Input, Output} from '@angular/core';
 import {ButtonModule} from "primeng/button";
 import {InputTextModule} from "primeng/inputtext";
 import {InputTextareaModule} from "primeng/inputtextarea";
@@ -9,6 +9,7 @@ import {DetailedTask} from "@core/types/tasks/detailed-task";
 import {TaskService} from "@core/services/task.service";
 import {ToastService} from "@core/services/toast.service";
 import {CreateTaskData} from "@core/types/tasks/create-task-data";
+import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
 
 @Component({
   selector: 'app-admin-create-task',
@@ -25,6 +26,8 @@ import {CreateTaskData} from "@core/types/tasks/create-task-data";
   styleUrl: './admin-create-task.component.scss'
 })
 export class AdminCreateTaskComponent {
+  destroyRef = inject(DestroyRef);
+
   @Output() newTaskEvent = new EventEmitter<DetailedTask>();
   @Input({required: true}) projectId!: number;
 
@@ -46,21 +49,23 @@ export class AdminCreateTaskComponent {
       userId: null
     }
 
-    this.taskService.createTaskAdmin(body).subscribe({
-      next: (task: DetailedTask) => {
-        this.newTaskEvent.emit(task);
+    this.taskService.createTaskAdmin(body)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (task: DetailedTask) => {
+          this.newTaskEvent.emit(task);
 
-        this.toastService.showMessage({
-          severity: 'success',
-          summary: 'Success',
-          detail: 'Task created successfully',
-          life: 3000
-        });
+          this.toastService.showMessage({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Task created successfully',
+            life: 3000
+          });
 
-        this.createTaskFormGroup.reset();
+          this.createTaskFormGroup.reset();
 
-      },
-      error: (err) => console.log(err)
-    })
+        },
+        error: (err) => console.log(err)
+      })
   }
 }

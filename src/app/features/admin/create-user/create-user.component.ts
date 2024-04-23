@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Output} from '@angular/core';
+import {Component, DestroyRef, EventEmitter, inject, Output} from '@angular/core';
 import {ButtonModule} from "primeng/button";
 import {DropdownModule} from "primeng/dropdown";
 import {InputTextModule} from "primeng/inputtext";
@@ -10,6 +10,7 @@ import {AuthService} from "@core/services/auth.service";
 import {ToastService} from "@core/services/toast.service";
 import {roleOptions} from "@core/constants";
 import {RegisterUserData} from "@core/types/users/register-user-data";
+import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
 
 @Component({
   selector: 'app-create-user',
@@ -26,6 +27,7 @@ import {RegisterUserData} from "@core/types/users/register-user-data";
   styleUrl: './create-user.component.scss'
 })
 export class CreateUserComponent {
+  destroyRef = inject(DestroyRef);
 
   @Output() newUserEvent = new EventEmitter<DetailedUser>();
 
@@ -53,35 +55,37 @@ export class CreateUserComponent {
       role: this.createUserFormGroup.value.role ?? ''
     }
 
-    this.authService.createAccount(data).subscribe({
-      next: (user: DetailedUser) => {
+    this.authService.createAccount(data)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (user: DetailedUser) => {
 
-        const userToAdd: DetailedUser = {
-          ...this.createUserFormGroup.value, id: user.id
-        } as DetailedUser
+          const userToAdd: DetailedUser = {
+            ...this.createUserFormGroup.value, id: user.id
+          } as DetailedUser
 
-        this.newUserEvent.emit(userToAdd);
+          this.newUserEvent.emit(userToAdd);
 
-        this.toastService.showMessage({
-          severity: 'success',
-          summary: 'Success',
-          detail: 'User created successfully',
-          life: 3000
-        });
+          this.toastService.showMessage({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'User created successfully',
+            life: 3000
+          });
 
-        this.createUserFormGroup.reset();
-      },
-      error: (err) => {
-        this.createUserFormGroup.setErrors({taken: true});
+          this.createUserFormGroup.reset();
+        },
+        error: (err) => {
+          this.createUserFormGroup.setErrors({taken: true});
 
-        this.toastService.showMessage({
-          severity: 'error',
-          summary: 'Error',
-          detail: 'REGISTRATION FAILED!',
-          life: 3000
-        });
-      }
-    })
+          this.toastService.showMessage({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'REGISTRATION FAILED!',
+            life: 3000
+          });
+        }
+      })
   }
 
   protected readonly roleOptions = roleOptions;

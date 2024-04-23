@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, DestroyRef, EventEmitter, inject, Input, OnInit, Output} from '@angular/core';
 import {ButtonModule} from "primeng/button";
 import {DialogModule} from "primeng/dialog";
 import {SingleTask} from "@core/types/tasks/single-task";
@@ -26,6 +26,7 @@ import {ConfirmationService} from "primeng/api";
 import {CreateCommentData} from "@core/types/comments/create-comment-data";
 import {UpdateTaskData} from "@core/types/tasks/update-task-data";
 import {taskStatus} from "@core/constants";
+import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
 
 @Component({
   selector: 'app-detailed-task',
@@ -51,6 +52,8 @@ import {taskStatus} from "@core/constants";
   styleUrl: './detailed-task.component.scss'
 })
 export class DetailedTaskComponent implements OnInit {
+  destroyRef = inject(DestroyRef);
+
   @Input({required: true}) id!: number;
   @Input({required: true}) projectId!: number;
   @Output() updatedStatusTaskEvent: EventEmitter<Task> = new EventEmitter<Task>();
@@ -58,7 +61,6 @@ export class DetailedTaskComponent implements OnInit {
   @Output() deletedTaskEvent: EventEmitter<number> = new EventEmitter<number>();
   @Output() updatedTaskEvent: EventEmitter<Task> = new EventEmitter<Task>();
   @Output() setCompletionTimeEvent: EventEmitter<Task> = new EventEmitter<Task>();
-
 
   task!: SingleTask;
   comments: Comment[] = [];
@@ -125,15 +127,17 @@ export class DetailedTaskComponent implements OnInit {
   }
 
   loadAssignUsers() {
-    this.projectService.getAllUsersInProject(this.projectId).subscribe({
-      next: (response) => {
-        this.assignUserOptions = response;
-      },
-      error: (err) => {
-        console.log(err);
-      }
+    this.projectService.getAllUsersInProject(this.projectId)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (response) => {
+          this.assignUserOptions = response;
+        },
+        error: (err) => {
+          console.log(err);
+        }
 
-    })
+      })
   }
 
   getAuthUserRole() {
@@ -151,34 +155,38 @@ export class DetailedTaskComponent implements OnInit {
   }
 
   loadComments(taskId: number) {
-    this.commentService.getTaskComments(taskId).subscribe({
-      next: (response) => {
-        this.comments = response;
-      }, error: () => {
-        console.log("Error loading tasks");
-      }
-    })
+    this.commentService.getTaskComments(taskId)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (response) => {
+          this.comments = response;
+        }, error: () => {
+          console.log("Error loading tasks");
+        }
+      })
   }
 
   loadTask(): void {
-    this.taskService.getById(this.id).subscribe({
-      next: (task: SingleTask) => {
-        this.task = task;
-        this.loading.task = false;
-        this.progress = this.task.progress;
+    this.taskService.getById(this.id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (task: SingleTask) => {
+          this.task = task;
+          this.loading.task = false;
+          this.progress = this.task.progress;
 
-        if (this.task.estimationTime) {
-          this.estimationTime = this.task.estimationTime;
-        }
-        if (this.task.completionTime) {
-          this.completionTime = this.task.completionTime;
-        }
+          if (this.task.estimationTime) {
+            this.estimationTime = this.task.estimationTime;
+          }
+          if (this.task.completionTime) {
+            this.completionTime = this.task.completionTime;
+          }
 
-        this.loadFormGroup();
-      }, error: () => {
-        console.log("Error loading tasks");
-      }
-    });
+          this.loadFormGroup();
+        }, error: () => {
+          console.log("Error loading tasks");
+        }
+      });
   }
 
   getAuthUserId(): number {
@@ -191,23 +199,25 @@ export class DetailedTaskComponent implements OnInit {
       taskID: this.task?.id
     };
 
-    this.commentService.createComment(body).subscribe({
-      next: (response: Comment) => {
-        this.comments.push(response);
+    this.commentService.createComment(body)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (response: Comment) => {
+          this.comments.push(response);
 
-        this.toastService.showMessage({
-          severity: 'success',
-          summary: 'Success',
-          detail: 'Comment created successfully',
-          life: 3000
-        });
+          this.toastService.showMessage({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Comment created successfully',
+            life: 3000
+          });
 
-        this.initializeCommentFormGroup();
+          this.initializeCommentFormGroup();
 
-      }, error: (err) => {
-        console.log(err);
-      }
-    })
+        }, error: (err) => {
+          console.log(err);
+        }
+      })
 
   }
 
@@ -223,96 +233,105 @@ export class DetailedTaskComponent implements OnInit {
   }
 
   startTask(): void {
-    this.taskService.updateStatus(this.task.id, TaskStatus.IN_PROGRESS.valueOf()).subscribe({
-      next: (updateTask: Task) => {
-        this.task.status = updateTask.status;
-        this.updatedStatusTaskEvent.emit(this.task as Task);
+    this.taskService.updateStatus(this.task.id, TaskStatus.IN_PROGRESS.valueOf())
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (updateTask: Task) => {
+          this.task.status = updateTask.status;
+          this.updatedStatusTaskEvent.emit(this.task as Task);
 
-        this.toastService.showMessage({
-          severity: 'success',
-          summary: 'Success',
-          detail: 'Status updated successfully',
-          life: 3000
-        });
-      },
-      error: (err) => console.log(err)
-    })
+          this.toastService.showMessage({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Status updated successfully',
+            life: 3000
+          });
+        },
+        error: (err) => console.log(err)
+      })
   }
 
   protected readonly TaskStatus = TaskStatus;
 
-
   submitEstimationTime(): void {
-    this.taskService.setEstimationTime(this.task.id, this.estimationTime).subscribe({
-      next: () => {
-        this.task.estimationTime = this.estimationTime;
+    this.taskService.setEstimationTime(this.task.id, this.estimationTime)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.task.estimationTime = this.estimationTime;
 
-        this.toastService.showMessage({
-          severity: 'success',
-          summary: 'Success',
-          detail: 'Estimation time added successfully',
-          life: 3000
-        });
-      },
-      error: (err) => {
-        console.log(err);
-      }
-    })
+          this.toastService.showMessage({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Estimation time added successfully',
+            life: 3000
+          });
+        },
+        error: (err) => {
+          console.log(err);
+        }
+      })
 
   }
 
   submitCompletionTime() {
-    this.taskService.setCompletionTime(this.task.id, this.completionTime).subscribe({
-      next: (response) => {
-        this.task.completionTime = this.completionTime;
+    this.taskService.setCompletionTime(this.task.id, this.completionTime)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (response) => {
+          this.task.completionTime = this.completionTime;
 
-        this.setCompletionTimeEvent.emit(response);
-        this.toastService.showMessage({
-          severity: 'success',
-          summary: 'Success',
-          detail: 'Completion time submitted successfully',
-          life: 3000
-        });
-      },
-      error: (err) => {
-        console.log(err);
-      }
-    })
+          this.setCompletionTimeEvent.emit(response);
+          this.toastService.showMessage({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Completion time submitted successfully',
+            life: 3000
+          });
+        },
+        error: (err) => {
+          console.log(err);
+        }
+      })
 
   }
 
   onProgressChange(progress: number): void {
-    this.taskService.changeProgress(this.task.id, progress).subscribe({
-      next: () => {
-        this.toastService.showMessage({
-          severity: 'success',
-          summary: 'Success',
-          detail: 'Progress added successfully',
-          life: 3000
-        });
-      },
-      error: (err) => {
-        console.log(err);
-      }
-    })
+    this.taskService.changeProgress(this.task.id, progress)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.toastService.showMessage({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Progress added successfully',
+            life: 3000
+          });
+        },
+        error: (err) => {
+          console.log(err);
+        }
+      })
 
   }
 
   assignUser(): void {
-    this.taskService.assignUser(this.task.id, this.selectedUserToAssign.id).subscribe({
-      next: (response: Task) => {
-        this.assignedUserToTaskEvent.emit(response);
-        this.toastService.showMessage({
-          severity: 'success',
-          summary: 'Success',
-          detail: 'User assigned to the task successfully!',
-          life: 3000
-        });
-      },
-      error: (err) => {
-        console.log(err)
-      }
-    })
+    this.taskService.assignUser(this.task.id, this.selectedUserToAssign.id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (response: Task) => {
+          this.assignedUserToTaskEvent.emit(response);
+          this.toastService.showMessage({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'User assigned to the task successfully!',
+            life: 3000
+          });
+        },
+        error: (err) => {
+          console.log(err)
+        }
+      })
   }
 
   protected readonly Role = Role;
@@ -333,18 +352,20 @@ export class DetailedTaskComponent implements OnInit {
   }
 
   deleteTask(id: number): void {
-    this.taskService.deletePM(id).subscribe({
-      next: () => {
-        this.deletedTaskEvent.emit(id);
-        this.toastService.showMessage({
+    this.taskService.deletePM(id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.deletedTaskEvent.emit(id);
+          this.toastService.showMessage({
 
-          severity: 'success',
-          summary: 'Success',
-          detail: 'Task deleted successfully',
-          life: 3000
-        });
-      }, error: (err) => console.log(err)
-    });
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Task deleted successfully',
+            life: 3000
+          });
+        }, error: (err) => console.log(err)
+      });
   }
 
   updateTask(id: number): void {
@@ -359,16 +380,18 @@ export class DetailedTaskComponent implements OnInit {
       projectId: this.projectId
     }
 
-    this.taskService.updatePM(id, data).subscribe({
-      next: (response: SingleTask) => {
-        this.task = response;
-        this.updatedTaskEvent.emit(response as Task);
-        this.toggleEditMode();
+    this.taskService.updatePM(id, data)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (response: SingleTask) => {
+          this.task = response;
+          this.updatedTaskEvent.emit(response as Task);
+          this.toggleEditMode();
 
-      }, error: (err) => {
-        console.log(err);
-      }
-    })
+        }, error: (err) => {
+          console.log(err);
+        }
+      })
   }
 
   protected readonly taskStatus = taskStatus;

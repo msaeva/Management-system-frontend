@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, DestroyRef, inject, Input, OnInit} from '@angular/core';
 import {ButtonModule} from "primeng/button";
 import {CardModule} from "primeng/card";
 import {MultiSelectModule} from "primeng/multiselect";
@@ -14,6 +14,7 @@ import {NgIf} from "@angular/common";
 import {Role} from "@core/role.enum";
 import {UserService} from "@core/services/user-service";
 import {lastValueFrom} from "rxjs";
+import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
 
 @Component({
   selector: 'app-admin-project-manager-table',
@@ -31,6 +32,8 @@ import {lastValueFrom} from "rxjs";
   styleUrl: './admin-project-manager-table.component.scss'
 })
 export class AdminProjectManagerTableComponent implements OnInit {
+  destroyRef = inject(DestroyRef);
+
   @Input({required: true}) project!: DetailedProject;
 
   dropdownOptions: SimpleUser[] = [];
@@ -61,48 +64,52 @@ export class AdminProjectManagerTableComponent implements OnInit {
 
   addProjectManager(projectId: number) {
     const pmIds = this.selectedPMToAddToProject.map(user => user.id);
-    this.projectService.addProjectManagers(projectId, pmIds).subscribe({
-      next: (response: User[]) => {
-        if (this.project) {
-          this.project.pms = response || [];
+    this.projectService.addProjectManagers(projectId, pmIds)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (response: User[]) => {
+          if (this.project) {
+            this.project.pms = response || [];
+          }
+          this.selectedPMToAddToProject = [];
+
+          this.dropdownOptions = this.dropdownOptions.filter(u => !pmIds.includes(u.id));
+
+          this.toastService.showMessage({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Successfully added Project Manager',
+            life: 3000
+          });
+        },
+        error: (err) => {
+          console.log(err);
         }
-        this.selectedPMToAddToProject = [];
-
-        this.dropdownOptions = this.dropdownOptions.filter(u => !pmIds.includes(u.id));
-
-        this.toastService.showMessage({
-          severity: 'success',
-          summary: 'Success',
-          detail: 'Successfully added Project Manager',
-          life: 3000
-        });
-      },
-      error: (err) => {
-        console.log(err);
-      }
-    })
+      })
   }
 
   removeProjectManager(pmId: number) {
-    this.projectService.removeProjectManager(this.project?.id!, pmId).subscribe({
-      next: (response) => {
-        console.log(response);
-        let removed = this.allProjectManagers?.find(user => user.id === pmId) as SimpleUser;
-        this.dropdownOptions.push(removed);
+    this.projectService
+      .removeProjectManager(this.project?.id!, pmId)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (response) => {
+          let removed = this.allProjectManagers?.find(user => user.id === pmId) as SimpleUser;
+          this.dropdownOptions.push(removed);
 
-        if (this.project) {
-          this.project.pms = response || [];
-        }
+          if (this.project) {
+            this.project.pms = response || [];
+          }
 
-        this.toastService.showMessage({
-          severity: 'success',
-          summary: 'Success',
-          detail: 'Successfully removed Project Manager!',
-          life: 3000
-        });
+          this.toastService.showMessage({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Successfully removed Project Manager!',
+            life: 3000
+          });
 
-      }, error: (err) => console.log(err)
-    })
+        }, error: (err) => console.log(err)
+      })
   }
 
   showDeleteProjectConfirmation(pmId: number) {

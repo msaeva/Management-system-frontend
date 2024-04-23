@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, OnInit, signal} from '@angular/core';
+import {ChangeDetectorRef, Component, DestroyRef, inject, OnInit, signal} from '@angular/core';
 import {DetailedMeetingComponent} from "@feature/shared/detailed-meeting/detailed-meeting.component";
 import {CreateMeetingComponent} from "@feature/shared/create-meeting/create-meeting.component";
 import {DialogModule} from "primeng/dialog";
@@ -20,6 +20,7 @@ import {MeetingService} from "@core/services/meeting.service";
 import {ProjectService} from "@core/services/project.service";
 import {ToastService} from "@core/services/toast.service";
 import {ProgressSpinnerModule} from "primeng/progressspinner";
+import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
 
 @Component({
   selector: 'app-pm-meetings',
@@ -39,6 +40,7 @@ import {ProgressSpinnerModule} from "primeng/progressspinner";
   styleUrl: './pm-meetings.component.scss'
 })
 export class PmMeetingsComponent implements OnInit {
+  destroyRef = inject(DestroyRef);
   currentEvents = signal<EventApi[]>([]);
   forms: FormGroup[] = [];
   meetings: DetailedMeeting[] = [];
@@ -87,23 +89,25 @@ export class PmMeetingsComponent implements OnInit {
   }
 
   loadMeetings(): void {
-    this.meetingService.getPMMeetings().subscribe({
-      next: (response: DetailedMeeting[]) => {
-        this.meetings = response;
-        this.loading.meeting = false;
+    this.meetingService.getPMMeetings()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (response: DetailedMeeting[]) => {
+          this.meetings = response;
+          this.loading.meeting = false;
 
-        this.events = this.meetings.map(meeting => ({
-          id: meeting.id.toString(),
-          title: meeting.title,
-          date: new Date(meeting.start).toISOString().slice(0, 10),
-          start: meeting.start,
-          end: meeting.end
-        }));
-      },
-      error: (err) => {
-        console.log(err);
-      }
-    })
+          this.events = this.meetings.map(meeting => ({
+            id: meeting.id.toString(),
+            title: meeting.title,
+            date: new Date(meeting.start).toISOString().slice(0, 10),
+            start: meeting.start,
+            end: meeting.end
+          }));
+        },
+        error: (err) => {
+          console.log(err);
+        }
+      })
   }
 
   handleDateSelect(selectInfo: DateSelectArg): void {

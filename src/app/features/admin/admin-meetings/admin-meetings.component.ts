@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, OnInit, signal} from '@angular/core';
+import {ChangeDetectorRef, Component, DestroyRef, inject, OnInit, signal} from '@angular/core';
 import {ButtonModule} from "primeng/button";
 import {DialogModule} from "primeng/dialog";
 import {DropdownModule} from "primeng/dropdown";
@@ -29,6 +29,7 @@ import {CheckboxModule} from "primeng/checkbox";
 import {TriStateCheckboxModule} from "primeng/tristatecheckbox";
 import {meetingStatus} from "@core/constants";
 import {MeetingStatus} from "@core/meeting-status.enum";
+import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
 
 
 @Component({
@@ -56,6 +57,8 @@ import {MeetingStatus} from "@core/meeting-status.enum";
   styleUrl: './admin-meetings.component.scss'
 })
 export class AdminMeetingsComponent implements OnInit {
+  destroyRef = inject(DestroyRef);
+
   currentEvents = signal<EventApi[]>([]);
   forms: FormGroup[] = [];
   meetings: DetailedMeeting[] = [];
@@ -113,45 +116,54 @@ export class AdminMeetingsComponent implements OnInit {
 
 
   loadProjects(): void {
-    this.projectService.getProjectsWithUsers().subscribe({
-      next: (response) => {
-        this.projects = response;
-        this.filteredProjects = response;
-      },
-      error: (err) => {
-        console.log(err);
-      }
-    })
+    this.projectService
+      .getProjectsWithUsers()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (response) => {
+          this.projects = response;
+          this.filteredProjects = response;
+        },
+        error: (err) => {
+          console.log(err);
+        }
+      })
   }
 
   private loadUsers(): void {
-    this.userService.getByRole([Role.USER.valueOf(), Role.PM.valueOf()]).subscribe({
-      next: (response) => {
-        this.users = response;
-      },
-      error: (err) => {
-        console.log(err);
-      }
-    })
+    this.userService
+      .getByRole([Role.USER.valueOf(), Role.PM.valueOf()])
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (response) => {
+          this.users = response;
+        },
+        error: (err) => {
+          console.log(err);
+        }
+      })
   }
 
   loadMeetings(): void {
-    this.meetingService.getMeetings(null, null).subscribe({
-      next: (response: DetailedMeeting[]) => {
-        this.meetings = response;
+    this.meetingService
+      .getMeetings(null, null)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (response: DetailedMeeting[]) => {
+          this.meetings = response;
 
-        this.events = this.meetings.map(meeting => ({
-          id: meeting.id.toString(),
-          title: meeting.title,
-          date: new Date(meeting.start).toISOString().slice(0, 10),
-          start: meeting.start,
-          end: meeting.end
-        }));
-      },
-      error: (err) => {
-        console.log(err);
-      }
-    })
+          this.events = this.meetings.map(meeting => ({
+            id: meeting.id.toString(),
+            title: meeting.title,
+            date: new Date(meeting.start).toISOString().slice(0, 10),
+            start: meeting.start,
+            end: meeting.end
+          }));
+        },
+        error: (err) => {
+          console.log(err);
+        }
+      })
   }
 
   handleDateSelect(selectInfo: DateSelectArg): void {
@@ -295,10 +307,13 @@ export class AdminMeetingsComponent implements OnInit {
   }
 
   fetchMeetingsAndUpdate(userId: number | null, projectId: number | null): void {
-    this.meetingService.getMeetings(userId, projectId).subscribe((meetings: DetailedMeeting[]) => {
-      this.filteredMeetings = meetings;
-      this.mapEvents();
-    });
+    this.meetingService
+      .getMeetings(userId, projectId)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((meetings: DetailedMeeting[]) => {
+        this.filteredMeetings = meetings;
+        this.mapEvents();
+      });
   }
 
   onMeetingStatusChange(): void {

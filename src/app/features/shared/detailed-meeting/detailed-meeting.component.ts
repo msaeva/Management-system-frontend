@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, Output} from '@angular/core';
+import {Component, DestroyRef, EventEmitter, inject, Input, Output} from '@angular/core';
 import {ButtonModule} from "primeng/button";
 import {CalendarModule} from "primeng/calendar";
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
@@ -15,6 +15,7 @@ import {ListboxModule} from "primeng/listbox";
 import {DividerModule} from "primeng/divider";
 import {ToastService} from "@core/services/toast.service";
 import {MeetingStatus} from "@core/meeting-status.enum";
+import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
 
 @Component({
   selector: 'app-detailed-meeting',
@@ -34,6 +35,8 @@ import {MeetingStatus} from "@core/meeting-status.enum";
   styleUrl: './detailed-meeting.component.scss'
 })
 export class DetailedMeetingComponent {
+  destroyRef = inject(DestroyRef);
+
   @Input() set meeting(value: DetailedMeeting) {
     if (value) {
       this.setUpUpdateMeetingFormGroup(value);
@@ -87,25 +90,29 @@ export class DetailedMeetingComponent {
     };
 
     if (this.getAuthUserRole() === Role.ADMIN.valueOf()) {
-      this.meetingService.updateMeeting(this._meeting.id, updatedMeetingFormValue).subscribe({
-        next: (response) => {
-          this.toggleEditMode();
-          this.updatedMeetingEvent.emit(response);
-        },
-        error: (err) => {
-          console.log(err);
-        }
-      })
+      this.meetingService.updateMeeting(this._meeting.id, updatedMeetingFormValue)
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe({
+          next: (response) => {
+            this.toggleEditMode();
+            this.updatedMeetingEvent.emit(response);
+          },
+          error: (err) => {
+            console.log(err);
+          }
+        })
     } else if (this.getAuthUserRole() === Role.PM.valueOf()) {
-      this.meetingService.updateMeetingPM(this._meeting.id, updatedMeetingFormValue).subscribe({
-        next: (response) => {
-          this.toggleEditMode();
-          this.updatedMeetingEvent.emit(response);
-        },
-        error: (err) => {
-          console.log(err);
-        }
-      })
+      this.meetingService.updateMeetingPM(this._meeting.id, updatedMeetingFormValue)
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe({
+          next: (response) => {
+            this.toggleEditMode();
+            this.updatedMeetingEvent.emit(response);
+          },
+          error: (err) => {
+            console.log(err);
+          }
+        })
     }
   }
 
@@ -134,25 +141,28 @@ export class DetailedMeetingComponent {
 
   private deleteMeeting(id: number): void {
     if (this.getAuthUserRole() === Role.ADMIN.valueOf()) {
-      this.meetingService.deleteMeeting(id).subscribe({
-        next: (response) => {
-          this.deletedMeetingEvent.emit(id);
-        },
-        error: (err) => {
-          console.log(err);
-        }
-      });
+      this.meetingService.deleteMeeting(id)
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe({
+          next: () => {
+            this.deletedMeetingEvent.emit(id);
+          },
+          error: (err) => {
+            console.log(err);
+          }
+        });
     } else if (this.getAuthUserRole() === Role.PM.valueOf()) {
-      this.meetingService.deleteMeetingPM(id).subscribe({
-        next: (response) => {
-          this.deletedMeetingEvent.emit(id);
-        },
-        error: (err) => {
-          console.log(err);
-        }
-      });
+      this.meetingService.deleteMeetingPM(id)
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe({
+          next: () => {
+            this.deletedMeetingEvent.emit(id);
+          },
+          error: (err) => {
+            console.log(err);
+          }
+        });
     }
-
   }
 
   getAuthUserRole() {
@@ -177,21 +187,23 @@ export class DetailedMeetingComponent {
 
 
   removeTeamFromMeeting(teamId: number, meetingId: number): void {
-    this.meetingService.removeTeamFromMeeting(meetingId, teamId).subscribe({
-      next: (updated: DetailedMeeting) => {
-        this._meeting = updated;
+    this.meetingService.removeTeamFromMeeting(meetingId, teamId)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (updated: DetailedMeeting) => {
+          this._meeting = updated;
 
-        this.toastService.showMessage({
-          severity: 'success',
-          summary: 'Success',
-          detail: 'Team removed successfully',
-          life: 3000
-        });
-      },
-      error: (err) => {
-        console.log(err);
-      }
-    })
+          this.toastService.showMessage({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Team removed successfully',
+            life: 3000
+          });
+        },
+        error: (err) => {
+          console.log(err);
+        }
+      })
   }
 
   showRemoveTeamFromMeeting(teamId: number) {

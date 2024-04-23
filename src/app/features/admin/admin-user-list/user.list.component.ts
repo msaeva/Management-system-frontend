@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {Component, DestroyRef, inject} from '@angular/core';
 import {NgForOf, NgIf, NgStyle} from "@angular/common";
 import {ToastModule} from "primeng/toast";
 import {TableLazyLoadEvent, TableModule} from "primeng/table";
@@ -21,6 +21,7 @@ import {ProgressSpinnerModule} from "primeng/progressspinner";
 import {last} from "rxjs";
 import {RouterLink} from "@angular/router";
 import {UpdateUserData} from "@core/types/users/update-user-data";
+import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
 
 @Component({
   selector: 'app-user-list',
@@ -48,6 +49,7 @@ import {UpdateUserData} from "@core/types/users/update-user-data";
   styleUrl: './user.list.component.scss'
 })
 export class UserListComponent {
+  destroyRef = inject(DestroyRef);
 
   users: DetailedUser[] = [];
   clonedUsers: Map<number, DetailedUser> = new Map<number, DetailedUser>();
@@ -102,18 +104,21 @@ export class UserListComponent {
     this.pagination.order = $event.sortOrder === 1 ? 'asc' : 'desc' as string;
 
     this.loading.users = true;
-    this.userService.getAllUsers({...this.pagination, page: pageNumber + 1}).subscribe(
-      {
-        next: (response) => {
-          this.pagination.totalRecords = response.totalRecords;
-          this.initializeForms(response.data);
-          this.users = response.data;
-          this.loading.users = false;
-        },
-        error: () => {
-          console.log("Error loading users");
-        }
-      })
+    this.userService
+      .getAllUsers({...this.pagination, page: pageNumber + 1})
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(
+        {
+          next: (response) => {
+            this.pagination.totalRecords = response.totalRecords;
+            this.initializeForms(response.data);
+            this.users = response.data;
+            this.loading.users = false;
+          },
+          error: () => {
+            console.log("Error loading users");
+          }
+        })
   }
 
   private initializeForms(users: DetailedUser[]): void {
@@ -139,18 +144,21 @@ export class UserListComponent {
       role: user.role,
     }
 
-    this.userService.updateAdmin(body).subscribe({
-      next: (updated: DetailedUser) => {
-        const index = this.users.findIndex(u => u.id === updated.id);
+    this.userService
+      .updateAdmin(body)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (updated: DetailedUser) => {
+          const index = this.users.findIndex(u => u.id === updated.id);
 
-        if (index !== -1) {
-          this.users[index] = updated;
+          if (index !== -1) {
+            this.users[index] = updated;
+          }
+          this.clonedUsers.delete(user.id);
+        }, error: (err) => {
+          console.log(err)
         }
-        this.clonedUsers.delete(user.id);
-      }, error: (err) => {
-        console.log(err)
-      }
-    })
+      })
   }
 
   onRowEditCancel(user: DetailedUser, index: number): void {
@@ -159,19 +167,21 @@ export class UserListComponent {
   }
 
   deleteUser(id: number): void {
-    this.userService.deleteById(id).subscribe({
-      next: () => {
-        this.users = this.users.filter(user => user.id !== id);
-        this.toastService.showMessage({
-          severity: 'success',
-          summary: 'Success',
-          detail: 'User deleted successfully',
-          life: 3000
-        });
-      }, error: (err) => {
-        console.log(err)
-      }
-    });
+    this.userService.deleteById(id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.users = this.users.filter(user => user.id !== id);
+          this.toastService.showMessage({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'User deleted successfully',
+            life: 3000
+          });
+        }, error: (err) => {
+          console.log(err)
+        }
+      });
   }
 
   protected readonly roleOptions = roleOptions;

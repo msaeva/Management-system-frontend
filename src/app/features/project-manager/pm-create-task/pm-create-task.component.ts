@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, DestroyRef, EventEmitter, inject, Input, OnInit, Output} from '@angular/core';
 import {Task} from "@core/types/tasks/task";
 import {ButtonModule} from "primeng/button";
 import {InputTextModule} from "primeng/inputtext";
@@ -11,6 +11,7 @@ import {DropdownModule} from "primeng/dropdown";
 import {ProjectService} from "@core/services/project.service";
 import {SimpleUser} from "@core/types/users/simple-user";
 import {CreateTaskData} from "@core/types/tasks/create-task-data";
+import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
 
 @Component({
   selector: 'app-pm-create-task',
@@ -27,6 +28,8 @@ import {CreateTaskData} from "@core/types/tasks/create-task-data";
   styleUrl: './pm-create-task.component.scss'
 })
 export class PmCreateTaskComponent implements OnInit {
+  destroyRef = inject(DestroyRef);
+
   @Input({required: true}) projectId!: number;
   @Output() newTaskEvent: EventEmitter<Task> = new EventEmitter<Task>();
 
@@ -50,14 +53,16 @@ export class PmCreateTaskComponent implements OnInit {
   }
 
   loadUsersToAddToTask(): void {
-    this.projectService.getAllUsersInProject(this.projectId).subscribe({
-      next: (response) => {
-        this.usersOptions = response;
-      },
-      error: (err) => {
-        console.log(err);
-      }
-    })
+    this.projectService.getAllUsersInProject(this.projectId)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (response) => {
+          this.usersOptions = response;
+        },
+        error: (err) => {
+          console.log(err);
+        }
+      })
   }
 
   createTask(): void {
@@ -69,22 +74,24 @@ export class PmCreateTaskComponent implements OnInit {
       userId: assigneeId || null
     }
 
-    this.taskService.createTaskPm(body).subscribe({
-      next: (task: Task) => {
-        this.newTaskEvent.emit(task);
+    this.taskService.createTaskPm(body)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (task: Task) => {
+          this.newTaskEvent.emit(task);
 
-        this.toastService.showMessage({
-          severity: 'success',
-          summary: 'Success',
-          detail: 'Task created successfully',
-          life: 3000
-        });
+          this.toastService.showMessage({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Task created successfully',
+            life: 3000
+          });
 
-        this.createTaskFormGroup.reset();
+          this.createTaskFormGroup.reset();
 
-      },
-      error: (err) => console.log(err)
-    })
+        },
+        error: (err) => console.log(err)
+      })
   }
 
 }

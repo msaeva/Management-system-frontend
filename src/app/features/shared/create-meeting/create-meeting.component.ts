@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, DestroyRef, EventEmitter, inject, Input, OnInit, Output} from '@angular/core';
 import {ProjectService} from "@core/services/project.service";
 import {TreeSelectModule} from "primeng/treeselect";
 import {TreeNode} from "primeng/api";
@@ -16,6 +16,7 @@ import {LocalStorageService} from "@core/services/local-storage.service";
 import {Role} from "@core/role.enum";
 import {CalendarModule} from "primeng/calendar";
 import {CreateMeetingData} from "@core/types/meetings/create-meeting-data";
+import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
 
 @Component({
   selector: 'app-create-meeting',
@@ -34,16 +35,17 @@ import {CreateMeetingData} from "@core/types/meetings/create-meeting-data";
   styleUrl: './create-meeting.component.scss'
 })
 export class CreateMeetingComponent implements OnInit {
+  destroyRef = inject(DestroyRef);
+
   @Input({required: true}) selectInfo!: DateSelectArg;
   @Output() newMeetingEvent: EventEmitter<DetailedMeeting> = new EventEmitter<DetailedMeeting>();
+
   projects: ProjectTeam[] = [];
   options: TreeNode[] = [];
   selectedData: any[] = [];
   title: string = '';
-
   start!: Date;
   end!: Date;
-
 
   constructor(private projectService: ProjectService,
               private meetingService: MeetingService,
@@ -93,23 +95,28 @@ export class CreateMeetingComponent implements OnInit {
     }
 
     if (this.localStorageService.getAuthUserRole() === Role.PM.valueOf()) {
-      this.meetingService.createPm(body).subscribe({
-        next: (response: DetailedMeeting) => {
-          this.newMeetingEvent.emit(response);
-        },
-        error: (err) => {
-          console.log(err);
-        }
-      })
+      this.meetingService.createPm(body)
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe({
+          next: (response: DetailedMeeting) => {
+            this.newMeetingEvent.emit(response);
+          },
+          error: (err) => {
+            console.log(err);
+          }
+        })
     } else if (this.localStorageService.getAuthUserRole() === Role.ADMIN.valueOf()) {
-      this.meetingService.createAdmin(body).subscribe({
-        next: (response: DetailedMeeting) => {
-          this.newMeetingEvent.emit(response);
-        },
-        error: (err) => {
-          console.log(err);
-        }
-      })
+      this.meetingService
+        .createAdmin(body)
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe({
+          next: (response: DetailedMeeting) => {
+            this.newMeetingEvent.emit(response);
+          },
+          error: (err) => {
+            console.log(err);
+          }
+        })
     }
   }
 }

@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, Output} from '@angular/core';
+import {Component, DestroyRef, EventEmitter, inject, Input, Output} from '@angular/core';
 import {ButtonModule} from "primeng/button";
 import {DropdownModule} from "primeng/dropdown";
 import {InputTextModule} from "primeng/inputtext";
@@ -12,6 +12,7 @@ import {ProjectService} from "@core/services/project.service";
 import {DetailedProject} from "@core/types/projects/detailed-project";
 import {ToastService} from "@core/services/toast.service";
 import {CreateProjectData} from "@core/types/projects/create-project-data";
+import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
 
 @Component({
   selector: 'app-create-project',
@@ -31,6 +32,8 @@ import {CreateProjectData} from "@core/types/projects/create-project-data";
   styleUrl: './create-project.component.scss'
 })
 export class CreateProjectComponent {
+  destroyRef = inject(DestroyRef);
+
   @Output() newProjectEvent = new EventEmitter<DetailedProject>();
   @Input() allProjectManagers!: SimpleUser[];
 
@@ -56,20 +59,22 @@ export class CreateProjectComponent {
       pmIds: this.createProjectFormGroup.value?.pmIds ?? [],
     }
 
-    this.projectService.create(body).subscribe({
-      next: (project: DetailedProject) => {
-        this.newProjectEvent.emit(project);
+    this.projectService.create(body)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (project: DetailedProject) => {
+          this.newProjectEvent.emit(project);
 
-        this.toastService.showMessage({
-          severity: 'success',
-          summary: 'Success',
-          detail: 'Project created successfully',
-          life: 3000
-        });
+          this.toastService.showMessage({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Project created successfully',
+            life: 3000
+          });
 
-        this.createProjectFormGroup.reset();
-      },
-      error: (err) => console.log(err)
-    })
+          this.createProjectFormGroup.reset();
+        },
+        error: (err) => console.log(err)
+      })
   }
 }

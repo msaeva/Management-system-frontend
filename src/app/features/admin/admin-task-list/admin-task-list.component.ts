@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, DestroyRef, inject, OnInit} from '@angular/core';
 import {ActivatedRoute} from "@angular/router";
 import {ButtonModule} from "primeng/button";
 import {taskStatus} from "@core/constants";
@@ -20,6 +20,7 @@ import {Pagination} from "@core/types/pagination";
 import {Pageable} from "@core/types/pageable";
 import {AdminCreateTaskComponent} from "@feature/admin/admin-create-task/admin-create-task.component";
 import {DetailedProject} from "@core/types/projects/detailed-project";
+import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
 
 @Component({
   selector: 'app-admin-task-list',
@@ -42,6 +43,8 @@ import {DetailedProject} from "@core/types/projects/detailed-project";
   styleUrl: './admin-task-list.component.scss'
 })
 export class AdminTaskListComponent implements OnInit {
+  destroyRef = inject(DestroyRef);
+
   projectId!: number;
   project!: DetailedProject;
   allTasks: DetailedTask[] = [];
@@ -79,14 +82,16 @@ export class AdminTaskListComponent implements OnInit {
 
   loadProject(): void {
     if (this.projectId) {
-      this.projectService.getDetailedInfoById(this.projectId).subscribe({
-        next: (response) => {
-          this.project = response;
-        },
-        error: (err) => {
-          console.log(err)
-        }
-      });
+      this.projectService.getDetailedInfoById(this.projectId)
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe({
+          next: (response) => {
+            this.project = response;
+          },
+          error: (err) => {
+            console.log(err)
+          }
+        });
     }
   }
 
@@ -99,19 +104,21 @@ export class AdminTaskListComponent implements OnInit {
   }
 
   onRowEditSave(task: DetailedTask): void {
-    this.taskService.update(task.id, task).subscribe({
-      next: () => {
-        const taskToUpdate = this.allTasks.find(u => u.id === task.id);
-        taskToUpdate!.title = task.title
-        taskToUpdate!.abbreviation = task.abbreviation;
-        taskToUpdate!.description = task.description;
-        taskToUpdate!.status = task.status;
+    this.taskService.update(task.id, task)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          const taskToUpdate = this.allTasks.find(u => u.id === task.id);
+          taskToUpdate!.title = task.title
+          taskToUpdate!.abbreviation = task.abbreviation;
+          taskToUpdate!.description = task.description;
+          taskToUpdate!.status = task.status;
 
-        this.clonedTasks.delete(task.id);
-      }, error: (err) => {
-        console.log(err)
-      }
-    })
+          this.clonedTasks.delete(task.id);
+        }, error: (err) => {
+          console.log(err)
+        }
+      })
   }
 
   private initializeForms(tasks: DetailedTask[]): void {
@@ -151,18 +158,20 @@ export class AdminTaskListComponent implements OnInit {
   }
 
   deleteTask(id: number): void {
-    this.taskService.delete(id).subscribe({
-      next: () => {
-        this.allTasks = this.allTasks.filter(task => task.id !== id);
-        this.toastService.showMessage({
+    this.taskService.delete(id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.allTasks = this.allTasks.filter(task => task.id !== id);
+          this.toastService.showMessage({
 
-          severity: 'success',
-          summary: 'Success',
-          detail: 'Task deleted successfully',
-          life: 3000
-        });
-      }, error: (err) => console.log(err)
-    });
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Task deleted successfully',
+            life: 3000
+          });
+        }, error: (err) => console.log(err)
+      });
   }
 
   newTaskHandler(task: DetailedTask): void {
@@ -182,16 +191,19 @@ export class AdminTaskListComponent implements OnInit {
     this.pagination.order = $event.sortOrder === 1 ? 'asc' : 'desc' as string;
 
     this.loading.tasks = true;
-    this.projectService.getAllProjectTasks(this.projectId, {...this.pagination, page: pageNumber + 1}).subscribe({
-      next: (response: Pageable<DetailedTask>) => {
-        this.pagination.totalRecords = response.totalRecords;
-        this.allTasks = response.data;
-        this.initializeForms(this.allTasks);
-        this.loading.tasks = false;
-      }, error: (err) => {
-        console.log(err);
-      }
-    })
+    this.projectService
+      .getAllProjectTasks(this.projectId, {...this.pagination, page: pageNumber + 1})
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (response: Pageable<DetailedTask>) => {
+          this.pagination.totalRecords = response.totalRecords;
+          this.allTasks = response.data;
+          this.initializeForms(this.allTasks);
+          this.loading.tasks = false;
+        }, error: (err) => {
+          console.log(err);
+        }
+      })
   }
 }
 

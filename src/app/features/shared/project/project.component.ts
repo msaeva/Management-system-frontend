@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, DestroyRef, inject, OnInit} from '@angular/core';
 import {SidebarComponent} from "@layouts/shared-components/sidebar/sidebar.component";
 import {DialogModule} from "primeng/dialog";
 import {AvatarModule} from "primeng/avatar";
@@ -15,6 +15,7 @@ import {PmCreateTaskComponent} from "@feature/project-manager/pm-create-task/pm-
 import {Task} from "@core/types/tasks/task";
 import {ProgressSpinnerModule} from "primeng/progressspinner";
 import {TaskService} from "@core/services/task.service";
+import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
 
 
 @Component({
@@ -37,6 +38,8 @@ import {TaskService} from "@core/services/task.service";
   styleUrl: './project.component.scss'
 })
 export class ProjectComponent implements OnInit {
+  destroyRef = inject(DestroyRef);
+
   visibleProjectDetailedTask: boolean = false;
   project: DetailedProject = {} as DetailedProject;
   visibleCreateTaskDialog: boolean = false;
@@ -64,23 +67,27 @@ export class ProjectComponent implements OnInit {
 
   loadTasks(): void {
     if (this.getAuthUserRole() === Role.USER.valueOf()) {
-      this.taskService.getTasksForUserTeamsByProjectId(this.project.id).subscribe({
-        next: (tasks: Task[]) => {
-          this.tasks = tasks;
-        },
-        error: () => {
-          console.log("Error loading tasks");
-        }
-      });
+      this.taskService.getTasksForUserTeamsByProjectId(this.project.id)
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe({
+          next: (tasks: Task[]) => {
+            this.tasks = tasks;
+          },
+          error: () => {
+            console.log("Error loading tasks");
+          }
+        });
     } else if (this.getAuthUserRole() === Role.PM.valueOf()) {
-      this.taskService.getAllTasksByProject(this.project.id).subscribe({
-        next: (tasks: Task[]) => {
-          this.tasks = tasks;
-        },
-        error: () => {
-          console.log("Error loading tasks");
-        }
-      });
+      this.taskService.getAllTasksByProject(this.project.id)
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe({
+          next: (tasks: Task[]) => {
+            this.tasks = tasks;
+          },
+          error: () => {
+            console.log("Error loading tasks");
+          }
+        });
     }
   }
 
@@ -89,17 +96,19 @@ export class ProjectComponent implements OnInit {
   }
 
   loadProject(id: string): void {
-    this.projectService.getById(id).subscribe({
-      next: (project: DetailedProject) => {
-        this.project = project;
-        this.loadingProject = false;
-        this.loadTasks();
-        console.log(this.project)
-      },
-      error: () => {
-        console.log("Error loading projects");
-      }
-    });
+    this.projectService.getById(id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (project: DetailedProject) => {
+          this.project = project;
+          this.loadingProject = false;
+          this.loadTasks();
+          console.log(this.project)
+        },
+        error: () => {
+          console.log("Error loading projects");
+        }
+      });
   }
 
   protected readonly Role = Role;

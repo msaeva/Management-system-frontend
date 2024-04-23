@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, DestroyRef, inject, OnInit} from '@angular/core';
 import {NavigationComponent} from "@layouts/shared-components/navigation/navigation.component";
 import {SidebarComponent} from "@layouts/shared-components/sidebar/sidebar.component";
 import {RouterOutlet} from "@angular/router";
@@ -9,6 +9,7 @@ import {LayoutService} from "@core/services/layout.service";
 import {ButtonModule} from "primeng/button";
 import {ConfirmDialogModule} from "primeng/confirmdialog";
 import {Project} from "@core/types/projects/project";
+import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
 
 @Component({
   selector: 'app-project-management',
@@ -28,6 +29,8 @@ import {Project} from "@core/types/projects/project";
   styleUrl: './project-management-layout.component.scss'
 })
 export class ProjectManagementLayout implements OnInit {
+  destroyRef = inject(DestroyRef);
+
   menuItems: MenuItem[] = [];
   showSidebar$ = this.layoutService.getValue();
 
@@ -37,33 +40,31 @@ export class ProjectManagementLayout implements OnInit {
 
   ngOnInit() {
     this.loadProjects();
-    this.loadMeetings();
 
     this.menuItems.push({
-      label: 'Profile',
-      icon: 'pi pi-user',
-      routerLink: ['/project-management/profile'],
-    })
+        label: 'Profile',
+        icon: 'pi pi-user',
+        routerLink: ['/project-management/profile'],
+      },
+      {
+        label: 'Meetings',
+        icon: 'pi pi-calendar',
+        routerLink: ['/project-management', 'meetings']
+      })
   }
 
-  loadMeetings() {
-    this.menuItems.push({
-      label: 'Meetings',
-      icon: 'pi pi-calendar',
-      routerLink: ['/project-management', 'meetings']
-    });
-  }
 
   loadProjects() {
-    this.projectService.getUserProjects().subscribe({
-      next: (response: Project[]) => {
-        console.log(response);
-        this.mapProjectsToMenuItems(response);
-      },
-      error: () => {
-        console.log("error");
-      }
-    })
+    this.projectService.getUserProjects()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (response: Project[]) => {
+          this.mapProjectsToMenuItems(response);
+        },
+        error: () => {
+          console.log("error");
+        }
+      })
   }
 
   mapProjectsToMenuItems(projects: Project[]) {

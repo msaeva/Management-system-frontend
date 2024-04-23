@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, DestroyRef, inject, OnInit} from '@angular/core';
 import {UserService} from "@core/services/user-service";
 import {DetailedUser} from "@core/types/users/detailed-user";
 import {FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
@@ -10,6 +10,7 @@ import {ToastService} from "@core/services/toast.service";
 import {PasswordModule} from "primeng/password";
 import {ChangePasswordData} from "@core/types/users/change-password-data";
 import {UpdateUserProfile} from "@core/types/users/update-user-profile";
+import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
 
 @Component({
   selector: 'app-profile',
@@ -26,6 +27,8 @@ import {UpdateUserProfile} from "@core/types/users/update-user-profile";
   styleUrl: './profile.component.scss'
 })
 export class ProfileComponent implements OnInit {
+  destroyRef = inject(DestroyRef);
+
   user!: DetailedUser;
   loading: boolean = true;
 
@@ -66,17 +69,18 @@ export class ProfileComponent implements OnInit {
   }
 
   loadUser(): void {
-    this.userService.getAuthUser().subscribe({
-      next: (response) => {
-        this.user = response;
-        this.loading = false;
-        this.initializeUpdateProfileFormGroup();
-
-      },
-      error: (err) => {
-        console.log(err);
-      }
-    })
+    this.userService.getAuthUser()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (response) => {
+          this.user = response;
+          this.loading = false;
+          this.initializeUpdateProfileFormGroup();
+        },
+        error: (err) => {
+          console.log(err);
+        }
+      })
   }
 
   changePassword(): void {
@@ -87,22 +91,24 @@ export class ProfileComponent implements OnInit {
         newPassword: this.changePasswordForm.value?.newPassword ?? '',
       }
 
-      this.userService.changePassword(body).subscribe({
-        next: (response) => {
-          this.authService.logout();
-        },
-        error: (err) => {
-          if (err.status === 400) {
-            this.changePasswordForm.get('oldPassword')?.setErrors({'incorrectPassword': true});
-            this.toastService.showMessage({
-              severity: 'error',
-              summary: 'Error',
-              detail: 'INVALID OLD PASSWORD!',
-              life: 3000
-            });
+      this.userService.changePassword(body)
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe({
+          next: () => {
+            this.authService.logout();
+          },
+          error: (err) => {
+            if (err.status === 400) {
+              this.changePasswordForm.get('oldPassword')?.setErrors({'incorrectPassword': true});
+              this.toastService.showMessage({
+                severity: 'error',
+                summary: 'Error',
+                detail: 'INVALID OLD PASSWORD!',
+                life: 3000
+              });
+            }
           }
-        }
-      });
+        });
     } else {
       this.changePasswordForm.get('repeatedPassword')?.setErrors({'passwordMismatch': true});
     }
@@ -115,7 +121,9 @@ export class ProfileComponent implements OnInit {
       lastName: this.updateProfileForm.value.lastName,
     }
 
-    this.userService.updateProfile(data).subscribe({
+    this.userService.updateProfile(data)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
       next: (response) => {
         this.user = response;
         this.toggleEditMode();

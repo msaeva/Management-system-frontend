@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, DestroyRef, inject, OnInit} from '@angular/core';
 import {AsyncPipe, NgIf, NgStyle} from "@angular/common";
 import {NavigationComponent} from "@layouts/shared-components/navigation/navigation.component";
 import {RouterOutlet} from "@angular/router";
@@ -9,6 +9,7 @@ import {ButtonModule} from "primeng/button";
 import {ConfirmDialogModule} from "primeng/confirmdialog";
 import {ProjectService} from "@core/services/project.service";
 import {Project} from "@core/types/projects/project";
+import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
 
 @Component({
   selector: 'app-project-manager',
@@ -28,6 +29,7 @@ import {Project} from "@core/types/projects/project";
   styleUrl: './project-manager-layout.component.scss'
 })
 export class ProjectManagerLayout implements OnInit {
+  destroyRef = inject(DestroyRef);
 
   constructor(private layoutService: LayoutService,
               private projectService: ProjectService) {
@@ -57,15 +59,17 @@ export class ProjectManagerLayout implements OnInit {
   }
 
   loadProjects(): void {
-    this.projectService.getPMProjects().subscribe({
-      next: (response: Project[]) => {
-        this.loadingProject = true;
-        this.mapProjectsToMenuItems(response);
-      },
-      error: () => {
-        console.log("error");
-      }
-    })
+    this.projectService.getPMProjects()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (response: Project[]) => {
+          this.loadingProject = true;
+          this.mapProjectsToMenuItems(response);
+        },
+        error: () => {
+          console.log("error");
+        }
+      })
   }
 
   mapProjectsToMenuItems(projects: Project[]): void {

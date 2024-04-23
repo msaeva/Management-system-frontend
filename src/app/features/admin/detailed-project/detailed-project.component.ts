@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, DestroyRef, EventEmitter, inject, Input, OnInit, Output} from '@angular/core';
 import {InplaceModule} from "primeng/inplace";
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
 import {DatePipe, NgForOf, NgIf, NgStyle} from "@angular/common";
@@ -26,6 +26,7 @@ import {InputTextareaModule} from "primeng/inputtextarea";
 import {projectStatus} from "@core/constants";
 import {ActivatedRoute} from "@angular/router";
 import {UpdateProjectData} from "@core/types/projects/update-project-data";
+import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
 
 @Component({
   selector: 'app-detailed-project',
@@ -53,6 +54,9 @@ import {UpdateProjectData} from "@core/types/projects/update-project-data";
   styleUrl: './detailed-project.component.scss'
 })
 export class DetailedProjectComponent implements OnInit {
+  destroyRef = inject(DestroyRef);
+
+
   @Input({required: true}) project!: DetailedProject;
   @Output() projectDeleted = new EventEmitter<number>();
   @Output() projectUpdated = new EventEmitter<DetailedProject>();
@@ -124,12 +128,14 @@ export class DetailedProjectComponent implements OnInit {
   }
 
   loadUsersToAddToTeam(): void {
-    this.userService.getByRole([Role.USER.valueOf()]).subscribe({
-      next: (users) => {
-        this.usersToAddToTeam = users;
-        this.loadingUsersToAddToTeam = false;
-      }, error: (err) => console.log(err)
-    })
+    this.userService.getByRole([Role.USER.valueOf()])
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (users) => {
+          this.usersToAddToTeam = users;
+          this.loadingUsersToAddToTeam = false;
+        }, error: (err) => console.log(err)
+      })
   }
 
   toggleEditMode(): void {
@@ -149,45 +155,51 @@ export class DetailedProjectComponent implements OnInit {
       status: this.updateProjectFormGroup.value.status,
     }
 
-    this.projectService.update(id, body).subscribe({
-      next: (response: DetailedProject) => {
-        this.project = response;
-        this.projectUpdated.emit(response);
-        this.toggleEditMode();
+    this.projectService.update(id, body)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (response: DetailedProject) => {
+          this.project = response;
+          this.projectUpdated.emit(response);
+          this.toggleEditMode();
 
-      }, error: (err) => {
-        console.log(err);
-      }
-    })
+        }, error: (err) => {
+          console.log(err);
+        }
+      })
   }
 
 
   deleteProject(id: number): void {
-    this.projectService.deleteById(id).subscribe({
-      next: (response) => {
-        this.projectDeleted.emit(id);
-      },
-      error: (err) => {
-        console.log(err)
-      }
-    })
+    this.projectService.deleteById(id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (response) => {
+          this.projectDeleted.emit(id);
+        },
+        error: (err) => {
+          console.log(err)
+        }
+      })
   }
 
   createTeam(): void {
-    this.teamService.createTeam(this.project.id).subscribe({
-      next: (response) => {
-        this.project.teams.push(response);
+    this.teamService.createTeam(this.project.id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (response) => {
+          this.project.teams.push(response);
 
-        this.toastService.showMessage({
-          severity: 'success',
-          summary: 'Success',
-          detail: 'Successfully created new team!',
-          life: 3000
-        });
-      }, error: (err) => {
-        console.log(err);
-      }
-    })
+          this.toastService.showMessage({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Successfully created new team!',
+            life: 3000
+          });
+        }, error: (err) => {
+          console.log(err);
+        }
+      })
   }
 
   formatDateTime(dateTime: string | null): string {

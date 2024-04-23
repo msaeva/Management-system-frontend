@@ -1,4 +1,4 @@
-import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
+import {Component, DestroyRef, inject, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import {TaskService} from "@core/services/task.service";
 import {ActivatedRoute} from "@angular/router";
 import {Task} from "@core/types/tasks/task";
@@ -17,6 +17,7 @@ import {DividerModule} from "primeng/divider";
 import {ProgressSpinnerModule} from "primeng/progressspinner";
 import {RippleModule} from "primeng/ripple";
 import {TableModule} from "primeng/table";
+import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
 
 @Component({
   selector: 'app-project-task-list',
@@ -42,6 +43,8 @@ import {TableModule} from "primeng/table";
   styleUrl: './task-list.component.scss'
 })
 export class TaskListComponent implements OnInit, OnChanges {
+  destroyRef = inject(DestroyRef);
+
   @Input({required: true}) tasks!: Task[];
   doneTasks: Task[] = [];
   todoTasks: Task[] = [];
@@ -177,23 +180,25 @@ export class TaskListComponent implements OnInit, OnChanges {
         console.error("Invalid drop action. Drop action is disabled.");
       }
 
-      this.taskService.updateStatus(taskId, task.status).subscribe({
-        next: (updatedTask: Task) => {
-          const index = this.tasks.findIndex(t => t.id === updatedTask.id);
-          if (index !== -1) {
-            this.tasks[index] = updatedTask;
-            this.filterTasks();
-          }
+      this.taskService.updateStatus(taskId, task.status)
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe({
+          next: (updatedTask: Task) => {
+            const index = this.tasks.findIndex(t => t.id === updatedTask.id);
+            if (index !== -1) {
+              this.tasks[index] = updatedTask;
+              this.filterTasks();
+            }
 
-          this.toastService.showMessage({
-            severity: 'success',
-            summary: 'Success',
-            detail: 'Status updated successfully',
-            life: 3000
-          });
-        },
-        error: (err) => console.log(err)
-      })
+            this.toastService.showMessage({
+              severity: 'success',
+              summary: 'Success',
+              detail: 'Status updated successfully',
+              life: 3000
+            });
+          },
+          error: (err) => console.log(err)
+        })
 
 
       switch (taskStatus) {

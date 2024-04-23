@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, DestroyRef, EventEmitter, inject, Input, OnInit, Output} from '@angular/core';
 import {ButtonModule} from "primeng/button";
 import {CardModule} from "primeng/card";
 import {MultiSelectModule} from "primeng/multiselect";
@@ -12,6 +12,7 @@ import {ToastService} from "@core/services/toast.service";
 import {ConfirmDialogModule} from "primeng/confirmdialog";
 import {NgIf, NgStyle} from "@angular/common";
 import {ProjectService} from "@core/services/project.service";
+import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
 
 
 @Component({
@@ -32,6 +33,8 @@ import {ProjectService} from "@core/services/project.service";
   styleUrl: './admin.team.card.component.scss'
 })
 export class AdminTeamCardComponent implements OnInit {
+  destroyRef = inject(DestroyRef);
+
   @Input({required: true}) team!: Team;
   @Input({required: true}) usersToAddToTeam!: SimpleUser[];
   @Input({required: true}) projectId!: number;
@@ -65,32 +68,36 @@ export class AdminTeamCardComponent implements OnInit {
   }
 
   removeUserFromTeam(userId: number, teamId: number) {
-    this.teamService.removeUserFromTeam(userId, teamId).subscribe({
-      next: (response) => {
-        this.team.users = this.team.users.filter(user => user.id !== userId);
+    this.teamService.removeUserFromTeam(userId, teamId)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.team.users = this.team.users.filter(user => user.id !== userId);
 
-        this.dropdownOptions.push(
-          this.usersToAddToTeam.find(user => user.id === userId) as SimpleUser
-        );
+          this.dropdownOptions.push(
+            this.usersToAddToTeam.find(user => user.id === userId) as SimpleUser
+          );
 
-        this.toastService.showMessage({
-          severity: 'success',
-          summary: 'Success',
-          detail: 'Successfully removed user!',
-          life: 3000
-        });
+          this.toastService.showMessage({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Successfully removed user!',
+            life: 3000
+          });
 
-      },
-      error: (err) => {
-        console.log(err);
-      }
-    })
+        },
+        error: (err) => {
+          console.log(err);
+        }
+      })
 
   }
 
   addNewUsersToTeam(teamId: number) {
     const userIds = this.selectedUsersToAddToTeam.map(user => user.id);
-    this.teamService.addUsersToTeam(teamId, userIds).subscribe({
+    this.teamService.addUsersToTeam(teamId, userIds)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
       next: (response) => {
         this.team.users = response;
         this.selectedUsersToAddToTeam = [];
@@ -108,8 +115,10 @@ export class AdminTeamCardComponent implements OnInit {
   }
 
   deleteTeamFromProject(teamId: number) {
-    this.projectService.deleteTeamFromProject(teamId, this.projectId).subscribe({
-      next: (response) => {
+    this.projectService.deleteTeamFromProject(teamId, this.projectId)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+      next: () => {
         this.projectDeletedEvent.emit(teamId);
 
         this.toastService.showMessage({

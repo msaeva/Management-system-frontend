@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, DestroyRef, inject, OnInit} from '@angular/core';
 import {NgForOf, NgIf} from "@angular/common";
 import {ProjectComponent} from "@feature/shared/project/project.component";
 import {ProjectService} from "@core/services/project.service";
@@ -17,6 +17,7 @@ import {UserService} from "@core/services/user-service";
 import {SimpleUser} from "@core/types/users/simple-user";
 import {TextTransformPipe} from "@core/pipes/text-transform.pipe";
 import {ToastService} from "@core/services/toast.service";
+import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
 
 
 @Component({
@@ -41,6 +42,8 @@ import {ToastService} from "@core/services/toast.service";
   styleUrl: './admin-project-list.component.scss'
 })
 export class AdminProjectListComponent implements OnInit {
+  destroyRef = inject(DestroyRef);
+
   visibleDetailedProjectDialog: boolean = false;
   visibleCreateProjectDialog: boolean = false;
   selectedProject!: DetailedProject;
@@ -68,41 +71,46 @@ export class AdminProjectListComponent implements OnInit {
 
   getById(id: number): void {
     this.loadingProjectById = true;
-    this.projectService.getDetailedInfoById(id).subscribe({
-      next: (project) => {
-        this.selectedProject = project;
-        this.loadingProjectById = false;
-      },
-      error: (err) => {
-        console.log(err);
-      }
-    })
+    this.projectService.getDetailedInfoById(id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (project) => {
+          this.selectedProject = project;
+          this.loadingProjectById = false;
+        },
+        error: (err) => {
+          console.log(err);
+        }
+      })
   }
 
   loadPMs(): void {
-    this.userService.getByRole([Role.PM.valueOf()]).subscribe({
-      next: (response) => {
-        this.allProjectManagers = response;
-        this.allProjectManagersOptions = this.allProjectManagers;
+    this.userService.getByRole([Role.PM.valueOf()])
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (response) => {
+          this.allProjectManagers = response;
+          this.allProjectManagersOptions = this.allProjectManagers;
 
-        this.loadingProjectManagers = false;
-      }, error: (err) => console.log(err)
-    })
+          this.loadingProjectManagers = false;
+        }, error: (err) => console.log(err)
+      })
   }
 
   loadProjects(): void {
-    this.projectService.getAll().subscribe({
-      next: (projects: DetailedProject[]) => {
-        this.projects = projects;
-      },
-      error: (err) => {
-        console.log(err);
-      }
-    })
+    this.projectService.getAll()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (projects: DetailedProject[]) => {
+          this.projects = projects;
+        },
+        error: (err) => {
+          console.log(err);
+        }
+      })
   }
 
   newProjectHandler(project: DetailedProject) {
-    // this.initializeForms([...this.projects, project]);
     this.projects.push(project);
     this.visibleCreateProjectDialog = false;
   }
@@ -117,9 +125,8 @@ export class AdminProjectListComponent implements OnInit {
   }
 
   updateProjectHandler(updatedProject: DetailedProject) {
-    // this.visibleDetailedProjectDialog = false;
-
     const index = this.projects.findIndex(p => p.id === updatedProject.id);
+
     if (index !== -1) {
       this.projects[index] = updatedProject;
       this.toastService.showMessage({
@@ -128,7 +135,6 @@ export class AdminProjectListComponent implements OnInit {
         detail: 'Successfully updated project!',
         life: 3000
       });
-      // this.visibleDetailedProjectDialog = false;
     }
   }
 }
