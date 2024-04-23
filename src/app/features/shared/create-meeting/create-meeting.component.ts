@@ -38,7 +38,7 @@ export class CreateMeetingComponent implements OnInit {
   @Output() newMeetingEvent: EventEmitter<DetailedMeeting> = new EventEmitter<DetailedMeeting>();
   projects: ProjectTeam[] = [];
   options: TreeNode[] = [];
-  selectedData!: any[];
+  selectedData: any[] = [];
   title: string = '';
 
   start!: Date;
@@ -82,21 +82,14 @@ export class CreateMeetingComponent implements OnInit {
     }
   }
 
-  onSelect(event: any): void {
-    const selectedNode = event.node;
-
-    if (selectedNode.children && selectedNode.children.length > 0) {
-      this.selectedData = [selectedNode];
-    }
-  }
 
   createMeeting(): void {
     const body: CreateMeetingData = {
       title: this.title,
       projectId: this.selectedData[0].key as number,
       teamIds: this.selectedData[0].children.map((child: any) => parseInt(child.key)),
-      start: this.selectInfo.start.getTime(),
-      end: this.selectInfo.end.getTime(),
+      start: this.start.getTime(),
+      end: this.end.getTime(),
     }
 
     if (this.localStorageService.getAuthUserRole() === Role.PM.valueOf()) {

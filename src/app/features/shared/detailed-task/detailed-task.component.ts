@@ -62,7 +62,7 @@ export class DetailedTaskComponent implements OnInit {
 
   task!: SingleTask;
   comments: Comment[] = [];
-  estimationTime: number = 2;
+  estimationTime: number = 0;
   completionTime: number = 0;
   progress: number = 0;
   assignUserOptions: SimpleUser[] = [];
@@ -244,7 +244,7 @@ export class DetailedTaskComponent implements OnInit {
 
   submitEstimationTime(): void {
     this.taskService.setEstimationTime(this.task.id, this.estimationTime).subscribe({
-      next: (response) => {
+      next: () => {
         this.task.estimationTime = this.estimationTime;
 
         this.toastService.showMessage({
@@ -283,7 +283,7 @@ export class DetailedTaskComponent implements OnInit {
 
   onProgressChange(progress: number): void {
     this.taskService.changeProgress(this.task.id, progress).subscribe({
-      next: (response) => {
+      next: () => {
         this.toastService.showMessage({
           severity: 'success',
           summary: 'Success',

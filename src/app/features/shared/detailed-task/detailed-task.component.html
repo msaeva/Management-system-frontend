@@ -145,7 +145,7 @@
                              mode="decimal">
               </p-inputNumber>
 
-              <p-button (onClick)="submitEstimationTime()" label="Submit" [text]="true" severity="info"></p-button>
+              <p-button *ngIf="estimationTime > 0" (onClick)="submitEstimationTime()" label="Submit" [text]="true" severity="info"></p-button>
             </div>
           </div>
 

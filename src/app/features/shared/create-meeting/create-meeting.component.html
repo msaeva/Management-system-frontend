@@ -5,10 +5,9 @@
     <p-treeSelect class="w-full" containerStyleClass="w-full"
                   [(ngModel)]="selectedData"
                   [options]="options"
-                  (onNodeSelect)="onSelect($event)"
                   display="chip"
                   [metaKeySelection]="false"
-                  selectionMode="checkbox"
+                  selectionMode="multiple"
                   placeholder="Select Project">
     </p-treeSelect>
   </div>
@@ -17,14 +16,20 @@
     <div class="flex flex-wrap gap-5">
       <div class="flex flex-column mt-3 pt-3">
         <label class="font-bold">Start Date</label>
-        <p-calendar [ngModel]="start"
-                    [showIcon]="true" [showTime]="true"></p-calendar>
+        <p-calendar [(ngModel)]="start"
+                    [showIcon]="true"
+                    [showTime]="true"
+                    appendTo="body">
+        </p-calendar>
       </div>
 
       <div class="flex flex-column mt-3 pt-3">
         <label class="font-bold">End Date</label>
-        <p-calendar [ngModel]="end"
-                    [showIcon]="true" [showTime]="true"></p-calendar>
+        <p-calendar [(ngModel)]="end"
+                    [showIcon]="true"
+                    [showTime]="true"
+                    appendTo="body">
+        </p-calendar>
       </div>
     </div>
   </div>
@@ -39,7 +44,7 @@
 
   <div class="justify-content-center align-items-center gap-2 mt-5">
     <p-button (click)="createMeeting()"
-              [disabled]="!selectedData || !title"
+              [disabled]="selectedData.length === 0 || !title"
               label="Create"
               styleClass="w-10rem">
     </p-button>

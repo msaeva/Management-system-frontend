@@ -92,19 +92,27 @@ export class TaskListComponent implements OnInit, OnChanges {
 
   dragStart(task: Task): void {
     this.draggedTask = task;
-    console.log("in dragStart");
   }
 
   drop(type: string): void {
-    console.log("in drop");
-    console.log(this.draggedTask.completionTime)
+
     if (type === 'DONE' && !this.draggedTask.completionTime) {
-      console.log("in if")
 
       this.toastService.showMessage({
         severity: 'error',
         summary: 'Error',
         detail: 'Enter completion time first!',
+        life: 3000
+      });
+      return;
+    }
+
+    if (type === 'IN_PROGRESS' && !this.draggedTask.estimationTime) {
+
+      this.toastService.showMessage({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Enter estimation time first!',
         life: 3000
       });
       return;
@@ -148,9 +156,9 @@ export class TaskListComponent implements OnInit, OnChanges {
   }
 
   dragEnd(task: any): void {
-    console.log("in drag end");
 
-    if (!this.draggedTask.completionTime) return;
+    if (!this.draggedTask.completionTime && task.status === TaskStatus.IN_PROGRESS) return;
+    if (!this.draggedTask.estimationTime && task.status === TaskStatus.TODO) return;
 
     const taskStatus = task.status;
     const taskId = task.id;

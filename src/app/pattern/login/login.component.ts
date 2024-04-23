@@ -11,6 +11,7 @@ import {LocalStorageService} from "@core/services/local-storage.service";
 import {DEFAULT_ROUTING} from "@core/constants";
 import {Role} from "@core/role.enum";
 import {ToastService} from "@core/services/toast.service";
+import {ProgressSpinnerModule} from "primeng/progressspinner";
 
 @Component({
   selector: 'app-login',
@@ -21,13 +22,16 @@ import {ToastService} from "@core/services/toast.service";
     ChipsModule,
     ReactiveFormsModule,
     NgIf,
-    RouterLink
+    RouterLink,
+    ProgressSpinnerModule
   ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
 })
 export class LoginComponent implements OnDestroy {
   private subscriptions: Subscription = new Subscription();
+
+  loading: boolean = false;
 
   loginForm = new FormGroup({
     username: new FormControl('', [Validators.minLength(3)]),
@@ -45,6 +49,7 @@ export class LoginComponent implements OnDestroy {
   }
 
   login() {
+    this.loading = true;
     this.subscriptions.add(
       this.authService.login(this.username!.value as string, this.password!.value as string)
         .subscribe({
@@ -53,6 +58,7 @@ export class LoginComponent implements OnDestroy {
 
               const url = DEFAULT_ROUTING.get(this.localStorageService.getAuthUserRole() as Role)
               this.router.navigate(['/', url]);
+              this.loading = false;
 
               this.toastService.showMessage({
                 severity: 'success',
@@ -60,15 +66,16 @@ export class LoginComponent implements OnDestroy {
                 detail: 'LOGIN SUCCESS!',
                 life: 3000
               });
+
             },
-            error: (error) => {
+            error:() => {
               this.toastService.showMessage({
                 severity: 'error',
                 summary: 'Error',
                 detail: 'Invalid Credentials',
                 life: 3000
               });
-              console.log(error);
+              this.loading = false;
             }
           }
         )
@@ -82,4 +89,5 @@ export class LoginComponent implements OnDestroy {
   get password() {
     return this.loginForm.get('password');
   }
+
 }

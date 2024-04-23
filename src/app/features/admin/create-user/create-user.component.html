@@ -78,7 +78,7 @@
         *ngIf="createUserFormGroup.get('password')?.invalid && (createUserFormGroup.get('password')?.dirty || createUserFormGroup.get('password')?.touched)"
         class="p-error">
         <small *ngIf="createUserFormGroup.get('password')?.errors?.['required']" class="p-error">
-          Password name is required.
+          Password is required.
         </small>
         <small *ngIf="createUserFormGroup.get('password')?.errors?.['minlength']" class="p-error">
           Password must be at least 6 characters long.
@@ -99,7 +99,7 @@
         *ngIf="createUserFormGroup.get('role')?.invalid && (createUserFormGroup.get('role')?.dirty || createUserFormGroup.get('role')?.touched)"
         class="p-error">
         <small *ngIf="createUserFormGroup.get('role')?.errors?.['required']" class="p-error">
-          Last name is required.
+          Role is required.
         </small>
       </div>
     </div>
