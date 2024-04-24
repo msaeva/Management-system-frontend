@@ -12,12 +12,12 @@
               <div
                 *ngIf="registerForm.get('username')?.invalid && (registerForm.get('username')?.dirty || registerForm.get('username')?.touched)"
                 class="p-error">
-                <div *ngIf="registerForm.get('username')?.errors?.['required']" class="p-error">
+                <small *ngIf="registerForm.get('username')?.errors?.['required']" class="p-error">
                   Username is required.
-                </div>
-                <div *ngIf="registerForm.get('username')?.errors?.['minlength']" class="p-error">
-                  Username must be at least 3 characters long.
-                </div>
+                </small>
+                <small *ngIf="registerForm.get('username')?.errors?.['minlength']" class="p-error">
+                  Username: min length 3 chars.
+                </small>
               </div>
             </div>
 
@@ -28,7 +28,7 @@
                 *ngIf="registerForm.get('email')?.invalid && (registerForm.get('email')?.dirty || registerForm.get('email')?.touched)"
                 class="p-error">
                 <small *ngIf="registerForm.get('email')?.errors?.['required']" class="p-error">
-                  First name is required.
+                  Email is required.
                 </small>
                 <small *ngIf="registerForm.get('email')?.errors?.['email']" class="p-error">
                   Email is invalid!
@@ -46,7 +46,7 @@
                   First name is required.
                 </small>
                 <small *ngIf="registerForm.get('firstName')?.errors?.['minlength']" class="p-error">
-                  First name must be at least 3 characters long.
+                  First name: min length 3 chars.
                 </small>
               </div>
             </div>
@@ -61,7 +61,7 @@
                   Last name is required.
                 </small>
                 <small *ngIf="registerForm.get('lastName')?.errors?.['minlength']" class="p-error">
-                  Last name must be at least 3 characters long.
+                  Last name: min length 3 chars.
                 </small>
               </div>
             </div>
@@ -78,7 +78,7 @@
                   Password is required.
                 </small>
                 <small *ngIf="registerForm.get('password')?.errors?.['minlength']" class="p-error">
-                  Password must be at least 6 characters long.
+                  Password: min length 6 chars.
                 </small>
               </div>
             </div>

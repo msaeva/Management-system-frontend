@@ -15,8 +15,9 @@ import {DetailedMeeting} from "@core/types/meetings/detailed-meeting";
 import {LocalStorageService} from "@core/services/local-storage.service";
 import {Role} from "@core/role.enum";
 import {CalendarModule} from "primeng/calendar";
-import {CreateMeetingData} from "@core/types/meetings/create-meeting-data";
 import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
+import {CreateMeetingData} from "@core/types/meetings/create-meeting-data";
+import {generateRandomString} from "@core/utils";
 
 @Component({
   selector: 'app-create-meeting',
@@ -42,7 +43,7 @@ export class CreateMeetingComponent implements OnInit {
 
   projects: ProjectTeam[] = [];
   options: TreeNode[] = [];
-  selectedData: any[] = [];
+  selectedData: TreeNode[] = [];
   title: string = '';
   start!: Date;
   end!: Date;
@@ -57,14 +58,14 @@ export class CreateMeetingComponent implements OnInit {
 
     for (const project of this.projects) {
       const record: TreeNode = {
-        key: project.id.toString(),
+        key: generateRandomString(),
         label: project.title,
         data: project.id.toString(),
         icon: 'pi pi-folder',
       }
 
       record.children = (project.teams ?? []).map(t => ({
-        key: t.id.toString(),
+        key: generateRandomString(),
         label: t.name,
         data: t.id.toString(),
         icon: 'pi pi-users',
@@ -86,10 +87,24 @@ export class CreateMeetingComponent implements OnInit {
 
 
   createMeeting(): void {
+    let projectId;
+    let teamIds: number[] = [];
+    for (const node of this.selectedData) {
+      if (!node.parent) {
+        projectId = node.data;
+        if (node.children) {
+          teamIds = node.children.map((child: any) => parseInt(child.data));
+        }
+      } else {
+        projectId = node.parent.data;
+        teamIds.push(Number.parseInt(<string>node.data));
+      }
+    }
+
     const body: CreateMeetingData = {
       title: this.title,
-      projectId: this.selectedData[0].key as number,
-      teamIds: this.selectedData[0].children.map((child: any) => parseInt(child.key)),
+      projectId: Number.parseInt(projectId!),
+      teamIds: teamIds,
       start: this.start.getTime(),
       end: this.end.getTime(),
     }
@@ -120,3 +135,4 @@ export class CreateMeetingComponent implements OnInit {
     }
   }
 }
+

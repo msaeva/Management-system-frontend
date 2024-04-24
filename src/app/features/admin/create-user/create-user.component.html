@@ -1,5 +1,5 @@
 <form [formGroup]="createUserFormGroup">
-  <div class="flex flex-column mt-3 pt-3 w-full">
+  <div class="flex flex-column pt-3 w-full">
     <div class="p-float-label mt-5 w-full">
       <input pInputText id="username"
              class="input-field w-full"
@@ -8,12 +8,12 @@
       <div
         *ngIf="createUserFormGroup.get('username')?.invalid && (createUserFormGroup.get('username')?.dirty || createUserFormGroup.get('username')?.touched)"
         class="p-error">
-        <div *ngIf="createUserFormGroup.get('username')?.errors?.['required']" class="p-error">
+        <small *ngIf="createUserFormGroup.get('username')?.errors?.['required']" class="p-error">
           Username is required.
-        </div>
-        <div *ngIf="createUserFormGroup.get('username')?.errors?.['minlength']" class="p-error">
+        </small>
+        <small *ngIf="createUserFormGroup.get('username')?.errors?.['minlength']" class="p-error">
           Username must be at least 3 characters long.
-        </div>
+        </small>
       </div>
     </div>
 

@@ -4,5 +4,5 @@ export interface UpdateTaskData {
   description: string;
   status: string;
   projectId: number;
-  userId: number;
+  userId: number | null;
 }

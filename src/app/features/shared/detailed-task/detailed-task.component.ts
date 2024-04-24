@@ -369,14 +369,14 @@ export class DetailedTaskComponent implements OnInit {
   }
 
   updateTask(id: number): void {
-    const assignee = this.updateTaskFormGroup.get('assignee')?.value;
+    const assignee = this.updateTaskFormGroup.get('assignee')?.value ?? null;
 
     const data: UpdateTaskData = {
       id: this.updateTaskFormGroup.value.id,
       title: this.updateTaskFormGroup.value.title,
       status: this.updateTaskFormGroup.value.status,
       description: this.updateTaskFormGroup.value.description,
-      userId: assignee.id,
+      userId: assignee?.id ?? null,
       projectId: this.projectId
     }
 

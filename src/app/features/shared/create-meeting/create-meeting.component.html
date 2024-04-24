@@ -2,12 +2,14 @@
 
   <div class="flex flex-column mt-3 pt-3 w-full">
     <label class="font-bold">Select Project</label>
-    <p-treeSelect class="w-full" containerStyleClass="w-full"
+    <p-treeSelect class="w-full"
+                  containerStyleClass="w-full"
                   [(ngModel)]="selectedData"
                   [options]="options"
                   display="chip"
                   [metaKeySelection]="false"
-                  selectionMode="multiple"
+                  selectionMode="checkbox"
+                  appendTo="body"
                   placeholder="Select Project">
     </p-treeSelect>
   </div>

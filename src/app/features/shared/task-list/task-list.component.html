@@ -67,7 +67,8 @@
             </div>
             <p>{{ task.description }}</p>
             <div class="task-footer flex justify-content-between">
-              <span><i class="pi pi-user mr-2"></i>{{ task.userFullName }}</span>
+              <span><i class="pi pi-user mr-2">
+              </i> {{ task.userFullName ? task.userFullName : 'deleted user' }}</span>
               <p-chip styleClass="flex-auto bg-primary-300 text-0" [label]="task.status | titlecase"></p-chip>
             </div>
           </div>
@@ -102,7 +103,10 @@
             </div>
             <p>{{ task.description }}</p>
             <div class="task-footer flex justify-content-between">
-              <span><i class="pi pi-user mr-2"></i>{{ task.userFullName }}</span>
+              <span><i class="pi pi-user mr-2">
+              </i>
+                {{ task.userFullName ? task.userFullName : 'deleted user' }}
+              </span>
               <p-chip styleClass="flex-auto bg-yellow-400 text-0" [label]="task.status | titlecase"></p-chip>
             </div>
           </div>
@@ -137,7 +141,9 @@
             </div>
             <p>{{ task.description }}</p>
             <div class="task-footer flex justify-content-between">
-              <span><i class="pi pi-user mr-2"></i>{{ task.userFullName }}</span>
+              <span><i class="pi pi-user mr-2">
+              </i> {{ task.userFullName ? task.userFullName : 'deleted user' }}
+              </span>
               <p-chip styleClass="flex-auto bg-teal-400 text-0" [label]="task.status | titlecase"></p-chip>
             </div>
           </div>

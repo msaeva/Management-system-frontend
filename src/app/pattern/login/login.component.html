@@ -11,12 +11,12 @@
               <div
                 *ngIf="loginForm.get('username')?.invalid && (loginForm.get('username')?.dirty || loginForm.get('username')?.touched)"
                 class="p-error">
-                <div *ngIf="loginForm.get('username')?.errors?.['required']" class="p-error">
-                  Name is required.
-                </div>
-                <div *ngIf="loginForm.get('username')?.errors?.['minlength']" class="p-error">
-                  Name must be at least 3 characters long.
-                </div>
+                <small *ngIf="loginForm.get('username')?.errors?.['required']" class="p-error">
+                  Username is required.
+                </small>
+                <small *ngIf="loginForm.get('username')?.errors?.['minlength']" class="p-error">
+                  Username: min length 6 chars.
+                </small>
               </div>
             </div>
             <div class="p-float-label mt-5">
@@ -26,14 +26,14 @@
               <div
                 *ngIf="loginForm.get('password')?.invalid && (loginForm.get('password')?.dirty || loginForm.get('password')?.touched)"
                 class="alert alert-danger">
-                <div *ngIf="loginForm.get('password')?.errors?.['required']"
+                <small *ngIf="loginForm.get('password')?.errors?.['required']"
                      class="p-error">
                   Password is required.
-                </div>
-                <div *ngIf="loginForm.get('password')?.errors?.['minlength']"
+                </small>
+                <small *ngIf="loginForm.get('password')?.errors?.['minlength']"
                      class="p-error">
-                  Password must be at least 6 characters long.
-                </div>
+                  Password: min length 6 chars.
+                </small>
               </div>
             </div>
             <div class="flex flex-wrap justify-content-center align-items-center gap-2 mt-5">

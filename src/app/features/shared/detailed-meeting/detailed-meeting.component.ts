@@ -177,9 +177,9 @@ export class DetailedMeetingComponent {
     if (now < start) {
       this.currentStatus = MeetingStatus.NOT_STARTED.valueOf();
     } else if (now > end) {
-      this.currentStatus = MeetingStatus.FINISHED;
+      this.currentStatus = MeetingStatus.FINISHED.valueOf();
     } else {
-      this.currentStatus = MeetingStatus.IN_PROGRESS;
+      this.currentStatus = MeetingStatus.IN_PROGRESS.valueOf();
     }
   }
 

@@ -3,10 +3,6 @@
 </p-progressSpinner>
 
 <ng-template #content>
-  <div *ngIf="getAuthUserId() === task.userId && task.status === TaskStatus.TODO.valueOf()"
-       class="flex justify-content-end flex-wrap">
-    <p-button (onClick)="startTask()" [text]="true" label="Start Task" severity="info"></p-button>
-  </div>
   <div *ngIf="getAuthUserRole() === Role.PM &&
   (task.status === TaskStatus.OPEN || task.status === TaskStatus.RE_OPEN || task.status === TaskStatus.TODO)"
     class="flex justify-content-end">

@@ -5,5 +5,7 @@ export interface Task {
   status: string;
   abbreviation: string;
   userFullName: string;
+  completionTime: number;
+  estimationTime: number;
   userId: number
 }
