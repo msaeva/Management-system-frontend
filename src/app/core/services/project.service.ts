@@ -123,4 +123,9 @@ export class ProjectService {
 
     return this.http.get<Pageable<SimpleUser>>(url);
   }
+
+  checkIfAbbreviationExists(abbreviation: string): Observable<{ exists: boolean }> {
+    const url = `${API_URL_ADMIN}/projects/exists?abbreviation=${abbreviation}`;
+    return this.http.get<{ exists: boolean }>(url);
+  }
 }

@@ -16,7 +16,7 @@
 
       <p-button *ngIf="!updateProjectFormGroup.get('title')!.disabled"
                 (click)="updateProject(project!.id)"
-                [disabled]="!updateProjectFormGroup.dirty && updateProjectFormGroup.valid"
+                [disabled]="updateProjectFormGroup.dirty && updateProjectFormGroup.invalid"
                 [rounded]="true"
                 [text]="true"
                 severity="success"
@@ -67,6 +67,7 @@
               <div class="flex flex-column gap-2">
                 <label for="abbreviation">Abbreviation</label>
                 <input pInputText id="abbreviation"
+                       (input)="onAbbreviationChange()"
                        formControlName="abbreviation"/>
                 <div
                   *ngIf="updateProjectFormGroup.get('abbreviation')?.invalid && (updateProjectFormGroup.get('abbreviation')?.dirty || updateProjectFormGroup.get('abbreviation')?.touched)"
@@ -76,7 +77,15 @@
                   </small>
                   <small *ngIf="updateProjectFormGroup.get('abbreviation')?.errors?.['minlength']"
                          class="alert alert-danger">
-                    Abbreviation must be at least 4 characters long.
+                    Abbreviation must be at least 3 characters long.
+                  </small>
+                  <small *ngIf="updateProjectFormGroup.get('abbreviation')?.errors?.['maxlength']"
+                         class="alert alert-danger">
+                    Abbreviation must be maximum 5 characters long.
+                  </small>
+                  <small *ngIf="updateProjectFormGroup.get('abbreviation')?.errors?.['exists']"
+                         class="alert alert-danger">
+                    Abbreviation is taken. Choose another one!
                   </small>
                 </div>
               </div>

@@ -27,6 +27,7 @@ import {projectStatus} from "@core/constants";
 import {ActivatedRoute} from "@angular/router";
 import {UpdateProjectData} from "@core/types/projects/update-project-data";
 import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
+import {debounceTime, distinctUntilChanged, Subject, switchMap} from "rxjs";
 
 @Component({
   selector: 'app-detailed-project',
@@ -54,13 +55,13 @@ import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
   styleUrl: './detailed-project.component.scss'
 })
 export class DetailedProjectComponent implements OnInit {
-  destroyRef = inject(DestroyRef);
-
+  destroyRef: DestroyRef = inject(DestroyRef);
+  searchAbbreviation$: Subject<string> = new Subject<string>();
 
   @Input({required: true}) project!: DetailedProject;
-  @Output() projectDeleted = new EventEmitter<number>();
-  @Output() projectUpdated = new EventEmitter<DetailedProject>();
-  @Output() teamDeleted = new EventEmitter<number>();
+  @Output() projectDeleted: EventEmitter<number> = new EventEmitter<number>();
+  @Output() projectUpdated: EventEmitter<DetailedProject> = new EventEmitter<DetailedProject>();
+  @Output() teamDeleted: EventEmitter<number> = new EventEmitter<number>();
 
   updateProjectFormGroup!: FormGroup;
 
@@ -86,6 +87,7 @@ export class DetailedProjectComponent implements OnInit {
     });
     this.loadFormGroup();
     this.loadUsersToAddToTeam();
+    this.setupAbbreviationSubscription();
   }
 
   loadFormGroup(): void {
@@ -100,7 +102,11 @@ export class DetailedProjectComponent implements OnInit {
       ],
       abbreviation: [
         {value: this.project.abbreviation, disabled: true},
-        [Validators.required, Validators.minLength(3)]
+        [
+          Validators.required,
+          Validators.minLength(3),
+          Validators.maxLength(5)
+        ]
       ],
       createdDate: [
         {value: this.formatDateTime(this.project.createdDate), disabled: true},
@@ -215,4 +221,32 @@ export class DetailedProjectComponent implements OnInit {
   }
 
   protected readonly projectStatus = projectStatus;
+
+  onAbbreviationChange() {
+    const abbreviation = this.updateProjectFormGroup.get('abbreviation')?.value;
+
+    if (abbreviation.length >= 3) {
+      this.searchAbbreviation$.next(abbreviation);
+    }
+
+  }
+
+  private setupAbbreviationSubscription() {
+    this.searchAbbreviation$
+      .pipe(
+        debounceTime(500),
+        distinctUntilChanged(),
+        switchMap(abbreviation => {
+          return this.projectService.checkIfAbbreviationExists(abbreviation)
+            .pipe(takeUntilDestroyed(this.destroyRef));
+        })
+      )
+      .subscribe({
+        next: (response: { exists: boolean }) => {
+          if (response.exists) {
+            this.updateProjectFormGroup.get('abbreviation')?.setErrors({'exists': true});
+          }
+        }
+      });
+  }
 }
