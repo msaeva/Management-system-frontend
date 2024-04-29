@@ -1,4 +1,4 @@
-import {Component, DestroyRef, EventEmitter, inject, Input, OnInit, Output} from '@angular/core';
+import {Component, DestroyRef, EventEmitter, inject, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {ButtonModule} from "primeng/button";
 import {DialogModule} from "primeng/dialog";
 import {SingleTask} from "@core/types/tasks/single-task";
@@ -16,17 +16,21 @@ import {LocalStorageService} from "@core/services/local-storage.service";
 import {TaskService} from "@core/services/task.service";
 import {TaskStatus} from "@core/task-status";
 import {Task} from "@core/types/tasks/task";
-import {PaginatorModule} from "primeng/paginator";
+import {PaginatorModule, PaginatorState} from "primeng/paginator";
 import {FileUploadModule} from "primeng/fileupload";
 import {ProgressSpinnerModule} from "primeng/progressspinner";
 import {SimpleUser} from "@core/types/users/simple-user";
 import {ProjectService} from "@core/services/project.service";
 import {Role} from "@core/role.enum";
-import {ConfirmationService} from "primeng/api";
+import {ConfirmationService, ScrollerOptions} from "primeng/api";
 import {CreateCommentData} from "@core/types/comments/create-comment-data";
 import {UpdateTaskData} from "@core/types/tasks/update-task-data";
 import {taskStatus} from "@core/constants";
 import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
+import {DropdownFilterEvent} from "primeng/dropdown";
+import {BehaviorSubject, debounceTime, distinctUntilChanged, Subject, takeUntil} from "rxjs";
+import {Pageable} from "@core/types/pageable";
+import {SearchAssignee} from "@core/types/SearchAssignee";
 
 @Component({
   selector: 'app-detailed-task',
@@ -46,13 +50,24 @@ import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
     NgIf,
     PaginatorModule,
     FileUploadModule,
-    ProgressSpinnerModule
+    ProgressSpinnerModule,
   ],
   templateUrl: './detailed-task.component.html',
   styleUrl: './detailed-task.component.scss'
 })
-export class DetailedTaskComponent implements OnInit {
-  destroyRef = inject(DestroyRef);
+export class DetailedTaskComponent implements OnInit, OnDestroy {
+  destroyRef: DestroyRef = inject(DestroyRef);
+  searchAssigneeParams$: BehaviorSubject<SearchAssignee> = new BehaviorSubject<SearchAssignee>({
+    page: 1,
+    keyword: '',
+  });
+
+  pagination = {
+    size: 2,
+    totalRecords: -1
+  }
+
+  private destroy$: Subject<void> = new Subject<void>();
 
   @Input({required: true}) id!: number;
   @Input({required: true}) projectId!: number;
@@ -64,13 +79,11 @@ export class DetailedTaskComponent implements OnInit {
 
   task!: SingleTask;
   comments: Comment[] = [];
-  estimationTime: number = 0;
-  completionTime: number = 0;
-  progress: number = 0;
-  assignUserOptions: SimpleUser[] = [];
+  assignUsersLazyLoadOptions: SimpleUser[] = [];
 
   createCommentFormControl: FormControl = new FormControl();
   updateTaskFormGroup!: FormGroup;
+
   loading: { task: boolean, comments: boolean } = {
     task: true,
     comments: true,
@@ -85,13 +98,14 @@ export class DetailedTaskComponent implements OnInit {
               private localStorageService: LocalStorageService) {
   }
 
+
   ngOnInit(): void {
     this.loadTask();
     this.loadComments(this.id!);
     this.initializeCommentFormGroup();
 
     if (this.getAuthUserRole() === Role.PM) {
-      this.loadAssignUsers();
+      this.setupFilterSubscription();
     }
   }
 
@@ -151,14 +165,64 @@ export class DetailedTaskComponent implements OnInit {
     });
   }
 
-  loadAssignUsers() {
-    this.projectService.getAllUsersInProject(this.projectId)
+  options: ScrollerOptions = {
+    delay: 250,
+    showLoader: true,
+    lazy: true,
+    itemSize: 2,
+    items: [],
+    onLazyLoad: (event: {
+      first: number,
+      last: number,
+      filter: string
+    }) => {
+      const page = Math.floor(event.first / event.last) + 1;
+      this.searchAssigneeParams$.next({...this.searchAssigneeParams$.value, page});
+    }
+  };
+
+
+  filterUsers($event: DropdownFilterEvent) {
+    this.searchAssigneeParams$.next({...this.searchAssigneeParams$.value, page: 1, keyword: $event.filter});
+  }
+
+  setupFilterSubscription(): void {
+    this.searchAssigneeParams$
+      .pipe(
+        debounceTime(300),
+        distinctUntilChanged(),
+        takeUntil(this.destroy$)
+      )
+      .subscribe({
+        next: (params) => {
+          this.loadAssignUsers(params.page, params.keyword);
+        },
+        error: () => {
+        }
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  loadAssignUsers(page: number, search: string) {
+    this.options.loading = true;
+
+    this.projectService.getAllUsersInProject(this.projectId, page, this.pagination.size, search)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: (response) => {
-          this.assignUserOptions = response;
+        next: (response: Pageable<SimpleUser>) => {
+          this.assignUsersLazyLoadOptions = response.data;
+          this.pagination.totalRecords = response.totalRecords as number;
         }
-      })
+      });
+
+  }
+
+  onPageChange($event: PaginatorState) {
+    this.searchAssigneeParams$.next({...this.searchAssigneeParams$.value, page: $event.page as number + 1});
   }
 
   getAuthUserRole() {
@@ -192,8 +256,6 @@ export class DetailedTaskComponent implements OnInit {
         next: (task: SingleTask) => {
           this.task = task;
           this.loading.task = false;
-          this.progress = this.task.progress;
-
           this.loadFormGroup();
         }
       });
@@ -279,7 +341,7 @@ export class DetailedTaskComponent implements OnInit {
 
     let found = null;
     if (assignee) {
-      found = this.assignUserOptions.find(u => u.fullName === assignee.fullName) as SimpleUser;
+      found = this.assignUsersLazyLoadOptions.find(u => u.fullName === assignee.fullName) as SimpleUser;
     }
 
     this.updateTaskFormGroup.enable();

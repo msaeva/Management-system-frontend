@@ -108,8 +108,19 @@ export class ProjectService {
     return this.http.get<Project[]>(url);
   }
 
-  getAllUsersInProject(projectId: number): Observable<SimpleUser[]> {
-    const url = API_URL_PM + "/projects/" + projectId + "/users";
-    return this.http.get<SimpleUser[]>(url);
+  getAllUsersInProject(projectId: number, page: number, size: number, search?: string): Observable<Pageable<SimpleUser>> {
+    let url = `${API_URL_PM}/projects/${projectId}/users`;
+
+    let params = new HttpParams()
+      .set('page', page.toString())
+      .set('size', size.toString());
+
+    if (search) {
+      params = params.set('search', search);
+    }
+
+    url += '?' + params.toString();
+
+    return this.http.get<Pageable<SimpleUser>>(url);
   }
 }

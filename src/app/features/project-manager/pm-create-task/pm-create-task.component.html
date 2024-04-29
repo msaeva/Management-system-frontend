@@ -46,13 +46,13 @@
     </div>
 
     <div class="flex flex-column mt-3 pt-3 w-full">
-      <p-dropdown [options]="usersOptions"
+      <p-dropdown [options]="assignUsersLazyLoadOptions"
                   [filter]="true"
                   [showClear]="true"
+                  (onFilter)="filterUsers($event)"
                   formControlName="assignee"
                   optionLabel="fullName"
                   appendTo="body"
-                  filterBy="fullName"
                   placeholder="Assign User">
         <ng-template let-user pTemplate="selectedItem">
           <div class="flex align-items-center gap-2">
@@ -63,6 +63,12 @@
           <div class="flex align-items-center gap-2">
             <div>{{ user.fullName }}</div>
           </div>
+        </ng-template>
+        <ng-template pTemplate="footer">
+          <p-paginator (onPageChange)="onPageChange($event)"
+                       [first]="searchAssigneeParams$.value.page"
+                       [rows]="pagination.size"
+                       [totalRecords]="pagination.totalRecords"></p-paginator>
         </ng-template>
       </p-dropdown>
     </div>

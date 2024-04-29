@@ -63,15 +63,24 @@
             <div class="p-col-2">
               <div class="flex flex-column gap-2">
                 <label class="font-bold">Assignee</label>
-                <p-dropdown [options]="assignUserOptions"
-                            optionLabel="fullName"
-                            formControlName="assignee"
-                            [filter]="true"
-                            filterBy="fullName"
-                            [showClear]="true"
-                            [placeholder]="updateTaskFormGroup.get('assignee')!.value ? updateTaskFormGroup.get('assignee')!.value
-                            : 'Assign User'">
+                <p-dropdown
+                  [options]="assignUsersLazyLoadOptions"
+                  [showClear]="true"
+                  [filter]="true"
+                  (onFilter)="filterUsers($event)"
+                  [placeholder]="updateTaskFormGroup.get('assignee')!.value ? updateTaskFormGroup.get('assignee')!.value
+                            : 'Assign User'"
+                  optionLabel="fullName"
+                  formControlName="assignee">
+
+                  <ng-template pTemplate="footer">
+                    <p-paginator (onPageChange)="onPageChange($event)"
+                                 [first]="searchAssigneeParams$.value.page"
+                                 [rows]="pagination.size"
+                                 [totalRecords]="pagination.totalRecords"></p-paginator>
+                  </ng-template>
                 </p-dropdown>
+
               </div>
             </div>
           </ng-container>
