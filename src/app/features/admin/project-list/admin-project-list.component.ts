@@ -77,9 +77,6 @@ export class AdminProjectListComponent implements OnInit {
         next: (project) => {
           this.selectedProject = project;
           this.loadingProjectById = false;
-        },
-        error: (err) => {
-          console.log(err);
         }
       })
   }
@@ -93,7 +90,7 @@ export class AdminProjectListComponent implements OnInit {
           this.allProjectManagersOptions = this.allProjectManagers;
 
           this.loadingProjectManagers = false;
-        }, error: (err) => console.log(err)
+        }
       })
   }
 
@@ -103,9 +100,6 @@ export class AdminProjectListComponent implements OnInit {
       .subscribe({
         next: (projects: DetailedProject[]) => {
           this.projects = projects;
-        },
-        error: (err) => {
-          console.log(err);
         }
       })
   }

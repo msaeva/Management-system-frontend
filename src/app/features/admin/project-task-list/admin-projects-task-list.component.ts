@@ -40,9 +40,6 @@ export class AdminProjectsTaskListComponent implements OnInit {
       .subscribe({
         next: (response) => {
           this.allProjectTasks = response;
-        },
-        error: (err) => {
-          console.log(err);
         }
       });
   }

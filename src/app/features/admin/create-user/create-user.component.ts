@@ -32,12 +32,36 @@ export class CreateUserComponent {
   @Output() newUserEvent = new EventEmitter<DetailedUser>();
 
   createUserFormGroup = this.formBuilder.group({
-    username: new FormControl('', [Validators.required, Validators.minLength(3)]),
-    email: new FormControl('', [Validators.required, Validators.email]),
-    firstName: new FormControl('', [Validators.required, Validators.minLength(3)]),
-    lastName: new FormControl('', [Validators.required, Validators.minLength(3)]),
-    password: new FormControl('', [Validators.required, Validators.minLength(6)]),
-    role: new FormControl(roleOptions[1].value, [Validators.required])
+    username: new FormControl('',
+      [
+        Validators.required,
+        Validators.minLength(3),
+        Validators.maxLength(20)
+      ]),
+    email: new FormControl('',
+      [
+        Validators.required, Validators.email,
+        Validators.maxLength(25)
+      ]),
+    firstName: new FormControl('', [
+      Validators.required,
+      Validators.minLength(3),
+      Validators.maxLength(20)
+    ]),
+    lastName: new FormControl('',
+      [
+        Validators.required,
+        Validators.minLength(3),
+        Validators.maxLength(20)
+      ]),
+    password: new FormControl('', [
+      Validators.required,
+      Validators.minLength(6),
+      Validators.maxLength(30)
+    ]),
+    role: new FormControl(roleOptions[1].value, [
+      Validators.required
+    ])
   })
 
   constructor(private authService: AuthService,
@@ -75,7 +99,7 @@ export class CreateUserComponent {
 
           this.createUserFormGroup.reset();
         },
-        error: (err) => {
+        error: () => {
           this.createUserFormGroup.setErrors({taken: true});
 
           this.toastService.showMessage({

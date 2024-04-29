@@ -103,9 +103,6 @@ export class PmMeetingsComponent implements OnInit {
             start: meeting.start,
             end: meeting.end
           }));
-        },
-        error: (err) => {
-          console.log(err);
         }
       })
   }
@@ -131,8 +128,6 @@ export class PmMeetingsComponent implements OnInit {
   handleEventClick(clickInfo: EventClickArg): void {
     const clickedEventId = clickInfo.event.id;
     this.selectedMeeting = this.meetings.find(meeting => meeting.id.toString() === clickedEventId) as DetailedMeeting;
-
-    console.log(this.selectedMeeting)
     this.visibleMeetingInformationDialog = true;
   }
 

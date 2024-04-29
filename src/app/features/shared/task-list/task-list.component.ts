@@ -52,8 +52,8 @@ export class TaskListComponent implements OnInit, OnChanges {
   openTasks: Task[] = [];
 
   allowedTransitions: { [key: string]: string[] } = {
-    [TaskStatus.OPEN.valueOf()]: [],
-    [TaskStatus.RE_OPEN.valueOf()]: [],
+    [TaskStatus.OPEN.valueOf()]: [TaskStatus.TODO.valueOf()],
+    [TaskStatus.RE_OPEN.valueOf()]: [TaskStatus.TODO.valueOf()],
     [TaskStatus.TODO.valueOf()]: [TaskStatus.IN_PROGRESS.valueOf()],
     [TaskStatus.IN_PROGRESS.valueOf()]: [TaskStatus.DONE.valueOf()],
     [TaskStatus.DONE.valueOf()]: [TaskStatus.OPEN.valueOf()]
@@ -99,7 +99,7 @@ export class TaskListComponent implements OnInit, OnChanges {
 
   drop(type: string): void {
 
-    if (type === 'DONE' && !this.draggedTask.completionTime) {
+    if (type === TaskStatus.DONE && !this.draggedTask.completionTime) {
 
       this.toastService.showMessage({
         severity: 'error',
@@ -110,7 +110,7 @@ export class TaskListComponent implements OnInit, OnChanges {
       return;
     }
 
-    if (type === 'IN_PROGRESS' && !this.draggedTask.estimationTime) {
+    if (type === TaskStatus.IN_PROGRESS && !this.draggedTask.estimationTime) {
 
       this.toastService.showMessage({
         severity: 'error',
@@ -120,6 +120,19 @@ export class TaskListComponent implements OnInit, OnChanges {
       });
       return;
     }
+
+    if (type === TaskStatus.TODO && !this.draggedTask.userId ) {
+
+      this.toastService.showMessage({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'No assigned user!',
+        life: 3000
+      });
+      return;
+    }
+
+
     const sourceColumn = this.draggedTask.status as string;
     const targetColumn = type;
 
@@ -159,9 +172,9 @@ export class TaskListComponent implements OnInit, OnChanges {
   }
 
   dragEnd(task: any): void {
-
     if (!this.draggedTask.completionTime && task.status === TaskStatus.IN_PROGRESS) return;
     if (!this.draggedTask.estimationTime && task.status === TaskStatus.TODO) return;
+    if (!this.draggedTask.userId && (task.status === TaskStatus.OPEN || TaskStatus.RE_OPEN)) return;
 
     const taskStatus = task.status;
     const taskId = task.id;
@@ -180,6 +193,7 @@ export class TaskListComponent implements OnInit, OnChanges {
         console.error("Invalid drop action. Drop action is disabled.");
       }
 
+
       this.taskService.updateStatus(taskId, task.status)
         .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe({
@@ -196,8 +210,7 @@ export class TaskListComponent implements OnInit, OnChanges {
               detail: 'Status updated successfully',
               life: 3000
             });
-          },
-          error: (err) => console.log(err)
+          }
         })
 
 
@@ -227,7 +240,6 @@ export class TaskListComponent implements OnInit, OnChanges {
     this.todoTasks = this.tasks.filter(task => task.status === TaskStatus.TODO.valueOf());
     this.inProgressTasks = this.tasks.filter(task => task.status === TaskStatus.IN_PROGRESS.valueOf());
     this.openTasks = this.tasks.filter(task => task.status === TaskStatus.OPEN.valueOf() || task.status === TaskStatus.RE_OPEN.valueOf());
-    // this.reOpenTasks = this.tasks.filter(task => task.status === "RE-OPEN");
   }
 
   openDetailedTaskDialog(task: Task): void {

@@ -9,7 +9,7 @@ import {ProjectTeam} from "@core/types/projects/project-team";
 import {ChipsModule} from "primeng/chips";
 import {ButtonModule} from "primeng/button";
 import {DateSelectArg} from '@fullcalendar/core';
-import {DatePipe} from "@angular/common";
+import {DatePipe, NgIf} from "@angular/common";
 import {MeetingService} from "@core/services/meeting.service";
 import {DetailedMeeting} from "@core/types/meetings/detailed-meeting";
 import {LocalStorageService} from "@core/services/local-storage.service";
@@ -30,7 +30,8 @@ import {generateRandomString} from "@core/utils";
     ButtonModule,
     DatePipe,
     CalendarModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    NgIf
   ],
   templateUrl: './create-meeting.component.html',
   styleUrl: './create-meeting.component.scss'
@@ -115,9 +116,6 @@ export class CreateMeetingComponent implements OnInit {
         .subscribe({
           next: (response: DetailedMeeting) => {
             this.newMeetingEvent.emit(response);
-          },
-          error: (err) => {
-            console.log(err);
           }
         })
     } else if (this.localStorageService.getAuthUserRole() === Role.ADMIN.valueOf()) {
@@ -128,9 +126,6 @@ export class CreateMeetingComponent implements OnInit {
           next: (response: DetailedMeeting) => {
             this.newMeetingEvent.emit(response);
           },
-          error: (err) => {
-            console.log(err);
-          }
         })
     }
   }

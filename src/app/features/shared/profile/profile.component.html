@@ -1,5 +1,8 @@
-<p-progressSpinner *ngIf="loading; else content" styleClass="spinner" strokeWidth="8"
-                   fill="var(--surface-ground)" animationDuration=".5s">
+<p-progressSpinner *ngIf="loading; else content"
+                   styleClass="spinner"
+                   strokeWidth="8"
+                   fill="var(--surface-ground)"
+                   animationDuration=".5s">
 </p-progressSpinner>
 
 <ng-template #content>
@@ -41,8 +44,25 @@
                   <span class="p-inputgroup-addon">
                     <i class="pi pi-user"></i>
                   </span>
-                  <input id="firstName" type="text" formControlName="firstName" placeholder="First Name">
+                  <input id="firstName"
+                         type="text"
+                         formControlName="firstName"
+                         placeholder="First Name">
                 </div>
+
+                <small
+                  *ngIf="updateProfileForm.get('firstName')?.invalid && (updateProfileForm.get('firstName')?.dirty || updateProfileForm.get('firstName')?.touched)"
+                  class="p-error">
+                  <small *ngIf="updateProfileForm.get('firstName')?.errors?.['required']" class="p-error">
+                    First name is required.
+                  </small>
+                  <small *ngIf="updateProfileForm.get('firstName')?.errors?.['minlength']" class="p-error">
+                    First name must be at least 3 characters long.
+                  </small>
+                  <small *ngIf="updateProfileForm.get('firstName')?.errors?.['maxlength']" class="p-error">
+                    First name must be maximum 15 characters long.
+                  </small>
+                </small>
               </div>
               <div class="flex flex-column align-items-start">
                 <label for="lastName">Last Name</label>
@@ -50,8 +70,23 @@
                   <span class="p-inputgroup-addon">
                     <i class="pi pi-user"></i>
                   </span>
-                  <input id="lastName" type="text" formControlName="lastName" placeholder="Last Name">
+                  <input id="lastName" type="text"
+                         formControlName="lastName"
+                         placeholder="Last Name">
                 </div>
+                <small
+                  *ngIf="updateProfileForm.get('lastName')?.invalid && (updateProfileForm.get('lastName')?.dirty || updateProfileForm.get('lastName')?.touched)"
+                  class="p-error">
+                  <small *ngIf="updateProfileForm.get('lastName')?.errors?.['required']" class="p-error">
+                    Last name is required.
+                  </small>
+                  <small *ngIf="updateProfileForm.get('lastName')?.errors?.['minlength']" class="p-error">
+                    Last name must be at least 3 characters long.
+                  </small>
+                  <small *ngIf="updateProfileForm.get('lastName')?.errors?.['maxlength']" class="p-error">
+                    Last name must be maximum 15 characters long.
+                  </small>
+                </small>
               </div>
               <div class="flex flex-column align-items-start">
                 <label for="username">Username</label>
@@ -90,6 +125,9 @@
                 <small *ngIf="changePasswordForm.get('oldPassword')?.errors?.['minlength']" class="p-error">
                   Password must be at least 6 characters long.
                 </small>
+                <small *ngIf="changePasswordForm.get('oldPassword')?.errors?.['maxlength']" class="p-error">
+                  Password must be maximum 30 characters long.
+                </small>
                 <small *ngIf="changePasswordForm.get('oldPassword')?.hasError('incorrectPassword')"
                        class="p-error">Invalid Password!</small>
               </small>
@@ -106,6 +144,9 @@
                 <small *ngIf="changePasswordForm.get('newPassword')?.errors?.['minlength']" class="p-error">
                   Password must be at least 6 characters long.
                 </small>
+                <small *ngIf="changePasswordForm.get('newPassword')?.errors?.['maxlength']" class="p-error">
+                  Password must be maximum 30 characters long.
+                </small>
               </small>
             </div>
             <div class="flex flex-column align-items-start">
@@ -119,6 +160,9 @@
                 </small>
                 <small *ngIf="changePasswordForm.get('repeatedPassword')?.errors?.['minlength']" class="p-error">
                   Password must be at least 6 characters long.
+                </small>
+                <small *ngIf="changePasswordForm.get('repeatedPassword')?.errors?.['maxlength']" class="p-error">
+                  Password must be maximum 30 characters long.
                 </small>
                 <small *ngIf="changePasswordForm.get('repeatedPassword')?.errors?.['passwordMismatch']" class="p-error">
                   Passwords do not match.

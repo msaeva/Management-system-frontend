@@ -38,9 +38,23 @@ export class CreateProjectComponent {
   @Input() allProjectManagers!: SimpleUser[];
 
   createProjectFormGroup = this.formBuilder.group({
-    title: new FormControl('', [Validators.required, Validators.minLength(3)]),
-    description: new FormControl('', [Validators.required, Validators.minLength(10), Validators.maxLength(1000)]),
-    abbreviation: new FormControl('', [Validators.required, Validators.minLength(3)]),
+    title: new FormControl('',
+      [
+        Validators.required,
+        Validators.minLength(3),
+        Validators.maxLength(20)
+      ]),
+    description: new FormControl('',
+      [Validators.required,
+        Validators.minLength(10),
+        Validators.maxLength(1000)
+      ]),
+    abbreviation: new FormControl('',
+      [Validators.required,
+        Validators.minLength(2),
+        Validators.maxLength(4)
+      ]
+    ),
     pmIds: new FormControl([]),
   })
 
@@ -73,8 +87,7 @@ export class CreateProjectComponent {
           });
 
           this.createProjectFormGroup.reset();
-        },
-        error: (err) => console.log(err)
+        }
       })
   }
 }

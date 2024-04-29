@@ -134,7 +134,7 @@ export class DetailedProjectComponent implements OnInit {
         next: (users) => {
           this.usersToAddToTeam = users;
           this.loadingUsersToAddToTeam = false;
-        }, error: (err) => console.log(err)
+        }
       })
   }
 
@@ -163,8 +163,8 @@ export class DetailedProjectComponent implements OnInit {
           this.projectUpdated.emit(response);
           this.toggleEditMode();
 
-        }, error: (err) => {
-          console.log(err);
+        }, error: () => {
+          this.loadFormGroup();
         }
       })
   }
@@ -174,11 +174,8 @@ export class DetailedProjectComponent implements OnInit {
     this.projectService.deleteById(id)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: (response) => {
+        next: () => {
           this.projectDeleted.emit(id);
-        },
-        error: (err) => {
-          console.log(err)
         }
       })
   }
@@ -196,8 +193,6 @@ export class DetailedProjectComponent implements OnInit {
             detail: 'Successfully created new team!',
             life: 3000
           });
-        }, error: (err) => {
-          console.log(err);
         }
       })
   }

@@ -16,4 +16,31 @@ export class ToastService {
       life: message.life
     });
   }
+
+  showErrorMessage() {
+    this.showMessage({
+      severity: 'error',
+      summary: 'Error',
+      detail: 'ERROR!',
+      life: 3000
+    });
+  }
+
+  showBadRequestMessage() {
+    this.showMessage({
+      severity: 'error',
+      summary: 'Error',
+      detail: 'Invalid request. Please try again.!',
+      life: 3000
+    });
+  }
+
+  showForbiddenMessage() {
+    this.showMessage({
+      severity: 'error',
+      summary: 'Error',
+      detail: 'Forbidden: Access denied!',
+      life: 3000
+    });
+  }
 }

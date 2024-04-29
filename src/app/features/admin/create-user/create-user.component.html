@@ -14,6 +14,9 @@
         <small *ngIf="createUserFormGroup.get('username')?.errors?.['minlength']" class="p-error">
           Username must be at least 3 characters long.
         </small>
+        <small *ngIf="createUserFormGroup.get('username')?.errors?.['maxlength']" class="p-error">
+          Username must be maximum 20 characters long.
+        </small>
       </div>
     </div>
 
@@ -32,6 +35,9 @@
         <small *ngIf="createUserFormGroup.get('email')?.errors?.['email']" class="p-error">
           Email is invalid!
         </small>
+        <small *ngIf="createUserFormGroup.get('email')?.errors?.['email']?.errors?.['maxlength']" class="p-error">
+          Email must be maximum 25 characters long.
+        </small>
       </div>
     </div>
 
@@ -48,6 +54,9 @@
         </small>
         <small *ngIf="createUserFormGroup.get('firstName')?.errors?.['minlength']" class="p-error">
           First name must be at least 3 characters long.
+        </small>
+        <small *ngIf="createUserFormGroup.get('firstName')?.errors?.['maxlength']" class="p-error">
+          First name must be maximum 20 characters long.
         </small>
       </div>
     </div>
@@ -66,6 +75,9 @@
         <small *ngIf="createUserFormGroup.get('lastName')?.errors?.['minlength']" class="p-error">
           Last name must be at least 3 characters long.
         </small>
+        <small *ngIf="createUserFormGroup.get('lastName')?.errors?.['maxlength']" class="p-error">
+          Last name must be maximum 20 characters long.
+        </small>
       </div>
     </div>
 
@@ -82,6 +94,9 @@
         </small>
         <small *ngIf="createUserFormGroup.get('password')?.errors?.['minlength']" class="p-error">
           Password must be at least 6 characters long.
+        </small>
+        <small *ngIf="createUserFormGroup.get('password')?.errors?.['maxlength']" class="p-error">
+          Last name must be maximum 30 characters long.
         </small>
       </div>
     </div>

@@ -85,9 +85,6 @@ export class CommentCardComponent implements OnInit {
       .subscribe({
         next: () => {
           this.deleteCommentEvent.emit(id);
-        },
-        error: (err) => {
-          console.log(err);
         }
       })
   }
@@ -109,9 +106,6 @@ export class CommentCardComponent implements OnInit {
             detail: 'Comment updated successfully',
             life: 3000
           });
-        },
-        error: (err) => {
-          console.log(err);
         }
       })
   }

@@ -1,6 +1,6 @@
 <div class="card">
   <div class="flex justify-content-between mb-3">
-    <h4 *ngIf="project">{{project.title}} - {{project.abbreviation}}</h4>
+    <h4 *ngIf="project">{{ project.title }} - {{ project.abbreviation }}</h4>
     <p-button [rounded]="true"
               (onClick)="showCreateNewTaskDialog()"
               severity="success"
@@ -76,7 +76,8 @@
               <div
                 *ngIf="forms[index % pagination.size]?.get('title')?.['invalid'] && (forms[index % pagination.size]?.get('title')?.dirty ||forms[index % pagination.size]?.get('title')?.touched)"
                 class="text-danger">
-                <small *ngIf="forms[index % pagination.size]?.get('title')?.errors?.['required']">Last Name is required.</small>
+                <small *ngIf="forms[index % pagination.size]?.get('title')?.errors?.['required']">Last Name is
+                  required.</small>
                 <small *ngIf="forms[index % pagination.size]?.get('title')?.errors?.['minlength']">
                   Last Name must be at least 3 characters long.
                 </small>
@@ -90,15 +91,7 @@
         <td>
           <p-cellEditor>
             <ng-template pTemplate="input">
-              <input pInputText type="text" formControlName="abbreviation">
-              <div
-                *ngIf="forms[index % pagination.size]?.get('abbreviation')?.['invalid'] && (forms[index % pagination.size]?.get('abbreviation')?.dirty ||forms[index % pagination.size]?.get('abbreviation')?.touched)"
-                class="text-danger">
-                <small *ngIf="forms[index % pagination.size]?.get('abbreviation')?.errors?.['required']">Last Name is required.</small>
-                <small *ngIf="forms[index % pagination.size]?.get('abbreviation')?.errors?.['minlength']">
-                  Abbreviation must be at least 3 characters long.
-                </small>
-              </div>
+              {{ task.abbreviation }}
             </ng-template>
             <ng-template pTemplate="output">
               {{ task.abbreviation }}
@@ -180,6 +173,6 @@
           [draggable]="false"
           [resizable]="false">
   <app-admin-create-task (newTaskEvent)="newTaskHandler($event)"
-                   [projectId]="projectId">
+                          [projectId]="projectId">
   </app-admin-create-task>
 </p-dialog>

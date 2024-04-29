@@ -123,9 +123,6 @@ export class AdminMeetingsComponent implements OnInit {
         next: (response) => {
           this.projects = response;
           this.filteredProjects = response;
-        },
-        error: (err) => {
-          console.log(err);
         }
       })
   }
@@ -137,9 +134,6 @@ export class AdminMeetingsComponent implements OnInit {
       .subscribe({
         next: (response) => {
           this.users = response;
-        },
-        error: (err) => {
-          console.log(err);
         }
       })
   }
@@ -159,9 +153,6 @@ export class AdminMeetingsComponent implements OnInit {
             start: meeting.start,
             end: meeting.end
           }));
-        },
-        error: (err) => {
-          console.log(err);
         }
       })
   }

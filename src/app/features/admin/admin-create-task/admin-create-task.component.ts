@@ -32,8 +32,18 @@ export class AdminCreateTaskComponent {
   @Input({required: true}) projectId!: number;
 
   createTaskFormGroup = this.formBuilder.group({
-    title: new FormControl('', [Validators.required, Validators.minLength(4)]),
-    description: new FormControl('', [Validators.required, Validators.minLength(10), Validators.maxLength(1000)]),
+    title: new FormControl('',
+      [
+        Validators.required,
+        Validators.minLength(4),
+        Validators.maxLength(20),
+      ]),
+    description: new FormControl('',
+      [
+        Validators.required,
+        Validators.minLength(10),
+        Validators.maxLength(1000)
+      ]),
   });
 
   constructor(private formBuilder: FormBuilder,
@@ -61,11 +71,8 @@ export class AdminCreateTaskComponent {
             detail: 'Task created successfully',
             life: 3000
           });
-
           this.createTaskFormGroup.reset();
-
-        },
-        error: (err) => console.log(err)
+        }
       })
   }
 }

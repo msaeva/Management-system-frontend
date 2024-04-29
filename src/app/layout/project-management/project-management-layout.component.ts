@@ -60,9 +60,6 @@ export class ProjectManagementLayout implements OnInit {
       .subscribe({
         next: (response: Project[]) => {
           this.mapProjectsToMenuItems(response);
-        },
-        error: () => {
-          console.log("error");
         }
       })
   }

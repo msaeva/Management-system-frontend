@@ -76,9 +76,6 @@ export class MeetingsComponent implements OnInit {
             start: meeting.start,
             end: meeting.end
           }));
-        },
-        error: (err) => {
-          console.log(err);
         }
       })
   }

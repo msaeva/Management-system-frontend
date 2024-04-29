@@ -72,9 +72,6 @@ export class ProjectComponent implements OnInit {
         .subscribe({
           next: (tasks: Task[]) => {
             this.tasks = tasks;
-          },
-          error: () => {
-            console.log("Error loading tasks");
           }
         });
     } else if (this.getAuthUserRole() === Role.PM.valueOf()) {
@@ -83,9 +80,6 @@ export class ProjectComponent implements OnInit {
         .subscribe({
           next: (tasks: Task[]) => {
             this.tasks = tasks;
-          },
-          error: () => {
-            console.log("Error loading tasks");
           }
         });
     }
@@ -103,10 +97,6 @@ export class ProjectComponent implements OnInit {
           this.project = project;
           this.loadingProject = false;
           this.loadTasks();
-          console.log(this.project)
-        },
-        error: () => {
-          console.log("Error loading projects");
         }
       });
   }

@@ -34,8 +34,18 @@ export class PmCreateTaskComponent implements OnInit {
   @Output() newTaskEvent: EventEmitter<Task> = new EventEmitter<Task>();
 
   createTaskFormGroup = this.formBuilder.group({
-    title: new FormControl('', [Validators.required, Validators.minLength(3)]),
-    description: new FormControl('', [Validators.required, Validators.minLength(10), Validators.maxLength(200)]),
+    title: new FormControl('',
+      [
+        Validators.required,
+        Validators.minLength(3),
+        Validators.maxLength(15)
+      ]),
+    description: new FormControl('',
+      [
+        Validators.required,
+        Validators.minLength(10),
+        Validators.maxLength(200)
+      ]),
     assignee: new FormControl<SimpleUser | null>(null)
   });
 
@@ -58,9 +68,6 @@ export class PmCreateTaskComponent implements OnInit {
       .subscribe({
         next: (response) => {
           this.usersOptions = response;
-        },
-        error: (err) => {
-          console.log(err);
         }
       })
   }
@@ -86,11 +93,8 @@ export class PmCreateTaskComponent implements OnInit {
             detail: 'Task created successfully',
             life: 3000
           });
-
           this.createTaskFormGroup.reset();
-
-        },
-        error: (err) => console.log(err)
+        }
       })
   }
 

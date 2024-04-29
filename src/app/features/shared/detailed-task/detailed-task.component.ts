@@ -68,7 +68,6 @@ export class DetailedTaskComponent implements OnInit {
   completionTime: number = 0;
   progress: number = 0;
   assignUserOptions: SimpleUser[] = [];
-  selectedUserToAssign!: SimpleUser;
 
   createCommentFormControl: FormControl = new FormControl();
   updateTaskFormGroup!: FormGroup;
@@ -99,10 +98,24 @@ export class DetailedTaskComponent implements OnInit {
   toggleEditMode() {
     const func = this.updateTaskFormGroup.get('title')!.disabled ? 'enable' : 'disable';
 
+    if (this.getAuthUserId() === this.task.userId) {
+
+      if (this.task.status === TaskStatus.TODO) {
+        this.updateTaskFormGroup.controls['estimationTime'][func]();
+      } else if (this.task.status === TaskStatus.IN_PROGRESS) {
+        this.updateTaskFormGroup.controls['progress'][func]();
+        this.updateTaskFormGroup.controls['completionTime'][func]();
+      }
+      return
+    }
+
     this.updateTaskFormGroup.controls['title'][func]();
     this.updateTaskFormGroup.controls['description'][func]();
     this.updateTaskFormGroup.controls['status'][func]();
     this.updateTaskFormGroup.controls['assignee'][func]();
+    // this.updateTaskFormGroup.controls['estimationTime'][func]();
+    // this.updateTaskFormGroup.controls['completionTime'][func]();
+    this.updateTaskFormGroup.controls['progress'][func]();
   }
 
   loadFormGroup() {
@@ -123,6 +136,18 @@ export class DetailedTaskComponent implements OnInit {
         {value: this.task.status, disabled: true},
         [Validators.required, Validators.minLength(6)]
       ],
+      estimationTime: [
+        {value: this.task.estimationTime ?? 0, disabled: true},
+        [Validators.required]
+      ],
+      completionTime: [
+        {value: this.task.completionTime ?? 0, disabled: true},
+        [Validators.required]
+      ],
+      progress: [
+        {value: this.task.progress ?? 0, disabled: true},
+        [Validators.required]
+      ]
     });
   }
 
@@ -132,11 +157,7 @@ export class DetailedTaskComponent implements OnInit {
       .subscribe({
         next: (response) => {
           this.assignUserOptions = response;
-        },
-        error: (err) => {
-          console.log(err);
         }
-
       })
   }
 
@@ -160,8 +181,6 @@ export class DetailedTaskComponent implements OnInit {
       .subscribe({
         next: (response) => {
           this.comments = response;
-        }, error: () => {
-          console.log("Error loading tasks");
         }
       })
   }
@@ -175,16 +194,7 @@ export class DetailedTaskComponent implements OnInit {
           this.loading.task = false;
           this.progress = this.task.progress;
 
-          if (this.task.estimationTime) {
-            this.estimationTime = this.task.estimationTime;
-          }
-          if (this.task.completionTime) {
-            this.completionTime = this.task.completionTime;
-          }
-
           this.loadFormGroup();
-        }, error: () => {
-          console.log("Error loading tasks");
         }
       });
   }
@@ -211,11 +221,7 @@ export class DetailedTaskComponent implements OnInit {
             detail: 'Comment created successfully',
             life: 3000
           });
-
           this.initializeCommentFormGroup();
-
-        }, error: (err) => {
-          console.log(err);
         }
       })
 
@@ -232,107 +238,7 @@ export class DetailedTaskComponent implements OnInit {
     });
   }
 
-  startTask(): void {
-    this.taskService.updateStatus(this.task.id, TaskStatus.IN_PROGRESS.valueOf())
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (updateTask: Task) => {
-          this.task.status = updateTask.status;
-          this.updatedStatusTaskEvent.emit(this.task as Task);
-
-          this.toastService.showMessage({
-            severity: 'success',
-            summary: 'Success',
-            detail: 'Status updated successfully',
-            life: 3000
-          });
-        },
-        error: (err) => console.log(err)
-      })
-  }
-
   protected readonly TaskStatus = TaskStatus;
-
-  submitEstimationTime(): void {
-    this.taskService.setEstimationTime(this.task.id, this.estimationTime)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: () => {
-          this.task.estimationTime = this.estimationTime;
-
-          this.toastService.showMessage({
-            severity: 'success',
-            summary: 'Success',
-            detail: 'Estimation time added successfully',
-            life: 3000
-          });
-        },
-        error: (err) => {
-          console.log(err);
-        }
-      })
-
-  }
-
-  submitCompletionTime() {
-    this.taskService.setCompletionTime(this.task.id, this.completionTime)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (response) => {
-          this.task.completionTime = this.completionTime;
-
-          this.setCompletionTimeEvent.emit(response);
-          this.toastService.showMessage({
-            severity: 'success',
-            summary: 'Success',
-            detail: 'Completion time submitted successfully',
-            life: 3000
-          });
-        },
-        error: (err) => {
-          console.log(err);
-        }
-      })
-
-  }
-
-  onProgressChange(progress: number): void {
-    this.taskService.changeProgress(this.task.id, progress)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: () => {
-          this.toastService.showMessage({
-            severity: 'success',
-            summary: 'Success',
-            detail: 'Progress added successfully',
-            life: 3000
-          });
-        },
-        error: (err) => {
-          console.log(err);
-        }
-      })
-
-  }
-
-  assignUser(): void {
-    this.taskService.assignUser(this.task.id, this.selectedUserToAssign.id)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (response: Task) => {
-          this.assignedUserToTaskEvent.emit(response);
-          this.toastService.showMessage({
-            severity: 'success',
-            summary: 'Success',
-            detail: 'User assigned to the task successfully!',
-            life: 3000
-          });
-        },
-        error: (err) => {
-          console.log(err)
-        }
-      })
-  }
 
   protected readonly Role = Role;
 
@@ -364,32 +270,38 @@ export class DetailedTaskComponent implements OnInit {
             detail: 'Task deleted successfully',
             life: 3000
           });
-        }, error: (err) => console.log(err)
+        }
       });
   }
 
   updateTask(id: number): void {
     const assignee = this.updateTaskFormGroup.get('assignee')?.value ?? null;
 
+    let found = null;
+    if (assignee) {
+      found = this.assignUserOptions.find(u => u.fullName === assignee.fullName) as SimpleUser;
+    }
+
+    this.updateTaskFormGroup.enable();
     const data: UpdateTaskData = {
-      id: this.updateTaskFormGroup.value.id,
       title: this.updateTaskFormGroup.value.title,
       status: this.updateTaskFormGroup.value.status,
       description: this.updateTaskFormGroup.value.description,
-      userId: assignee?.id ?? null,
-      projectId: this.projectId
+      userId: found?.id ?? null,
+      projectId: this.projectId,
+      completionTime: this.updateTaskFormGroup.value.completionTime,
+      estimationTime: this.updateTaskFormGroup.value.estimationTime,
+      progress: this.updateTaskFormGroup.value.progress,
     }
 
-    this.taskService.updatePM(id, data)
+    this.taskService.update(id, data)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (response: SingleTask) => {
           this.task = response;
           this.updatedTaskEvent.emit(response as Task);
           this.toggleEditMode();
-
-        }, error: (err) => {
-          console.log(err);
+          this.updateTaskFormGroup.disable();
         }
       })
   }

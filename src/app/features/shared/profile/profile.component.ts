@@ -33,9 +33,23 @@ export class ProfileComponent implements OnInit {
   loading: boolean = true;
 
   changePasswordForm = new FormGroup({
-    oldPassword: new FormControl('', [Validators.required, Validators.minLength(6)]),
-    newPassword: new FormControl('', [Validators.required, Validators.minLength(6)]),
-    repeatedPassword: new FormControl('', [Validators.required, Validators.minLength(6)]),
+    oldPassword: new FormControl('',
+      [
+        Validators.required,
+        Validators.minLength(6),
+        Validators.maxLength(30)
+      ]),
+    newPassword: new FormControl('',
+      [
+        Validators.required,
+        Validators.minLength(6),
+        Validators.maxLength(6)
+      ]),
+    repeatedPassword: new FormControl('',
+      [
+        Validators.required,
+        Validators.maxLength(6)
+      ]),
   });
   updateProfileForm!: FormGroup;
 
@@ -53,11 +67,19 @@ export class ProfileComponent implements OnInit {
     this.updateProfileForm = this.formBuilder.group({
       firstName: [
         {value: this.user.firstName, disabled: true},
-        [Validators.required, Validators.minLength(4)]
+        [
+          Validators.required,
+          Validators.minLength(3),
+          Validators.maxLength(15),
+        ]
       ],
       lastName: [
         {value: this.user.lastName, disabled: true},
-        [Validators.required, Validators.minLength(4)]
+        [
+          Validators.required,
+          Validators.minLength(3),
+          Validators.maxLength(15)
+        ]
       ],
       email: [
         {value: this.user.email, disabled: true}
@@ -76,9 +98,6 @@ export class ProfileComponent implements OnInit {
           this.user = response;
           this.loading = false;
           this.initializeUpdateProfileFormGroup();
-        },
-        error: (err) => {
-          console.log(err);
         }
       })
   }
@@ -106,6 +125,8 @@ export class ProfileComponent implements OnInit {
                 detail: 'INVALID OLD PASSWORD!',
                 life: 3000
               });
+            } else {
+              this.toastService.showErrorMessage();
             }
           }
         });
@@ -124,22 +145,19 @@ export class ProfileComponent implements OnInit {
     this.userService.updateProfile(data)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-      next: (response) => {
-        this.user = response;
-        this.toggleEditMode();
+        next: (response) => {
+          this.user = response;
+          this.toggleEditMode();
 
-        this.toastService.showMessage({
-          severity: 'success',
-          summary: 'Success',
-          detail: 'Successfully updated!',
-          life: 3000
-        });
+          this.toastService.showMessage({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Successfully updated!',
+            life: 3000
+          });
 
-      },
-      error: (err) => {
-        console.log(err);
-      }
-    })
+        }
+      })
   }
 
   cancelUpdateMeeting(): void {

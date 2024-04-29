@@ -96,9 +96,6 @@ export class DetailedMeetingComponent {
           next: (response) => {
             this.toggleEditMode();
             this.updatedMeetingEvent.emit(response);
-          },
-          error: (err) => {
-            console.log(err);
           }
         })
     } else if (this.getAuthUserRole() === Role.PM.valueOf()) {
@@ -108,9 +105,6 @@ export class DetailedMeetingComponent {
           next: (response) => {
             this.toggleEditMode();
             this.updatedMeetingEvent.emit(response);
-          },
-          error: (err) => {
-            console.log(err);
           }
         })
     }
@@ -146,9 +140,6 @@ export class DetailedMeetingComponent {
         .subscribe({
           next: () => {
             this.deletedMeetingEvent.emit(id);
-          },
-          error: (err) => {
-            console.log(err);
           }
         });
     } else if (this.getAuthUserRole() === Role.PM.valueOf()) {
@@ -157,9 +148,6 @@ export class DetailedMeetingComponent {
         .subscribe({
           next: () => {
             this.deletedMeetingEvent.emit(id);
-          },
-          error: (err) => {
-            console.log(err);
           }
         });
     }
@@ -199,9 +187,6 @@ export class DetailedMeetingComponent {
             detail: 'Team removed successfully',
             life: 3000
           });
-        },
-        error: (err) => {
-          console.log(err);
         }
       })
   }

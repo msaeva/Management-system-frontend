@@ -81,9 +81,6 @@ export class AdminProjectManagerTableComponent implements OnInit {
             detail: 'Successfully added Project Manager',
             life: 3000
           });
-        },
-        error: (err) => {
-          console.log(err);
         }
       })
   }
@@ -107,8 +104,7 @@ export class AdminProjectManagerTableComponent implements OnInit {
             detail: 'Successfully removed Project Manager!',
             life: 3000
           });
-
-        }, error: (err) => console.log(err)
+        }
       })
   }
 

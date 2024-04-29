@@ -66,7 +66,6 @@ export class LoginComponent implements OnDestroy {
                 detail: 'LOGIN SUCCESS!',
                 life: 3000
               });
-
             },
             error:() => {
               this.toastService.showMessage({

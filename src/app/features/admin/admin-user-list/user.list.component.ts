@@ -114,9 +114,6 @@ export class UserListComponent {
             this.initializeForms(response.data);
             this.users = response.data;
             this.loading.users = false;
-          },
-          error: () => {
-            console.log("Error loading users");
           }
         })
   }
@@ -155,8 +152,6 @@ export class UserListComponent {
             this.users[index] = updated;
           }
           this.clonedUsers.delete(user.id);
-        }, error: (err) => {
-          console.log(err)
         }
       })
   }
@@ -178,8 +173,6 @@ export class UserListComponent {
             detail: 'User deleted successfully',
             life: 3000
           });
-        }, error: (err) => {
-          console.log(err)
         }
       });
   }

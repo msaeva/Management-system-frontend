@@ -3,24 +3,23 @@
 </p-progressSpinner>
 
 <ng-template #content>
-  <div *ngIf="getAuthUserRole() === Role.PM &&
-  (task.status === TaskStatus.OPEN || task.status === TaskStatus.RE_OPEN || task.status === TaskStatus.TODO)"
-    class="flex justify-content-end">
-    <p-button *ngIf="updateTaskFormGroup.get('title')!.disabled"
+  <div *ngIf="(getAuthUserRole() === Role.PM || getAuthUserId() === task.userId) && (task.status !== TaskStatus.DONE)"
+       class="flex justify-content-end">
+    <p-button *ngIf="updateTaskFormGroup.disabled"
               (onClick)="toggleEditMode()"
               [rounded]="true"
               [text]="true"
               icon="pi pi-pencil">
     </p-button>
 
-    <p-button *ngIf="!updateTaskFormGroup.get('title')!.disabled"
+    <p-button *ngIf="updateTaskFormGroup.enabled"
               (onClick)="cancelUpdateTask()"
               [rounded]="true"
               [text]="true"
               severity="danger"
               icon="pi pi-times-circle">
     </p-button>
-    <p-button *ngIf="!updateTaskFormGroup.get('title')!.disabled"
+    <p-button *ngIf="updateTaskFormGroup.enabled"
               (click)="updateTask(task!.id)"
               [disabled]="!updateTaskFormGroup.dirty && updateTaskFormGroup.valid"
               [rounded]="true"
@@ -60,7 +59,7 @@
               </p-dropdown>
             </div>
           </div>
-          <ng-container *ngIf="task.userFullName">
+          <ng-container>
             <div class="p-col-2">
               <div class="flex flex-column gap-2">
                 <label class="font-bold">Assignee</label>
@@ -70,98 +69,45 @@
                             [filter]="true"
                             filterBy="fullName"
                             [showClear]="true"
-                            [placeholder]="updateTaskFormGroup.get('assignee')!.value ? updateTaskFormGroup.get('assignee')!.value : 'Assign User'">
+                            [placeholder]="updateTaskFormGroup.get('assignee')!.value ? updateTaskFormGroup.get('assignee')!.value
+                            : 'Assign User'">
                 </p-dropdown>
               </div>
             </div>
           </ng-container>
           <div
-            *ngIf="getAuthUserRole() === Role.PM && (task.status === TaskStatus.TODO || task.status === TaskStatus.IN_PROGRESS)"
+            *ngIf="(getAuthUserId() === task.userId || getAuthUserRole() == Role.PM) &&
+            (task.status === TaskStatus.TODO || task.status === TaskStatus.IN_PROGRESS)"
             class="p-col-2">
             <div class="flex flex-column gap-2">
               <label for="estimation-time" class="font-bold">Estimation Time</label>
-              <input [disabled]="true"
-                     [ngModel]="estimationTime + ' hours'"
-                     [ngModelOptions]="{standalone: true}"
-                     pInputText id="estimation-time"/>
+              <p-inputNumber formControlName="estimationTime"
+                             [disabled]="true"
+                             id="estimation-time"
+                             suffix=" (hours)"
+                             [showButtons]="true"
+                             [min]="1" [max]="50"
+                             mode="decimal">
+              </p-inputNumber>
             </div>
           </div>
 
           <div
-            *ngIf="getAuthUserRole() === Role.PM && (task.status === TaskStatus.TODO || task.status === TaskStatus.IN_PROGRESS)"
+            *ngIf="(getAuthUserId() === task.userId || getAuthUserRole() == Role.PM) && (task.status === TaskStatus.IN_PROGRESS)"
             class="p-col-2">
             <div class="flex flex-column gap-2">
               <label for="completion-time" class="font-bold">Completion Time</label>
-              <input [disabled]="true"
-                     [ngModel]="completionTime + ' hours'"
-                     [ngModelOptions]="{standalone: true}"
-                     pInputText id="completion-time"/>
-            </div>
-          </div>
-
-          <div *ngIf="!task.userFullName &&  getAuthUserRole() === Role.PM"
-               class="flex flex-row gap-2 pt-4">
-            <p-dropdown [options]="assignUserOptions"
-                        [(ngModel)]="selectedUserToAssign"
-                        optionLabel="fullName"
-                        [filter]="true"
-                        filterBy="fullName"
-                        [showClear]="true"
-                        [ngModelOptions]="{standalone: true}"
-                        placeholder="Assign User">
-              placeholder="Assign User">
-              <ng-template let-user pTemplate="selectedItem">
-                <div class="flex align-items-center gap-2">
-                  <div>{{ user.fullName }}</div>
-                </div>
-              </ng-template>
-              <ng-template let-user pTemplate="item">
-                <div class="flex align-items-center gap-2">
-                  <div>{{ user.fullName }}</div>
-                </div>
-              </ng-template>
-            </p-dropdown>
-            <p-button *ngIf="selectedUserToAssign"
-                      (onClick)="assignUser()"
-                      icon="pi pi-check" [rounded]="true"
-                      severity="success" [text]="true">
-            </p-button>
-          </div>
-
-          <div *ngIf="getAuthUserId() === task.userId && task.status === TaskStatus.TODO.valueOf()"
-               class="flex flex-column gap-2">
-            <div class="block font-bold mb-2">
-              <label for="estimation" class="block">Enter Estimation Time: </label>
-              <p-inputNumber [(ngModel)]="estimationTime"
-                             [ngModelOptions]="{standalone: true}"
-                             id="estimation"
+              <p-inputNumber formControlName="completionTime"
+                             [disabled]="true"
+                             id="completion-time"
                              suffix=" (hours)"
                              [showButtons]="true"
                              [min]="1" [max]="50"
                              mode="decimal">
               </p-inputNumber>
-
-              <p-button *ngIf="estimationTime > 0" (onClick)="submitEstimationTime()" label="Submit" [text]="true" severity="info"></p-button>
             </div>
           </div>
 
-          <div *ngIf="getAuthUserId() === task.userId && task.status === TaskStatus.IN_PROGRESS.valueOf()"
-               class="flex flex-column gap-2">
-            <div class="block font-bold mb-2">
-              <label for="completion" class="block">Enter Completion Time: </label>
-              <p-inputNumber [(ngModel)]="completionTime"
-                             [ngModelOptions]="{standalone: true}"
-                             id="completion"
-                             suffix=" (hours)"
-                             [showButtons]="true"
-                             [min]="1" [max]="50"
-                             mode="decimal">
-              </p-inputNumber>
-
-              <p-button *ngIf="completionTime > 0" (onClick)="submitCompletionTime()" label="Submit" [text]="true"
-                        severity="info"></p-button>
-            </div>
-          </div>
           <div
             *ngIf="task.status === TaskStatus.DONE"
             class="p-col-2">
@@ -196,31 +142,18 @@
         </div>
       </div>
 
-      <div class="flex flex-column gap-2 mt-3">
-        <label class="font-bold" for="description">Description</label>
-        <textarea pInputTextarea id="description"
-                  aria-describedby="username-help"
-                  rows="3"
-                  cols="20"
-                  [disabled]="true"
-                  formControlName="description">
-        </textarea>
-      </div>
-
       <div *ngIf="(getAuthUserId() === task.userId && task.status === TaskStatus.IN_PROGRESS.valueOf())
             || (getAuthUserRole() === Role.PM.valueOf() && task.status === TaskStatus.IN_PROGRESS.valueOf())"
            class="flex flex-column gap-2 mt-4">
         <label for="progress">Progress</label>
-        <p-progressBar [value]="progress"></p-progressBar>
+        <p-progressBar [value]="updateTaskFormGroup.get('progress')?.value"></p-progressBar>
         <p-inputNumber
-          [(ngModel)]="progress"
+          formControlName="progress"
           [showButtons]="true"
-          (ngModelChange)="onProgressChange($event)"
           [max]="100"
           [min]="0"
           [step]="10"
-          [disabled]="!(getAuthUserId() === task.userId && task.status === TaskStatus.IN_PROGRESS.valueOf())"
-          [ngModelOptions]="{standalone: true}"
+          [disabled]="true"
           buttonLayout="horizontal"
           inputId="horizontal"
           id="progress"
@@ -231,6 +164,17 @@
           mode="decimal"
           class="w-2rem"
         ></p-inputNumber>
+      </div>
+
+      <div class="flex flex-column gap-2 mt-4">
+        <label class="font-bold" for="description">Description</label>
+        <textarea pInputTextarea id="description"
+                  aria-describedby="username-help"
+                  rows="3"
+                  cols="20"
+                  [disabled]="true"
+                  formControlName="description">
+        </textarea>
       </div>
     </form>
     <div class="mt-7">

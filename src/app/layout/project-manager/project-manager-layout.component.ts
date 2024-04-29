@@ -65,9 +65,6 @@ export class ProjectManagerLayout implements OnInit {
         next: (response: Project[]) => {
           this.loadingProject = true;
           this.mapProjectsToMenuItems(response);
-        },
-        error: () => {
-          console.log("error");
         }
       })
   }

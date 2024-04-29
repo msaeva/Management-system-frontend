@@ -5,4 +5,7 @@ export interface DetailedTask {
   status: string;
   abbreviation: string;
   createdDate: string;
+  completionTime: number;
+  estimationTime: number;
+  progress: number;
 }

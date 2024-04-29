@@ -85,9 +85,6 @@ export class AdminTeamCardComponent implements OnInit {
             life: 3000
           });
 
-        },
-        error: (err) => {
-          console.log(err);
         }
       })
 
@@ -98,38 +95,36 @@ export class AdminTeamCardComponent implements OnInit {
     this.teamService.addUsersToTeam(teamId, userIds)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-      next: (response) => {
-        this.team.users = response;
-        this.selectedUsersToAddToTeam = [];
-        this.dropdownOptions = this.dropdownOptions.filter(u => !userIds.includes(u.id));
+        next: (response) => {
+          this.team.users = response;
+          this.selectedUsersToAddToTeam = [];
+          this.dropdownOptions = this.dropdownOptions.filter(u => !userIds.includes(u.id));
 
-        this.toastService.showMessage({
-          severity: 'success',
-          summary: 'Success',
-          detail: 'Successfully added new user!',
-          life: 3000
-        });
-      },
-      error: (err) => console.log(err)
-    })
+          this.toastService.showMessage({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Successfully added new user!',
+            life: 3000
+          });
+        }
+      })
   }
 
   deleteTeamFromProject(teamId: number) {
     this.projectService.deleteTeamFromProject(teamId, this.projectId)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-      next: () => {
-        this.projectDeletedEvent.emit(teamId);
+        next: () => {
+          this.projectDeletedEvent.emit(teamId);
 
-        this.toastService.showMessage({
-          severity: 'success',
-          summary: 'Success',
-          detail: 'Successfully deleted team!',
-          life: 3000
-        });
-      },
-      error: (err) => console.log(err)
-    });
+          this.toastService.showMessage({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Successfully deleted team!',
+            life: 3000
+          });
+        }
+      });
   }
 
   showDeleteTeamConfirmation(teamId: number) {

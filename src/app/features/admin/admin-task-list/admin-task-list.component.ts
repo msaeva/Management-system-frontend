@@ -21,6 +21,7 @@ import {Pageable} from "@core/types/pageable";
 import {AdminCreateTaskComponent} from "@feature/admin/admin-create-task/admin-create-task.component";
 import {DetailedProject} from "@core/types/projects/detailed-project";
 import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
+import {UpdateTaskData} from "@core/types/tasks/update-task-data";
 
 @Component({
   selector: 'app-admin-task-list',
@@ -87,9 +88,6 @@ export class AdminTaskListComponent implements OnInit {
         .subscribe({
           next: (response) => {
             this.project = response;
-          },
-          error: (err) => {
-            console.log(err)
           }
         });
     }
@@ -104,7 +102,19 @@ export class AdminTaskListComponent implements OnInit {
   }
 
   onRowEditSave(task: DetailedTask): void {
-    this.taskService.update(task.id, task)
+
+    const data: UpdateTaskData = {
+      title: task.title,
+      status: task.status,
+      description: task.description,
+      userId: null,
+      projectId: this.projectId,
+      completionTime: task.completionTime ?? 0,
+      estimationTime: task.estimationTime ?? 0,
+      progress: task.progress
+    }
+
+    this.taskService.update(task.id, data)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
@@ -115,8 +125,6 @@ export class AdminTaskListComponent implements OnInit {
           taskToUpdate!.status = task.status;
 
           this.clonedTasks.delete(task.id);
-        }, error: (err) => {
-          console.log(err)
         }
       })
   }
@@ -170,7 +178,7 @@ export class AdminTaskListComponent implements OnInit {
             detail: 'Task deleted successfully',
             life: 3000
           });
-        }, error: (err) => console.log(err)
+        }
       });
   }
 
@@ -200,8 +208,6 @@ export class AdminTaskListComponent implements OnInit {
           this.allTasks = response.data;
           this.initializeForms(this.allTasks);
           this.loading.tasks = false;
-        }, error: (err) => {
-          console.log(err);
         }
       })
   }

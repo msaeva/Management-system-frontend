@@ -40,8 +40,7 @@ export class AdminLayout implements OnInit, OnDestroy {
     this.subscriptions.add(this.sidebarSubject.subscribe({
       next: (response) => {
         this.showSidebar = response;
-      },
-      error: (err) => console.log(err)
+      }
     }))
 
     this.loadMenuItems();
